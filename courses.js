@@ -35,15 +35,13 @@ function makeCard(course) {
         </div>
         <div class="laptop-base"></div>
       </div>
-      <span class="art-mark ${course.tone}" aria-hidden="true">${course.mark}</span>
-      <span class="art-name">${course.name}</span>
     </div>
     <div class="catalog-card-content">
       <span class="course-category-label">${categoryLabel}</span>
       <h3>${course.name}</h3>
       <p>${course.desc}</p>
       <div class="catalog-card-bottom">
-        <div class="catalog-price"><small>Sample course price</small><b>${course.price}</b></div>
+        <div class="catalog-price"><b>${course.price}</b></div>
         <div class="catalog-actions">
           <a class="small-action details" href="course.html?course=${course.id}">View Details</a>
           <a class="small-action buy" href="course.html?course=${course.id}#buy">Buy Now</a>

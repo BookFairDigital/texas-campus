@@ -49,3 +49,17 @@ body:has(.catalog-grid){background:#101113;color:#f5f5f7}
 .catalog-card-art .art-name{left:auto;right:25px;bottom:24px;width:95px;max-width:95px;text-align:center;font-size:9px;line-height:1.2;color:#f8f8fa}
 .catalog-card-art:after{z-index:1}
 @media(max-width:700px){.catalog-card-art .art-mark{right:30px;bottom:33px;width:42px;height:42px;font-size:17px}.catalog-card-art .art-name{right:13px;bottom:15px;width:82px;max-width:82px;font-size:7px}}
+
+
+/* Final approved card refinement: remove decorative corner animation and duplicate floating logo. */
+.catalog-card-art:after{content:none!important;animation:none!important;display:none!important}
+.catalog-card-art:before{opacity:.45}
+.course-laptop{width:78%;height:100px;left:11%;right:auto;top:17px;animation:none!important;filter:drop-shadow(0 8px 12px #0008)}
+.laptop-screen{height:87px;padding:7px;border-width:4px;border-bottom-width:6px}
+.screen-brand{gap:10px}
+.screen-mark{font-size:clamp(22px,2.2vw,31px)}
+.screen-name{font-size:clamp(8px,.9vw,11px);max-width:105px}
+.screen-glint{display:none!important;animation:none!important}
+.catalog-price small{display:none!important}
+.catalog-card-content .catalog-price{display:flex;align-items:center;min-height:36px}
+@media(max-width:700px){.course-laptop{width:78%;left:11%;top:14px;height:76px}.laptop-screen{height:65px}.screen-mark{font-size:19px}.screen-name{font-size:7px;max-width:70px}}

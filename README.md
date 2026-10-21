@@ -16,3 +16,6 @@
 
 ## Important
 This is still a front-end prototype. Student/admin authentication, order storage, receipt upload, bank-payment verification, and automatic course access are not connected yet. The login modals clearly indicate that backend setup is pending. No password is saved by this prototype.
+
+
+Latest card refinement: removed the “Sample course price” label and preview-price note, removed the extra corner shine/duplicate logo, and centered/enlarged the course mark inside the laptop screen.
