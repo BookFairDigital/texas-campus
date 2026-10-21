@@ -1,0 +1,224 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Student Registration | Texas Campus</title>
+
+<style>
+* {
+  box-sizing: border-box;
+}
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f5fb;
+  color: #12213b;
+}
+header {
+  background: #071a35;
+  color: white;
+  padding: 20px 7%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 15px;
+}
+.logo {
+  font-size: 22px;
+  font-weight: bold;
+}
+.logo span {
+  color: #edc45f;
+}
+header a {
+  color: white;
+  text-decoration: none;
+}
+.container {
+  max-width: 650px;
+  margin: 40px auto;
+  padding: 0 18px;
+}
+.form-card {
+  background: white;
+  padding: 32px;
+  border-radius: 18px;
+  border: 1px solid #e0e7f1;
+  box-shadow: 0 12px 35px #12213b0c;
+}
+.eyebrow {
+  color: #1769ed;
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+h1 {
+  font-size: 30px;
+  margin-bottom: 10px;
+}
+.subtitle {
+  color: #66748a;
+  line-height: 1.7;
+  margin-bottom: 26px;
+}
+label {
+  display: block;
+  font-size: 13px;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+input {
+  display: block;
+  width: 100%;
+  padding: 13px;
+  border: 1px solid #ccd6e4;
+  border-radius: 8px;
+  font-size: 15px;
+  margin-bottom: 18px;
+}
+input:focus {
+  outline: 2px solid #1769ed;
+  border-color: #1769ed;
+}
+button {
+  width: 100%;
+  border: none;
+  background: #1769ed;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  padding: 15px;
+  border-radius: 9px;
+  cursor: pointer;
+}
+button:hover {
+  background: #0d4fb9;
+}
+.message {
+  display: none;
+  margin-top: 18px;
+  padding: 13px;
+  border-radius: 8px;
+  line-height: 1.6;
+  font-size: 14px;
+}
+.login-link {
+  text-align: center;
+  margin-top: 24px;
+  font-size: 14px;
+}
+.login-link a {
+  color: #1769ed;
+  font-weight: bold;
+}
+.notice {
+  background: #fff8e7;
+  color: #76551b;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+  line-height: 1.6;
+  margin-top: 18px;
+}
+@media(max-width: 480px) {
+  header { padding: 17px; }
+  .logo { font-size: 18px; }
+  .form-card { padding: 22px; }
+  h1 { font-size: 26px; }
+}
+</style>
+</head>
+
+<body>
+<header>
+  <a class="logo" href="index.html">
+    TEXAS <span>CAMPUS</span>
+  </a>
+  <a href="index.html">← Home</a>
+</header>
+
+<main class="container">
+  <div class="form-card">
+    <div class="eyebrow">STUDENT PORTAL</div>
+    <h1>Create Your Account</h1>
+    <p class="subtitle">
+      Register with Texas Campus to continue your course enrollment.
+    </p>
+
+    <form id="registerForm">
+      <label for="fullname">Full Name</label>
+      <input id="fullname" name="fullname"
+        type="text" autocomplete="name"
+        placeholder="Enter your full name" required>
+
+      <label for="username">Username</label>
+      <input id="username" name="username"
+        type="text" autocomplete="username"
+        minlength="3" placeholder="Choose a username" required>
+
+      <label for="email">Email Address</label>
+      <input id="email" name="email"
+        type="email" autocomplete="email"
+        placeholder="you@example.com" required>
+
+      <label for="mobile">Mobile Number</label>
+      <input id="mobile" name="mobile"
+        type="tel" autocomplete="tel"
+        placeholder="Enter your mobile number" required>
+
+      <label for="password">Password</label>
+      <input id="password" name="password"
+        type="password" autocomplete="new-password"
+        minlength="8" placeholder="At least 8 characters" required>
+
+      <label for="confirmPassword">Confirm Password</label>
+      <input id="confirmPassword" name="confirmPassword"
+        type="password" autocomplete="new-password"
+        minlength="8" placeholder="Enter password again" required>
+
+      <button type="submit">Create Account →</button>
+      <div class="message" id="message" role="status"></div>
+    </form>
+
+    <div class="login-link">
+      Already have an account?
+      <a href="login.html">Student Login</a>
+    </div>
+
+    <div class="notice">
+      Demo form only: this page does not create a real account or save
+      registration details. Secure account creation will be connected
+      to the backend in a later step.
+    </div>
+  </div>
+</main>
+
+<script>
+const form = document.getElementById("registerForm");
+const password = document.getElementById("password");
+const confirmPassword = document.getElementById("confirmPassword");
+const message = document.getElementById("message");
+
+form.addEventListener("submit", function(event) {
+  event.preventDefault();
+
+  if (password.value !== confirmPassword.value) {
+    message.style.display = "block";
+    message.style.background = "#fff0f0";
+    message.style.color = "#b42318";
+    message.textContent = "Passwords do not match. Please try again.";
+    confirmPassword.focus();
+    return;
+  }
+
+  message.style.display = "block";
+  message.style.background = "#fff8e7";
+  message.style.color = "#76551b";
+  message.textContent =
+    "Registration form validated. Real account creation is not connected yet.";
+});
+</script>
+</body>
+</html>
