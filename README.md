@@ -1,7 +1,7 @@
 # Texas Campus — Step 2: Course Catalog + Details
 
 ## Files
-- `index.html` — homepage
+- `index.html` — homepage (large category panels only; compact course-card row removed)
 - `styles.css` — shared design styles
 - `script.js` — mobile navigation and homepage behavior
 - `courses.html` — catalog with all 12 courses and category filters
@@ -14,7 +14,7 @@
 ## Run
 1. Extract this ZIP into a new folder.
 2. Open `index.html` in your browser.
-3. Click either category card or **Courses** in the navigation.
+3. On the homepage, click **View Courses** on either large category panel, or click **Courses** in the navigation.
 4. Try the category filter buttons.
 5. Click **View Details** or **Buy Now** to open that course's details page.
 

@@ -207,3 +207,32 @@ button, a { -webkit-tap-highlight-color: transparent; }
   .brand-wordmark strong { font-size: 19px; }.brand-mark { width: 33px; }.hero h1 { font-size: 32px; }.hero-actions .button { padding-inline: 11px; }.hero-points { gap: 11px; }.hero-point { min-width: 45%; }.course-image { padding: 8px; }.course-info { padding-inline: 8px; }.course-info h3 { font-size: 11px; }.course-info p { font-size: 9px; }.category-copy h3 { font-size: 16px; }
 }
 @media (prefers-reduced-motion: reduce) { *, *::before, *::after { scroll-behavior: auto !important; transition-duration: .01ms !important; animation-duration: .01ms !important; } }
+
+
+/* Step 2 visual adjustment: larger category panels on the homepage */
+.category-grid { gap: 16px; margin-bottom: 19px; }
+.category-card { min-height: 166px; }
+.category-copy { width: 58%; padding: 24px 0 23px 25px; }
+.category-copy h3 { font-size: clamp(19px, 1.6vw, 24px); margin-bottom: 8px; }
+.category-copy p { font-size: 12px; line-height: 1.6; max-width: 300px; margin-bottom: 13px; }
+.category-art { width: 46%; }
+.art-screen { width: 190px; height: 110px; top: 27px; right: 38px; }
+.art-calculator { right: 11px; bottom: 14px; }
+.ai-tile { right: 43%; top: 39px; font-size: 52px; }
+.robot { right: 14%; top: 28px; transform: scale(1.04); transform-origin: top right; }
+.ai-lines { right: 3%; top: 35px; height: 77px; }
+
+@media (max-width: 1100px) {
+  .category-card { min-height: 160px; }
+  .category-copy { padding-left: 18px; }
+  .art-screen { width: 155px; right: 18px; }
+}
+@media (max-width: 760px) {
+  .category-card { min-height: 155px; }
+  .category-copy { width: 63%; padding: 17px 0 17px 17px; }
+  .category-copy h3 { font-size: 18px; }
+  .category-copy p { font-size: 11px; margin-bottom: 11px; }
+  .art-screen { width: 135px; height: 88px; top: 31px; right: 7px; }
+  .ai-tile { font-size: 36px; right: 44%; top: 46px; }
+  .robot { transform: scale(.8); transform-origin: top right; right: 10%; top: 38px; }
+}
