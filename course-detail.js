@@ -24,7 +24,79 @@ document.querySelector("#detail-overview").textContent = course.overview;
 document.querySelector("#detail-mark").textContent = course.mark;
 document.querySelector("#purchase-name").textContent = course.name;
 document.querySelector("#purchase-price").textContent = course.price;
+const checkoutDialog = document.querySelector("#checkout-dialog");
+const registerStep = document.querySelector("#checkout-step-register");
+const paymentStep = document.querySelector("#checkout-step-payment");
+const doneStep = document.querySelector("#checkout-step-done");
+let checkoutStudent = null;
+let demoOrder = null;
+
 document.querySelector("#buy-button").addEventListener("click", () => {
-  document.querySelector("#purchase-note").textContent = "This is a design preview. Student registration, order placement and bank-deposit checkout will be connected in a later development step.";
+  registerStep.hidden = false;
+  paymentStep.hidden = true;
+  doneStep.hidden = true;
+  if (typeof checkoutDialog.showModal === "function") checkoutDialog.showModal();
 });
+
+document.querySelector(".checkout-close").addEventListener("click", () => checkoutDialog.close());
+checkoutDialog.addEventListener("click", (event) => {
+  if (event.target === checkoutDialog) checkoutDialog.close();
+});
+
+document.querySelector("#student-checkout-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  checkoutStudent = {
+    fullName: String(form.get("fullName")).trim(),
+    username: String(form.get("username")).trim(),
+    email: String(form.get("email")).trim(),
+    mobile: String(form.get("mobile")).trim()
+  };
+  // Deliberately do not read or store the password in this front-end prototype.
+  document.querySelector("#checkout-course-name").textContent = course.name;
+  document.querySelector("#checkout-course-price").textContent = course.price;
+  registerStep.hidden = true;
+  paymentStep.hidden = false;
+  doneStep.hidden = true;
+});
+
+document.querySelector("#demo-order-form").addEventListener("submit", (event) => {
+  event.preventDefault();
+  const form = new FormData(event.currentTarget);
+  const receipt = form.get("receipt");
+  demoOrder = {
+    course: course.name,
+    price: course.price,
+    student: checkoutStudent ? checkoutStudent.fullName : "",
+    username: checkoutStudent ? checkoutStudent.username : "",
+    email: checkoutStudent ? checkoutStudent.email : "",
+    mobile: checkoutStudent ? checkoutStudent.mobile : "",
+    depositor: String(form.get("depositor")).trim(),
+    reference: String(form.get("reference")).trim(),
+    receiptName: receipt && receipt.name ? receipt.name : "No file selected",
+    status: "Pending — demo only"
+  };
+  const summary = document.querySelector("#demo-order-summary");
+  summary.replaceChildren();
+  [
+    ["Course", demoOrder.course],
+    ["Student", demoOrder.student],
+    ["Email", demoOrder.email],
+    ["Deposit reference", demoOrder.reference],
+    ["Receipt file", demoOrder.receiptName],
+    ["Status", demoOrder.status]
+  ].forEach(([label, value]) => {
+    const row = document.createElement("p");
+    const key = document.createElement("span");
+    const val = document.createElement("b");
+    key.textContent = label;
+    val.textContent = value;
+    row.append(key, val);
+    summary.appendChild(row);
+  });
+  paymentStep.hidden = true;
+  doneStep.hidden = false;
+});
+
+document.querySelector("#finish-demo-order").addEventListener("click", () => checkoutDialog.close());
 document.querySelector("#year").textContent = new Date().getFullYear();

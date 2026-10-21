@@ -25,3 +25,9 @@
 - The bank details shown were supplied for the design; verify them with the account owner before using them in a live checkout.
 - Firebase, student registration, admin price management, receipt upload/payment approval and protected Google Drive video access are later steps.
 - The logo remains a simple placeholder graphic until the original Texas Campus logo asset is provided.
+
+
+## Buy Now front-end flow (prototype)
+- Open any course details page and click **Buy Now**.
+- A student-details form opens, followed by bank deposit instructions and a demo order confirmation.
+- This is only a browser-side prototype. It does not create an account, securely store data, upload receipts to a server, submit a real order, verify payment or unlock courses. Firebase and backend security are required before using real student or payment data.
