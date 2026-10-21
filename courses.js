@@ -25,7 +25,17 @@ function makeCard(course) {
   const artClass = course.category === "ai" ? "catalog-card-art ai-art-card" : "catalog-card-art";
   card.innerHTML = `
     <div class="${artClass}">
-      <span class="art-mark ${course.tone}">${course.mark}</span>
+      <div class="course-laptop" aria-label="${course.name} logo on a laptop screen">
+        <div class="laptop-screen">
+          <div class="screen-brand ${course.tone}">
+            <span class="screen-mark">${course.mark}</span>
+            <span class="screen-name">${course.name}</span>
+          </div>
+          <div class="screen-glint"></div>
+        </div>
+        <div class="laptop-base"></div>
+      </div>
+      <span class="art-mark ${course.tone}" aria-hidden="true">${course.mark}</span>
       <span class="art-name">${course.name}</span>
     </div>
     <div class="catalog-card-content">
