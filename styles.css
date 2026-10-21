@@ -345,3 +345,43 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}
   .brand-qb { right:12%; bottom:9%; }
 }
 @media (prefers-reduced-motion: reduce) { .brand-float,.ai-logo-float,.art-screen,.ai-dashboard { animation:none !important; } }
+
+
+/* Approved hero video: replaces the duplicated static dashboard/AI overlays */
+.hero-video-visual {
+  position: relative;
+  width: 100%;
+  min-width: 0;
+  height: clamp(260px, 27vw, 390px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
+  border-radius: 12px;
+  isolation: isolate;
+  background: radial-gradient(ellipse at center, rgba(177, 13, 37, .22), #09090c 72%);
+}
+.hero-video-visual::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  background: linear-gradient(90deg, rgba(10,10,13,.16), transparent 24%, transparent 78%, rgba(10,10,13,.2));
+  z-index: 1;
+}
+.hero-promo-video {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  border: 0;
+  border-radius: inherit;
+  filter: saturate(1.04) contrast(1.02);
+}
+@media (max-width: 900px) {
+  .hero-video-visual { height: clamp(230px, 48vw, 340px); }
+}
+@media (max-width: 600px) {
+  .hero-video-visual { height: 230px; border-radius: 8px; }
+}
