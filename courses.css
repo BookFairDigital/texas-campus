@@ -63,3 +63,36 @@ body:has(.catalog-grid){background:#101113;color:#f5f5f7}
 .catalog-price small{display:none!important}
 .catalog-card-content .catalog-price{display:flex;align-items:center;min-height:36px}
 @media(max-width:700px){.course-laptop{width:78%;left:11%;top:14px;height:76px}.laptop-screen{height:65px}.screen-mark{font-size:19px}.screen-name{font-size:7px;max-width:70px}}
+
+/* Shared premium catalog heading banner to match the approved Texas Campus layout */
+.catalog-hero {
+  display:flex; align-items:center; justify-content:space-between; gap:28px;
+  text-align:left; min-height:150px; padding:34px clamp(24px, 7vw, 112px);
+  background:radial-gradient(ellipse at 78% 45%, rgba(126,16,35,.52), transparent 52%),
+             linear-gradient(110deg,#18090e 0%,#241015 54%,#101114 100%);
+  border-bottom:1px solid #d719354f;
+}
+.catalog-hero:after {
+  content:""; position:absolute; width:520px; height:280px; right:-90px; bottom:-190px;
+  border:1px solid rgba(215,25,53,.35); border-radius:50%; transform:rotate(-12deg);
+  box-shadow:0 0 45px rgba(215,25,53,.12); pointer-events:none;
+}
+.catalog-hero .eyebrow { color:#ff5269; letter-spacing:.15em; font-size:10px; font-weight:800; margin:0 0 8px; }
+.catalog-hero h1 { margin:0; font-size:clamp(25px,3vw,40px); font-weight:850; line-height:1.12; }
+.catalog-hero h1 span { color:#ed203c; }
+.catalog-hero > p:not(.eyebrow) { color:#c8c8d0; margin:10px 0 0; font-size:15px; }
+.catalog-hero .catalog-hero-copy { display:flex; align-items:center; gap:18px; }
+.catalog-hero .catalog-hero-icon {
+  display:grid; place-items:center; flex:0 0 64px; width:64px; height:64px;
+  border:1px solid #d719355c; border-radius:15px; color:#ff2947;
+  background:linear-gradient(145deg,#301018,#170b10); box-shadow:0 0 25px #d7193520;
+}
+.catalog-hero .catalog-hero-icon svg { width:34px; height:34px; }
+.catalog-hero .catalog-breadcrumbs { display:flex; align-items:center; gap:13px; flex-wrap:wrap; color:#c8c8d0; font-size:12px; position:relative; z-index:1; }
+.catalog-hero .catalog-breadcrumbs a { color:#e3e3e7; }
+.catalog-hero .catalog-breadcrumbs strong { color:#ff2947; font-weight:800; }
+@media(max-width:760px) {
+  .catalog-hero { align-items:flex-start; flex-direction:column; padding:28px 22px; gap:18px; }
+  .catalog-hero .catalog-hero-copy { align-items:flex-start; gap:13px; }
+  .catalog-hero .catalog-hero-icon { flex-basis:52px; width:52px; height:52px; }
+}
