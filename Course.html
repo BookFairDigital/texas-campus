@@ -1,0 +1,168 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Course Details | Texas Campus</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;font-family:Arial,sans-serif;background:#f3f6fc;color:#12213b}
+header{background:#071a35;color:white;padding:20px 7%;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
+.logo{font-size:21px;font-weight:bold}
+.logo span{color:#edc45f}
+header a{color:white;text-decoration:none}
+main{max-width:1050px;margin:40px auto;padding:0 20px}
+.back{color:#1769ed;text-decoration:none}
+.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:25px;margin-top:24px}
+.card{background:white;padding:28px;border-radius:16px;border:1px solid #e0e7f1;box-shadow:0 8px 25px #10213d08}
+.tag{color:#1769ed;font-weight:bold;font-size:12px;letter-spacing:2px}
+h1{font-size:34px;margin:14px 0}
+p{color:#637189;line-height:1.7}
+h3{margin-top:28px}
+li{padding:8px 0;color:#45536b}
+.price{font-size:32px;font-weight:bold;color:#1769ed;margin:12px 0}
+button{width:100%;padding:15px;border:0;border-radius:9px;background:#1769ed;color:white;font-weight:bold;font-size:16px;cursor:pointer}
+button:hover{background:#0d4fb9}
+.note{font-size:12px}
+@media(max-width:700px){.layout{grid-template-columns:1fr}h1{font-size:28px}}
+</style>
+</head>
+<body>
+<header>
+  <div class="logo">TEXAS <span>CAMPUS</span></div>
+  <a href="index.html">← Back to Home</a>
+</header>
+
+<main>
+  <a class="back" href="index.html#courses">← All Courses</a>
+
+  <div class="layout">
+    <section class="card">
+      <div class="tag" id="category">DIGITAL ACCOUNTING</div>
+      <h1 id="title">QuickBooks Online</h1>
+      <p id="summary">Learn modern cloud accounting skills and manage everyday accounting tasks with confidence.</p>
+
+      <h3>What You Will Learn</h3>
+      <ul id="lessons">
+        <li>Accounting software introduction</li>
+        <li>Company setup and account settings</li>
+        <li>Customers, invoices and expenses</li>
+        <li>Reports and practical exercises</li>
+      </ul>
+
+      <h3>Course Materials</h3>
+      <p>Video lessons, tutorial materials and software installation guidance are provided after purchase approval.</p>
+    </section>
+
+    <aside class="card">
+      <div class="tag">COURSE ENROLLMENT</div>
+      <h2 id="sideTitle">QuickBooks Online</h2>
+      <p>Course fee</p>
+      <div class="price" id="price">Contact us</div>
+      <p id="duration">Course duration: Details available soon</p>
+      <button onclick="buyCourse()">Buy Course</button>
+      <p class="note">Bank deposit payment. Course access is provided after admin verifies the payment.</p>
+      <hr>
+      <p>✓ Video lessons</p>
+      <p>✓ Tutorial materials</p>
+      <p>✓ Software installation guidance</p>
+    </aside>
+  </div>
+</main>
+
+<script>
+const params = new URLSearchParams(window.location.search);
+
+const courses = {
+  "myob": {
+    title: "MYOB Accounting",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Learn core accounting workflows using MYOB accounting software.",
+    price: "Contact us"
+  },
+  "quickbooks-desktop": {
+    title: "QuickBooks Desktop",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Explore desktop accounting workflows, transactions and financial reports.",
+    price: "Contact us"
+  },
+  "quickbooks-online": {
+    title: "QuickBooks Online",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Learn cloud accounting, invoices, expenses and financial reporting.",
+    price: "Contact us"
+  },
+  "tally": {
+    title: "Tally ERP Accounting",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Understand accounting entries, company records and financial reports in Tally.",
+    price: "Contact us"
+  },
+  "sage": {
+    title: "Sage 50 Accounting",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Learn accounting workflows and reporting using Sage 50.",
+    price: "Contact us"
+  },
+  "xero": {
+    title: "Xero Cloud Accounting",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Learn cloud bookkeeping, bank reconciliation and financial reporting with Xero.",
+    price: "Contact us"
+  },
+  "zoho": {
+    title: "Zoho Books Cloud",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Explore online invoicing, expense tracking and accounting in Zoho Books.",
+    price: "Contact us"
+  },
+  "freshbooks": {
+    title: "FreshBooks Accounting",
+    category: "DIGITAL ACCOUNTING",
+    summary: "Learn invoicing, expense tracking and client accounting workflows.",
+    price: "Contact us"
+  },
+  "chatgpt": {
+    title: "ChatGPT for Accounting",
+    category: "ARTIFICIAL INTELLIGENCE",
+    summary: "Explore practical ways to use AI for accounting tasks, spreadsheet support and drafting reports.",
+    price: "Contact us"
+  },
+  "gemini": {
+    title: "Gemini AI for Accounting",
+    category: "ARTIFICIAL INTELLIGENCE",
+    summary: "Learn how to use Gemini for accounting research, document analysis and productivity.",
+    price: "Contact us"
+  },
+  "claude": {
+    title: "Claude AI for Accounting",
+    category: "ARTIFICIAL INTELLIGENCE",
+    summary: "Explore AI-assisted document analysis, financial explanations and accounting workflows.",
+    price: "Contact us"
+  },
+  "gamma": {
+    title: "Gamma AI for Accounting",
+    category: "ARTIFICIAL INTELLIGENCE",
+    summary: "Learn to create clear presentations and accounting reports with AI-assisted tools.",
+    price: "Contact us"
+  }
+};
+
+const key = params.get("course") || "quickbooks-online";
+const course = courses[key] || courses["quickbooks-online"];
+
+document.title = course.title + " | Texas Campus";
+document.getElementById("title").textContent = course.title;
+document.getElementById("sideTitle").textContent = course.title;
+document.getElementById("category").textContent = course.category;
+document.getElementById("summary").textContent = course.summary;
+document.getElementById("price").textContent = course.price;
+
+function buyCourse() {
+  alert("Course: " + course.title +
+    "\n\nStudent account creation and bank deposit ordering will be connected in the next step.");
+}
+</script>
+</body>
+</html>
