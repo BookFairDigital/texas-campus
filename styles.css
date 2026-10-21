@@ -281,3 +281,5 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}
 @keyframes tileFloat{0%,100%{transform:translateY(0) rotate(-4deg)}50%{transform:translateY(-8px) rotate(4deg)}}
 @media(max-width:760px){.official-logo{width:138px;height:52px}.footer-official-logo{width:150px;height:62px}.hero-dashboard-image{width:80%;left:0;top:15%}.hero-robot-image{width:32%;right:0;bottom:0}.info-sections{grid-template-columns:1fr;padding-top:10px;padding-bottom:30px}.admin-column{min-width:0}}
 @media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*:before,*:after{animation-duration:.01ms!important;animation-iteration-count:1!important;scroll-behavior:auto!important;transition-duration:.01ms!important}}
+
+.brand-wordmark-fallback{display:flex;flex-direction:column;line-height:1;color:#e71935;font-weight:900;font-size:27px;letter-spacing:.5px}.brand-wordmark-fallback small{color:#fff;font-size:9px;letter-spacing:5px;margin-top:5px}
