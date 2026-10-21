@@ -7,9 +7,12 @@
 <title>Student Registration | Texas Campus</title>
 
 <style>
-* {
-  box-sizing: border-box;
+:root {
+  --navy: #071a35;
+  --blue: #1769ed;
+  --gold: #edc45f;
 }
+* { box-sizing: border-box; }
 body {
   margin: 0;
   font-family: Arial, sans-serif;
@@ -17,57 +20,43 @@ body {
   color: #12213b;
 }
 header {
-  background: #071a35;
+  background: var(--navy);
   color: white;
   padding: 20px 7%;
   display: flex;
   justify-content: space-between;
   align-items: center;
-  gap: 15px;
+  gap: 14px;
 }
 .logo {
   font-size: 22px;
   font-weight: bold;
-}
-.logo span {
-  color: #edc45f;
-}
-header a {
   color: white;
   text-decoration: none;
 }
-.container {
-  max-width: 650px;
-  margin: 40px auto;
-  padding: 0 18px;
-}
-.form-card {
+.logo span { color: var(--gold); }
+header a.home { color: white; text-decoration: none; }
+.container { max-width: 650px; margin: 38px auto; padding: 0 18px; }
+.card {
   background: white;
-  padding: 32px;
-  border-radius: 18px;
+  padding: 30px;
+  border-radius: 16px;
   border: 1px solid #e0e7f1;
   box-shadow: 0 12px 35px #12213b0c;
 }
 .eyebrow {
-  color: #1769ed;
+  color: var(--blue);
   font-size: 12px;
   font-weight: bold;
   letter-spacing: 2px;
 }
-h1 {
-  font-size: 30px;
-  margin-bottom: 10px;
-}
-.subtitle {
-  color: #66748a;
-  line-height: 1.7;
-  margin-bottom: 26px;
-}
+h1 { font-size: 29px; margin: 14px 0; }
+.muted { color: #66748a; line-height: 1.7; }
 label {
   display: block;
   font-size: 13px;
   font-weight: bold;
-  margin-bottom: 8px;
+  margin: 16px 0 7px;
 }
 input {
   display: block;
@@ -76,42 +65,29 @@ input {
   border: 1px solid #ccd6e4;
   border-radius: 8px;
   font-size: 15px;
-  margin-bottom: 18px;
 }
-input:focus {
-  outline: 2px solid #1769ed;
-  border-color: #1769ed;
-}
+input:focus { outline: 2px solid #1769ed; border-color: #1769ed; }
 button {
   width: 100%;
-  border: none;
-  background: #1769ed;
+  padding: 15px;
+  border: 0;
+  border-radius: 9px;
+  background: var(--blue);
   color: white;
   font-weight: bold;
-  font-size: 16px;
-  padding: 15px;
-  border-radius: 9px;
+  font-size: 15px;
   cursor: pointer;
+  margin-top: 22px;
 }
-button:hover {
-  background: #0d4fb9;
-}
+button:disabled { opacity: .6; cursor: wait; }
 .message {
   display: none;
-  margin-top: 18px;
   padding: 13px;
   border-radius: 8px;
-  line-height: 1.6;
+  margin-top: 18px;
   font-size: 14px;
-}
-.login-link {
-  text-align: center;
-  margin-top: 24px;
-  font-size: 14px;
-}
-.login-link a {
-  color: #1769ed;
-  font-weight: bold;
+  line-height: 1.7;
+  overflow-wrap: anywhere;
 }
 .notice {
   background: #fff8e7;
@@ -119,105 +95,179 @@ button:hover {
   padding: 12px;
   border-radius: 8px;
   font-size: 12px;
-  line-height: 1.6;
-  margin-top: 18px;
+  line-height: 1.7;
+  margin: 18px 0;
 }
-@media(max-width: 480px) {
+.login { text-align: center; margin-top: 23px; font-size: 14px; }
+.login a { color: var(--blue); font-weight: bold; }
+@media(max-width:480px) {
+  .card { padding: 22px; }
   header { padding: 17px; }
   .logo { font-size: 18px; }
-  .form-card { padding: 22px; }
-  h1 { font-size: 26px; }
 }
 </style>
 </head>
 
 <body>
 <header>
-  <a class="logo" href="index.html">
-    TEXAS <span>CAMPUS</span>
-  </a>
-  <a href="index.html">← Home</a>
+  <a class="logo" href="index.html">TEXAS <span>CAMPUS</span></a>
+  <a class="home" href="index.html">← Home</a>
 </header>
 
 <main class="container">
-  <div class="form-card">
+  <div class="card">
     <div class="eyebrow">STUDENT PORTAL</div>
     <h1>Create Your Account</h1>
-    <p class="subtitle">
+    <p class="muted">
       Register with Texas Campus to continue your course enrollment.
     </p>
 
-    <form id="registerForm">
-      <label for="fullname">Full Name</label>
-      <input id="fullname" name="fullname"
-        type="text" autocomplete="name"
-        placeholder="Enter your full name" required>
-
-      <label for="username">Username</label>
-      <input id="username" name="username"
-        type="text" autocomplete="username"
-        minlength="3" placeholder="Choose a username" required>
-
-      <label for="email">Email Address</label>
-      <input id="email" name="email"
-        type="email" autocomplete="email"
-        placeholder="you@example.com" required>
-
-      <label for="mobile">Mobile Number</label>
-      <input id="mobile" name="mobile"
-        type="tel" autocomplete="tel"
-        placeholder="Enter your mobile number" required>
-
-      <label for="password">Password</label>
-      <input id="password" name="password"
-        type="password" autocomplete="new-password"
-        minlength="8" placeholder="At least 8 characters" required>
-
-      <label for="confirmPassword">Confirm Password</label>
-      <input id="confirmPassword" name="confirmPassword"
-        type="password" autocomplete="new-password"
-        minlength="8" placeholder="Enter password again" required>
-
-      <button type="submit">Create Account →</button>
-      <div class="message" id="message" role="status"></div>
-    </form>
-
-    <div class="login-link">
-      Already have an account?
-      <a href="login.html">Student Login</a>
+    <div class="notice">
+      Use an email address you control. You may need to confirm your email
+      before signing in. Never share your password.
     </div>
 
-    <div class="notice">
-      Demo form only: this page does not create a real account or save
-      registration details. Secure account creation will be connected
-      to the backend in a later step.
+    <form id="registerForm">
+      <label for="fullName">Full Name</label>
+      <input id="fullName" autocomplete="name"
+        required maxlength="100" placeholder="Enter your full name">
+
+      <label for="username">Username</label>
+      <input id="username" autocomplete="username"
+        required minlength="3" maxlength="30"
+        pattern="[A-Za-z0-9_]+"
+        title="Use letters, numbers and underscores only"
+        placeholder="Choose a username">
+
+      <label for="email">Email Address</label>
+      <input id="email" type="email" autocomplete="email"
+        required maxlength="254" placeholder="you@example.com">
+
+      <label for="mobile">Mobile Number</label>
+      <input id="mobile" type="tel" autocomplete="tel"
+        required maxlength="25" placeholder="Enter your mobile number">
+
+      <label for="password">Password</label>
+      <input id="password" type="password" autocomplete="new-password"
+        required minlength="8" maxlength="72"
+        placeholder="At least 8 characters">
+
+      <label for="confirmPassword">Confirm Password</label>
+      <input id="confirmPassword" type="password"
+        autocomplete="new-password" required minlength="8" maxlength="72"
+        placeholder="Enter password again">
+
+      <button id="submitButton" type="submit">Create Account →</button>
+      <div id="message" class="message" role="status" aria-live="polite"></div>
+    </form>
+
+    <div class="login">
+      Already have an account?
+      <a href="login.html">Student Login</a>
     </div>
   </div>
 </main>
 
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const form = document.getElementById("registerForm");
-const password = document.getElementById("password");
-const confirmPassword = document.getElementById("confirmPassword");
-const message = document.getElementById("message");
+const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY =
+  "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
 
-form.addEventListener("submit", function(event) {
+const form = document.getElementById("registerForm");
+const message = document.getElementById("message");
+const submitButton = document.getElementById("submitButton");
+
+function showMessage(text, success = false) {
+  message.style.display = "block";
+  message.style.background = success ? "#e8f8ef" : "#fff0f0";
+  message.style.color = success ? "#166534" : "#a61b1b";
+  message.textContent = text;
+}
+
+let supabaseClient = null;
+
+if (window.supabase) {
+  supabaseClient = window.supabase.createClient(
+    SUPABASE_URL,
+    SUPABASE_PUBLISHABLE_KEY
+  );
+}
+
+form.addEventListener("submit", async function(event) {
   event.preventDefault();
 
-  if (password.value !== confirmPassword.value) {
-    message.style.display = "block";
-    message.style.background = "#fff0f0";
-    message.style.color = "#b42318";
-    message.textContent = "Passwords do not match. Please try again.";
-    confirmPassword.focus();
+  if (!supabaseClient) {
+    showMessage(
+      "Supabase library could not load. Check your internet connection and refresh the page."
+    );
     return;
   }
 
-  message.style.display = "block";
-  message.style.background = "#fff8e7";
-  message.style.color = "#76551b";
-  message.textContent =
-    "Registration form validated. Real account creation is not connected yet.";
+  const fullName = document.getElementById("fullName").value.trim();
+  const username = document.getElementById("username").value.trim();
+  const email = document.getElementById("email").value.trim();
+  const mobile = document.getElementById("mobile").value.trim();
+  const password = document.getElementById("password").value;
+  const confirmPassword = document.getElementById("confirmPassword").value;
+
+  if (!/^[A-Za-z0-9_]{3,30}$/.test(username)) {
+    showMessage("Username must contain 3–30 letters, numbers or underscores.");
+    return;
+  }
+
+  if (password !== confirmPassword) {
+    showMessage("Passwords do not match.");
+    return;
+  }
+
+  submitButton.disabled = true;
+  submitButton.textContent = "Creating account...";
+
+  try {
+    const { data, error } = await supabaseClient.auth.signUp({
+      email: email,
+      password: password,
+      options: {
+        data: {
+          full_name: fullName,
+          username: username,
+          mobile: mobile
+        },
+        emailRedirectTo: window.location.origin + "/index.html"
+      }
+    });
+
+    if (error) throw error;
+
+    if (data.user && data.user.identities &&
+        data.user.identities.length === 0) {
+      showMessage(
+        "Registration could not be completed. If you already have an account, try signing in."
+      );
+      return;
+    }
+
+    form.reset();
+
+    if (data.session) {
+      showMessage(
+        "Account created and signed in successfully. Your profile setup has started.",
+        true
+      );
+    } else {
+      showMessage(
+        "Registration submitted! Check your email for the confirmation link. After confirming your email, you can sign in.",
+        true
+      );
+    }
+  } catch (error) {
+    console.error("Registration error:", error);
+    showMessage(error.message || "Registration failed. Please try again.");
+  } finally {
+    submitButton.disabled = false;
+    submitButton.textContent = "Create Account →";
+  }
 });
 </script>
 </body>
