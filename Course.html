@@ -5,33 +5,150 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Course Details | Texas Campus</title>
+
 <style>
-*{box-sizing:border-box}
-body{margin:0;font-family:Arial,sans-serif;background:#f3f6fc;color:#12213b}
-header{background:#071a35;color:white;padding:20px 7%;display:flex;justify-content:space-between;align-items:center;gap:16px;flex-wrap:wrap}
-.logo{font-size:21px;font-weight:bold}
-.logo span{color:#edc45f}
-header a{color:white;text-decoration:none}
-main{max-width:1050px;margin:40px auto;padding:0 20px}
-.back{color:#1769ed;text-decoration:none}
-.layout{display:grid;grid-template-columns:1.5fr 1fr;gap:25px;margin-top:24px}
-.card{background:white;padding:28px;border-radius:16px;border:1px solid #e0e7f1;box-shadow:0 8px 25px #10213d08}
-.tag{color:#1769ed;font-weight:bold;font-size:12px;letter-spacing:2px}
-h1{font-size:34px;margin:14px 0}
-p{color:#637189;line-height:1.7}
-h3{margin-top:28px}
-li{padding:8px 0;color:#45536b}
-.price{font-size:32px;font-weight:bold;color:#1769ed;margin:12px 0}
-button{width:100%;padding:15px;border:0;border-radius:9px;background:#1769ed;color:white;font-weight:bold;font-size:16px;cursor:pointer}
-button:hover{background:#0d4fb9}
-.note{font-size:12px}
-@media(max-width:700px){.layout{grid-template-columns:1fr}h1{font-size:28px}}
+:root {
+  --navy: #071a35;
+  --blue: #1769ed;
+  --gold: #edc45f;
+  --light: #f3f6fc;
+  --text: #12213b;
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: var(--light);
+  color: var(--text);
+}
+a { text-decoration: none; }
+header {
+  background: var(--navy);
+  color: white;
+  padding: 18px 6%;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 18px;
+  flex-wrap: wrap;
+}
+.logo {
+  color: white;
+  font-size: 22px;
+  font-weight: 900;
+}
+.logo span { color: var(--gold); }
+header a.back-home { color: white; }
+main {
+  max-width: 1100px;
+  margin: 38px auto;
+  padding: 0 20px;
+}
+.back {
+  display: inline-block;
+  color: var(--blue);
+  margin-bottom: 20px;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 1.5fr 1fr;
+  gap: 24px;
+}
+.card {
+  background: white;
+  padding: 28px;
+  border: 1px solid #dfe7f1;
+  border-radius: 16px;
+  box-shadow: 0 10px 30px #10213d08;
+}
+.tag {
+  color: var(--blue);
+  font-size: 12px;
+  font-weight: bold;
+  letter-spacing: 2px;
+}
+h1 {
+  font-size: clamp(28px, 4vw, 39px);
+  line-height: 1.2;
+  margin: 15px 0;
+}
+h2 { font-size: 23px; }
+h3 { margin-top: 28px; }
+p { color: #65738a; line-height: 1.75; }
+li { color: #45536b; padding: 7px 0; line-height: 1.5; }
+.price {
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--blue);
+  margin: 12px 0;
+}
+.primary {
+  display: inline-block;
+  background: var(--blue);
+  color: white;
+  border: none;
+  border-radius: 9px;
+  padding: 14px 20px;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+  cursor: pointer;
+}
+.primary:hover { background: #0d4fb9; }
+.buy-button { width: 100%; margin: 12px 0; }
+.note {
+  background: #fff8e7;
+  color: #76551b;
+  padding: 12px;
+  border-radius: 8px;
+  font-size: 12px;
+}
+.course-menu {
+  margin-top: 30px;
+  background: white;
+  border: 1px solid #dfe7f1;
+  border-radius: 14px;
+  padding: 22px;
+}
+.course-menu h2 { margin-top: 0; }
+.course-links {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+}
+.course-links a {
+  background: #f0f5ff;
+  color: #174b9c;
+  border-radius: 8px;
+  padding: 12px;
+  font-size: 13px;
+}
+.course-links a:hover { background: #dce9ff; }
+footer {
+  text-align: center;
+  background: var(--navy);
+  color: white;
+  padding: 24px;
+  margin-top: 55px;
+  font-size: 13px;
+}
+@media(max-width: 760px) {
+  .layout { grid-template-columns: 1fr; }
+  .course-links { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  main { margin-top: 25px; }
+}
+@media(max-width: 420px) {
+  .course-links { grid-template-columns: 1fr; }
+  .card { padding: 21px; }
+}
 </style>
 </head>
+
 <body>
+
 <header>
-  <div class="logo">TEXAS <span>CAMPUS</span></div>
-  <a href="index.html">← Back to Home</a>
+  <a href="index.html" class="logo">TEXAS <span>CAMPUS</span></a>
+  <a href="index.html#courses" class="back-home">← Back to Courses</a>
 </header>
 
 <main>
@@ -41,18 +158,19 @@ button:hover{background:#0d4fb9}
     <section class="card">
       <div class="tag" id="category">DIGITAL ACCOUNTING</div>
       <h1 id="title">QuickBooks Online</h1>
-      <p id="summary">Learn modern cloud accounting skills and manage everyday accounting tasks with confidence.</p>
+      <p id="summary"></p>
 
       <h3>What You Will Learn</h3>
-      <ul id="lessons">
-        <li>Accounting software introduction</li>
-        <li>Company setup and account settings</li>
-        <li>Customers, invoices and expenses</li>
-        <li>Reports and practical exercises</li>
-      </ul>
+      <ul id="lessons"></ul>
 
       <h3>Course Materials</h3>
-      <p>Video lessons, tutorial materials and software installation guidance are provided after purchase approval.</p>
+      <p>
+        Approved students will receive access to video lessons,
+        tutorial materials and software installation guidance.
+      </p>
+
+      <h3>Who Is This Course For?</h3>
+      <p id="audience"></p>
     </section>
 
     <aside class="card">
@@ -60,95 +178,185 @@ button:hover{background:#0d4fb9}
       <h2 id="sideTitle">QuickBooks Online</h2>
       <p>Course fee</p>
       <div class="price" id="price">Contact us</div>
-      <p id="duration">Course duration: Details available soon</p>
-      <button onclick="buyCourse()">Buy Course</button>
-      <p class="note">Bank deposit payment. Course access is provided after admin verifies the payment.</p>
+      <p id="duration">Duration: To be confirmed</p>
+
+      <button class="primary buy-button" id="buyButton" type="button">
+        Buy Course →
+      </button>
+
+      <p class="note">
+        Payment method: Bank deposit. Course access is granted
+        only after the administrator verifies the payment.
+      </p>
+
       <hr>
       <p>✓ Video lessons</p>
       <p>✓ Tutorial materials</p>
       <p>✓ Software installation guidance</p>
+      <p>✓ Student dashboard access after approval</p>
     </aside>
   </div>
+
+  <section class="course-menu">
+    <h2>Explore Other Courses</h2>
+    <p>Select a course to view its details.</p>
+    <div class="course-links" id="courseLinks"></div>
+  </section>
 </main>
 
-<script>
-const params = new URLSearchParams(window.location.search);
+<footer>
+  © 2026 Texas Campus. AI Powered Digital Accounting.
+</footer>
 
+<script>
 const courses = {
   "myob": {
     title: "MYOB Accounting",
     category: "DIGITAL ACCOUNTING",
-    summary: "Learn core accounting workflows using MYOB accounting software.",
-    price: "Contact us"
+    summary: "Learn essential accounting workflows and manage business financial records using MYOB.",
+    lessons: [
+      "Introduction to MYOB",
+      "Company setup and account settings",
+      "Transactions, invoices and expenses",
+      "Financial reports and practical exercises"
+    ],
+    audience: "Beginners and learners who want practical digital accounting skills."
   },
   "quickbooks-desktop": {
     title: "QuickBooks Desktop",
     category: "DIGITAL ACCOUNTING",
-    summary: "Explore desktop accounting workflows, transactions and financial reports.",
-    price: "Contact us"
+    summary: "Learn desktop accounting workflows, business transactions and financial reporting.",
+    lessons: [
+      "Company file setup",
+      "Customers, suppliers and transactions",
+      "Banking and reconciliations",
+      "Reports and practical exercises"
+    ],
+    audience: "Students and professionals learning desktop accounting software."
   },
   "quickbooks-online": {
     title: "QuickBooks Online",
     category: "DIGITAL ACCOUNTING",
-    summary: "Learn cloud accounting, invoices, expenses and financial reporting.",
-    price: "Contact us"
+    summary: "Learn cloud accounting, invoices, expenses and financial reporting with QuickBooks Online.",
+    lessons: [
+      "Cloud accounting introduction",
+      "Company setup and chart of accounts",
+      "Invoices, bills and expenses",
+      "Bank reconciliation and financial reports"
+    ],
+    audience: "Beginners and professionals interested in cloud accounting."
   },
   "tally": {
     title: "Tally ERP Accounting",
     category: "DIGITAL ACCOUNTING",
-    summary: "Understand accounting entries, company records and financial reports in Tally.",
-    price: "Contact us"
+    summary: "Understand accounting entries, company records and financial reporting using Tally.",
+    lessons: [
+      "Company creation and configuration",
+      "Ledgers and voucher entries",
+      "Inventory and transactions",
+      "Financial statements and reports"
+    ],
+    audience: "Learners interested in computerized accounting and bookkeeping."
   },
   "sage": {
     title: "Sage 50 Accounting",
     category: "DIGITAL ACCOUNTING",
-    summary: "Learn accounting workflows and reporting using Sage 50.",
-    price: "Contact us"
+    summary: "Build accounting software skills using Sage 50 business accounting tools.",
+    lessons: [
+      "Company setup",
+      "Accounts and transactions",
+      "Customer and supplier records",
+      "Financial reports"
+    ],
+    audience: "Students and professionals developing accounting software skills."
   },
   "xero": {
     title: "Xero Cloud Accounting",
     category: "DIGITAL ACCOUNTING",
-    summary: "Learn cloud bookkeeping, bank reconciliation and financial reporting with Xero.",
-    price: "Contact us"
+    summary: "Explore cloud bookkeeping, bank reconciliation and financial reporting with Xero.",
+    lessons: [
+      "Organization setup",
+      "Invoices and expenses",
+      "Bank feeds and reconciliation",
+      "Reports and accounting workflows"
+    ],
+    audience: "Learners interested in cloud-based accounting workflows."
   },
   "zoho": {
     title: "Zoho Books Cloud",
     category: "DIGITAL ACCOUNTING",
-    summary: "Explore online invoicing, expense tracking and accounting in Zoho Books.",
-    price: "Contact us"
+    summary: "Learn online invoicing, expense tracking and accounting workflows in Zoho Books.",
+    lessons: [
+      "Organization setup",
+      "Customers and invoices",
+      "Expenses and banking",
+      "Reports and automation features"
+    ],
+    audience: "Small business learners and aspiring digital accounting professionals."
   },
   "freshbooks": {
     title: "FreshBooks Accounting",
     category: "DIGITAL ACCOUNTING",
-    summary: "Learn invoicing, expense tracking and client accounting workflows.",
-    price: "Contact us"
+    summary: "Learn invoicing, expense tracking and client accounting workflows with FreshBooks.",
+    lessons: [
+      "Account setup",
+      "Clients and invoices",
+      "Expenses and time tracking",
+      "Reports and payment tracking"
+    ],
+    audience: "Learners interested in service business bookkeeping."
   },
   "chatgpt": {
     title: "ChatGPT for Accounting",
-    category: "ARTIFICIAL INTELLIGENCE",
-    summary: "Explore practical ways to use AI for accounting tasks, spreadsheet support and drafting reports.",
-    price: "Contact us"
+    category: "ARTIFICIAL INTELLIGENCE FOR ACCOUNTING",
+    summary: "Explore practical ways to use ChatGPT for accounting explanations, spreadsheet assistance and report drafting.",
+    lessons: [
+      "AI fundamentals and prompt writing",
+      "Accounting research and explanations",
+      "Spreadsheet and data assistance",
+      "Report drafting and responsible AI use"
+    ],
+    audience: "Accounting students and professionals exploring AI-assisted workflows."
   },
   "gemini": {
     title: "Gemini AI for Accounting",
-    category: "ARTIFICIAL INTELLIGENCE",
-    summary: "Learn how to use Gemini for accounting research, document analysis and productivity.",
-    price: "Contact us"
+    category: "ARTIFICIAL INTELLIGENCE FOR ACCOUNTING",
+    summary: "Learn how Gemini can assist with accounting research, document work and productivity.",
+    lessons: [
+      "Gemini fundamentals",
+      "Research and document assistance",
+      "Accounting task prompts",
+      "Reviewing AI output responsibly"
+    ],
+    audience: "Learners interested in AI-supported accounting productivity."
   },
   "claude": {
     title: "Claude AI for Accounting",
-    category: "ARTIFICIAL INTELLIGENCE",
+    category: "ARTIFICIAL INTELLIGENCE FOR ACCOUNTING",
     summary: "Explore AI-assisted document analysis, financial explanations and accounting workflows.",
-    price: "Contact us"
+    lessons: [
+      "Claude fundamentals",
+      "Working with accounting documents",
+      "Analysis and report drafting",
+      "Accuracy, privacy and responsible use"
+    ],
+    audience: "Accounting learners interested in document analysis and AI support."
   },
   "gamma": {
     title: "Gamma AI for Accounting",
-    category: "ARTIFICIAL INTELLIGENCE",
-    summary: "Learn to create clear presentations and accounting reports with AI-assisted tools.",
-    price: "Contact us"
+    category: "ARTIFICIAL INTELLIGENCE FOR ACCOUNTING",
+    summary: "Learn to create clear presentations and learning materials using AI-assisted presentation tools.",
+    lessons: [
+      "Introduction to Gamma",
+      "Creating presentation outlines",
+      "Building accounting presentations",
+      "Reviewing and exporting presentations"
+    ],
+    audience: "Accounting students and professionals preparing presentations and reports."
   }
 };
 
+const params = new URLSearchParams(window.location.search);
 const key = params.get("course") || "quickbooks-online";
 const course = courses[key] || courses["quickbooks-online"];
 
@@ -157,12 +365,32 @@ document.getElementById("title").textContent = course.title;
 document.getElementById("sideTitle").textContent = course.title;
 document.getElementById("category").textContent = course.category;
 document.getElementById("summary").textContent = course.summary;
-document.getElementById("price").textContent = course.price;
+document.getElementById("audience").textContent = course.audience;
+document.getElementById("price").textContent = "Contact us";
+document.getElementById("duration").textContent =
+  "Course duration: To be confirmed by Texas Campus";
 
-function buyCourse() {
-  alert("Course: " + course.title +
-    "\n\nStudent account creation and bank deposit ordering will be connected in the next step.");
-}
+const lessonList = document.getElementById("lessons");
+course.lessons.forEach(function(lesson) {
+  const item = document.createElement("li");
+  item.textContent = lesson;
+  lessonList.appendChild(item);
+});
+
+document.getElementById("buyButton").addEventListener("click", function() {
+  window.location.href =
+    "register.html?course=" + encodeURIComponent(key);
+});
+
+const courseLinks = document.getElementById("courseLinks");
+
+Object.keys(courses).forEach(function(courseKey) {
+  const link = document.createElement("a");
+  link.href = "course.html?course=" + encodeURIComponent(courseKey);
+  link.textContent = courses[courseKey].title;
+  courseLinks.appendChild(link);
+});
 </script>
+
 </body>
 </html>
