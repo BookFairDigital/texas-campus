@@ -1,0 +1,30 @@
+STUDENT DASHBOARD EXPIRY CHECK
+
+In student-dashboard.html, find this line near the bottom:
+
+    await loadDashboard(data.session.user);
+
+Replace that one line with the block below:
+
+    const { data: accessProfile, error: accessProfileError } = await sb
+      .from('profiles')
+      .select('account_status, access_expires_at')
+      .eq('id', data.session.user.id)
+      .maybeSingle();
+
+    const accessExpired = accessProfile?.access_expires_at &&
+      new Date(accessProfile.access_expires_at).getTime() <= Date.now();
+
+    if (accessProfileError || !accessProfile ||
+        accessProfile.account_status !== 'active' || accessExpired) {
+      await sb.auth.signOut();
+      alert('Your student account is inactive or your 2-year video access period has expired. Please contact Texas Campus.');
+      location.href = './index.html#student-login';
+      return;
+    }
+
+    await loadDashboard(data.session.user);
+
+This blocks a previously signed-in student from loading the dashboard after their expiry date or after deactivation.
+
+Important: for complete video protection, do not use publicly accessible Drive/video URLs that students can bookmark and open directly. Videos must be delivered through protected, expiry-aware access checks. The current site does not yet have a connected lesson-player route.

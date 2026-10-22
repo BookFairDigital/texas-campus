@@ -1,0 +1,2 @@
+<!-- Add this link inside the Management Workspace section in admin.html -->
+<a class="admin-btn admin-btn-secondary" href="student-management.html">Manage Student Accounts →</a>
