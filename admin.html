@@ -1,135 +1,344 @@
- 
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
- <script type="module">
-  import { auth, db } from "./firebase-config.js";
-  import {
-    onAuthStateChanged,
-    signOut
-  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-  import {
-    doc,
-    getDoc
-  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
-
-  onAuthStateChanged(auth, async (user) => {
-    if (!user) {
-      alert("Admin login කරන්න.");
-      window.location.href = "index.html";
-      return;
-    }
-
-    try {
-      const adminDoc = await getDoc(doc(db, "admins", user.uid));
-
-      if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
-        alert("Admin access නැහැ.");
-        await signOut(auth);
-        window.location.href = "index.html";
-        return;
-      }
-
-      document.body.style.display = "block";
-      console.log("Admin verified.");
-    } catch (error) {
-      console.error("Admin verification failed:", error);
-      alert("Admin verification අසාර්ථකයි. Firebase rules පරීක්ෂා කරන්න.");
-    }
-  });
-</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel | Texas Campus</title>
   <link rel="stylesheet" href="style.css">
+
   <style>
-    .admin-wrap { max-width: 1100px; margin: 40px auto; padding: 20px; }
-    .admin-header { display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:25px; }
-    .admin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; }
-    .admin-card { padding:22px; border:1px solid #333; border-radius:14px; background:#151515; }
-    .admin-card h2 { font-size:19px; margin-top:0; }
-    .admin-card p { color:#bbb; line-height:1.6; }
-    .admin-label { display:block; margin:12px 0 6px; }
-    .admin-input { width:100%; box-sizing:border-box; padding:12px; border:1px solid #444; border-radius:8px; background:#101010; color:#fff; }
-    .admin-btn { padding:11px 16px; border:0; border-radius:8px; background:#d62828; color:#fff; cursor:pointer; margin-top:12px; }
-    .admin-note { margin-top:22px; padding:15px; border-left:4px solid #d62828; background:#211616; line-height:1.6; }
-    .admin-status { color:#ffcc80; }
-    a { color:#ff7777; }
+    [hidden] {
+      display: none !important;
+    }
+
+    .admin-wrap {
+      max-width: 1100px;
+      margin: 40px auto;
+      padding: 20px;
+    }
+
+    .admin-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-bottom: 25px;
+    }
+
+    .admin-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+      gap: 18px;
+    }
+
+    .admin-card {
+      padding: 22px;
+      border: 1px solid #333;
+      border-radius: 14px;
+      background: #151515;
+      color: #fff;
+    }
+
+    .admin-card h2 {
+      font-size: 19px;
+      margin-top: 0;
+    }
+
+    .admin-card p {
+      color: #bbb;
+      line-height: 1.6;
+    }
+
+    .admin-label {
+      display: block;
+      margin: 12px 0 6px;
+    }
+
+    .admin-input {
+      width: 100%;
+      box-sizing: border-box;
+      padding: 12px;
+      border: 1px solid #444;
+      border-radius: 8px;
+      background: #101010;
+      color: #fff;
+    }
+
+    .admin-btn {
+      padding: 11px 16px;
+      border: 0;
+      border-radius: 8px;
+      background: #d62828;
+      color: #fff;
+      cursor: pointer;
+      margin-top: 12px;
+    }
+
+    .admin-btn:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+    }
+
+    .admin-note {
+      margin-top: 22px;
+      padding: 15px;
+      border-left: 4px solid #d62828;
+      background: #211616;
+      color: #fff;
+      line-height: 1.6;
+    }
+
+    .admin-status {
+      color: #ffcc80;
+    }
+
+    .admin-login {
+      max-width: 420px;
+      margin: 60px auto;
+      padding: 25px;
+      border: 1px solid #333;
+      border-radius: 14px;
+      background: #151515;
+      color: #fff;
+    }
+
+    .admin-login h1 {
+      font-size: 24px;
+    }
+
+    .login-message {
+      overflow-wrap: anywhere;
+      line-height: 1.5;
+    }
+
+    a {
+      color: #ff7777;
+    }
   </style>
 </head>
+
 <body>
- 
-<div id="admin-login" style="max-width:400px;margin:60px auto;padding:24px;background:#151515;color:white;border-radius:12px;">
-  <h2>Texas Campus Admin Login</h2>
-  <form id="admin-login-form">
-    <label for="admin-email">Admin Email</label>
-    <input id="admin-email" type="email" required autocomplete="username"
-      style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
 
-    <label for="admin-password">Password</label>
-    <input id="admin-password" type="password" required autocomplete="current-password"
-      style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
+  <!-- Admin login -->
+  <section id="admin-login" class="admin-login">
+    <h1>Texas Campus Admin Login</h1>
+    <p>Sign in using your registered administrator account.</p>
 
-    <button type="submit" style="padding:12px 18px;cursor:pointer;">Login</button>
-    <p id="login-message" role="status"></p>
-  </form>
-</div>
+    <form id="admin-login-form">
+      <label class="admin-label" for="admin-email">Admin Email</label>
+      <input
+        class="admin-input"
+        id="admin-email"
+        type="email"
+        autocomplete="username"
+        required
+      >
 
-  <main class="admin-wrap">
+      <label class="admin-label" for="admin-password">Password</label>
+      <input
+        class="admin-input"
+        id="admin-password"
+        type="password"
+        autocomplete="current-password"
+        required
+      >
+
+      <button class="admin-btn" id="login-button" type="submit">
+        Login
+      </button>
+
+      <p id="login-message" class="login-message" role="status" aria-live="polite"></p>
+      <a href="index.html">Back to Website</a>
+    </form>
+  </section>
+
+  <!-- Hidden until Firebase confirms admin role -->
+  <main id="admin-content" class="admin-wrap" hidden>
     <div class="admin-header">
       <div>
         <h1>Texas Campus — Admin Panel</h1>
         <p>Manage students, courses and payment requests.</p>
+        <p id="admin-account"></p>
       </div>
-      <a href="index.html">← Back to Website</a>
+
+      <div>
+        <a href="index.html">← Back to Website</a>
+        <button class="admin-btn" id="logout-button" type="button">
+          Logout
+        </button>
+      </div>
     </div>
 
     <div class="admin-note">
-      <strong>Setup status:</strong>
-      <span class="admin-status">Admin backend not connected yet.</span>
-      <br>මෙහි buttons දැනට preview සඳහා පමණයි. Backend එක සහ security rules සකස් කරන තුරු student accounts හෝ payments මෙතැනින් process වෙන්නේ නැහැ.
+      <strong>System status:</strong>
+      <span class="admin-status">Backend features not connected yet.</span>
+      <br>
+      මෙම panel එකේ login verification සම්බන්ධ කර ඇත.
+      Student creation, payment approval සහ course unlocking තවම සක්‍රිය කර නැත.
     </div>
 
     <section class="admin-grid" style="margin-top:24px;">
+
       <div class="admin-card">
         <h2>Student Accounts</h2>
         <p>Create student accounts and assign their usernames and passwords.</p>
+
         <label class="admin-label" for="student-name">Student name</label>
-        <input class="admin-input" id="student-name" placeholder="Student name">
+        <input class="admin-input" id="student-name" placeholder="Student name" disabled>
+
         <label class="admin-label" for="student-email">Student email</label>
-        <input class="admin-input" id="student-email" type="email" placeholder="student@example.com">
+        <input class="admin-input" id="student-email" type="email" placeholder="student@example.com" disabled>
+
         <label class="admin-label" for="student-username">Assigned username</label>
-        <input class="admin-input" id="student-username" placeholder="Username">
-        <button class="admin-btn" type="button" onclick="alert('Backend එක සම්බන්ධ කළ පසු student account create කිරීම සක්‍රිය කරමු.')">Create Student</button>
+        <input class="admin-input" id="student-username" placeholder="Username" disabled>
+
+        <button class="admin-btn" type="button" disabled>Create Student</button>
+        <p>Available after secure account-creation backend setup.</p>
       </div>
 
       <div class="admin-card">
         <h2>Course Management</h2>
         <p>Add courses, update prices and attach Google Drive lesson links.</p>
+
         <label class="admin-label" for="course-name">Course name</label>
-        <input class="admin-input" id="course-name" placeholder="Course name">
+        <input class="admin-input" id="course-name" placeholder="Course name" disabled>
+
         <label class="admin-label" for="course-price">Price (LKR)</label>
-        <input class="admin-input" id="course-price" type="number" min="0" placeholder="12500">
+        <input class="admin-input" id="course-price" type="number" min="0" placeholder="12500" disabled>
+
         <label class="admin-label" for="drive-link">Google Drive lesson link</label>
-        <input class="admin-input" id="drive-link" type="url" placeholder="https://drive.google.com/...">
-        <button class="admin-btn" type="button" onclick="alert('Backend එක සම්බන්ධ කළ පසු course save කිරීම සක්‍රිය කරමු.')">Save Course</button>
+        <input class="admin-input" id="drive-link" type="url" placeholder="https://drive.google.com/..." disabled>
+
+        <button class="admin-btn" type="button" disabled>Save Course</button>
+        <p>Course saving will be enabled after secure Firestore access is configured.</p>
       </div>
 
       <div class="admin-card">
         <h2>Payment Requests</h2>
-        <p>Review student payment receipts and approve or reject requests.</p>
+        <p>Review payment receipts and approve or reject requests.</p>
         <p><strong>Pending requests:</strong> Not connected</p>
-        <p>Payment records සහ uploaded receipts backend එක සම්බන්ධ කළ පසු මෙතැන පෙන්වමු.</p>
-        <button class="admin-btn" type="button" onclick="alert('Payment request system එක තවම සම්බන්ධ කර නැහැ.')">View Requests</button>
+        <button class="admin-btn" type="button" disabled>View Requests</button>
       </div>
 
       <div class="admin-card">
         <h2>Course Access</h2>
-        <p>Grant course access after a payment has been verified.</p>
-        <p>Access controls will be connected to the student's account after backend setup.</p>
-        <button class="admin-btn" type="button" onclick="alert('Course unlocking backend එක සකස් කළ පසු සක්‍රිය කරමු.')">Manage Access</button>
+        <p>Grant access after payment has been verified.</p>
+        <p>Course access controls are not connected yet.</p>
+        <button class="admin-btn" type="button" disabled>Manage Access</button>
       </div>
+
     </section>
   </main>
+
+  <script type="module">
+    import { auth, db } from "./firebase-config.js";
+
+    import {
+      signInWithEmailAndPassword,
+      onAuthStateChanged,
+      signOut
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+
+    import {
+      doc,
+      getDoc
+    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+    const loginBox = document.getElementById("admin-login");
+    const loginForm = document.getElementById("admin-login-form");
+    const loginButton = document.getElementById("login-button");
+    const loginMessage = document.getElementById("login-message");
+    const adminContent = document.getElementById("admin-content");
+    const adminAccount = document.getElementById("admin-account");
+    const logoutButton = document.getElementById("logout-button");
+
+    let verificationInProgress = false;
+
+    function showLogin(message = "") {
+      loginBox.hidden = false;
+      adminContent.hidden = true;
+      loginMessage.textContent = message;
+    }
+
+    function showAdmin(user) {
+      loginBox.hidden = true;
+      adminContent.hidden = false;
+      adminAccount.textContent = "Signed in: " + user.email;
+    }
+
+    loginForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+
+      loginButton.disabled = true;
+      loginMessage.textContent = "Signing in...";
+
+      const email = document.getElementById("admin-email").value.trim();
+      const password = document.getElementById("admin-password").value;
+
+      try {
+        await signInWithEmailAndPassword(auth, email, password);
+        loginMessage.textContent = "Login accepted. Verifying admin access...";
+      } catch (error) {
+        console.error("Login failed:", error.code);
+
+        showLogin(
+          error.code === "auth/invalid-credential"
+            ? "Email or password is incorrect."
+            : "Login failed. Check your credentials and Firebase settings."
+        );
+      } finally {
+        loginButton.disabled = false;
+      }
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (verificationInProgress) return;
+
+      if (!user) {
+        showLogin("");
+        return;
+      }
+
+      verificationInProgress = true;
+      loginMessage.textContent = "Verifying administrator permissions...";
+
+      try {
+        const adminRef = doc(db, "admins", user.uid);
+        const adminSnapshot = await getDoc(adminRef);
+
+        if (
+          adminSnapshot.exists() &&
+          adminSnapshot.data().role === "admin"
+        ) {
+          showAdmin(user);
+        } else {
+          await signOut(auth);
+          showLogin("This account does not have administrator access.");
+        }
+      } catch (error) {
+        console.error("Admin verification failed:", error.code || error.message);
+
+        await signOut(auth).catch(() => {});
+        showLogin(
+          "Could not verify admin access. Firestore rules may block this check."
+        );
+      } finally {
+        verificationInProgress = false;
+      }
+    });
+
+    logoutButton.addEventListener("click", async () => {
+      try {
+        await signOut(auth);
+        showLogin("You have been signed out.");
+      } catch (error) {
+        console.error("Logout failed:", error);
+        alert("Logout failed. Please try again.");
+      }
+    });
+  </script>
+
 </body>
 </html>
