@@ -3,6 +3,42 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+ <script type="module">
+  import { auth, db } from "./firebase-config.js";
+  import {
+    onAuthStateChanged,
+    signOut
+  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
+  import {
+    doc,
+    getDoc
+  } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+
+  onAuthStateChanged(auth, async (user) => {
+    if (!user) {
+      alert("Admin login කරන්න.");
+      window.location.href = "index.html";
+      return;
+    }
+
+    try {
+      const adminDoc = await getDoc(doc(db, "admins", user.uid));
+
+      if (!adminDoc.exists() || adminDoc.data().role !== "admin") {
+        alert("Admin access නැහැ.");
+        await signOut(auth);
+        window.location.href = "index.html";
+        return;
+      }
+
+      document.body.style.display = "block";
+      console.log("Admin verified.");
+    } catch (error) {
+      console.error("Admin verification failed:", error);
+      alert("Admin verification අසාර්ථකයි. Firebase rules පරීක්ෂා කරන්න.");
+    }
+  });
+</script>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Admin Panel | Texas Campus</title>
   <link rel="stylesheet" href="style.css">
