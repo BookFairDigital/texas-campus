@@ -4,224 +4,864 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Admin Panel | Texas Campus</title>
-  <link rel="stylesheet" href="style.css">
+  <meta name="theme-color" content="#101116">
+  <meta name="description" content="Texas Campus administrator dashboard">
+  <title>Admin Dashboard | Texas Campus</title>
+
+  <link rel="stylesheet" href="styles.css">
 
   <style>
-    [hidden] { display: none !important; }
-
-    .admin-wrap {
-      max-width: 1100px;
-      margin: 40px auto;
-      padding: 20px;
+    :root {
+      color-scheme: dark;
+      --admin-bg: #0b0c10;
+      --admin-panel: #14151b;
+      --admin-panel-hover: #191a22;
+      --admin-border: #292a34;
+      --admin-text: #f5f5f7;
+      --admin-muted: #9b9daa;
+      --admin-red: #df1732;
+      --admin-red-hover: #f12642;
+      --admin-green: #32c48d;
+      --admin-amber: #f3b94f;
     }
 
-    .admin-header {
+    [hidden] {
+      display: none !important;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background:
+        radial-gradient(ellipse at 50% -15%, rgba(223, 23, 50, .12), transparent 50%),
+        var(--admin-bg);
+      color: var(--admin-text);
+      font-family: Inter, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    a {
+      color: #ff687b;
+      text-decoration: none;
+    }
+
+    a:hover {
+      color: #ff9aa7;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    a:focus-visible {
+      outline: 2px solid #ff687b;
+      outline-offset: 3px;
+    }
+
+    .admin-topbar {
+      position: sticky;
+      top: 0;
+      z-index: 10;
+      min-height: 76px;
+      padding: 15px 5%;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      background: rgba(15, 16, 21, .94);
+      border-bottom: 1px solid var(--admin-border);
+      backdrop-filter: blur(16px);
+    }
+
+    .admin-brand {
+      display: flex;
+      align-items: center;
+      gap: 13px;
+      min-width: 0;
+    }
+
+    .admin-brand img {
+      display: block;
+      width: 132px;
+      max-height: 48px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 5px;
+      padding: 4px 7px;
+    }
+
+    .admin-brand-copy {
+      padding-left: 13px;
+      border-left: 1px solid var(--admin-border);
+    }
+
+    .admin-brand-copy strong {
+      display: block;
+      font-size: 13px;
+      letter-spacing: .04em;
+    }
+
+    .admin-brand-copy span {
+      display: block;
+      color: var(--admin-muted);
+      font-size: 11px;
+    }
+
+    .admin-top-actions {
+      display: flex;
+      align-items: center;
+      justify-content: flex-end;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .top-link {
+      color: #d2d3db;
+      font-size: 13px;
+    }
+
+    .admin-btn {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      min-height: 40px;
+      padding: 10px 16px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      background: var(--admin-red);
+      color: #fff;
+      font-weight: 650;
+      cursor: pointer;
+      transition: background .18s ease, border-color .18s ease, transform .18s ease;
+    }
+
+    .admin-btn:hover:not(:disabled) {
+      background: var(--admin-red-hover);
+      transform: translateY(-1px);
+    }
+
+    .admin-btn:disabled {
+      opacity: .58;
+      cursor: not-allowed;
+    }
+
+    .admin-btn-secondary {
+      background: #1b1c23;
+      border-color: #343541;
+    }
+
+    .admin-btn-secondary:hover:not(:disabled) {
+      background: #252630;
+      border-color: #484a58;
+    }
+
+    .admin-btn-small {
+      min-height: 35px;
+      padding: 7px 12px;
+      font-size: 12px;
+    }
+
+    .admin-wrap {
+      width: min(1200px, 92%);
+      margin: 0 auto;
+      padding: 42px 0 55px;
+    }
+
+    .admin-page-heading {
       display: flex;
       justify-content: space-between;
-      align-items: center;
-      gap: 15px;
+      align-items: flex-end;
+      gap: 20px;
       flex-wrap: wrap;
-      margin-bottom: 25px;
+      margin-bottom: 27px;
+    }
+
+    .admin-eyebrow {
+      margin: 0 0 7px;
+      color: #ff687b;
+      font-size: 11px;
+      font-weight: 750;
+      letter-spacing: .17em;
+      text-transform: uppercase;
+    }
+
+    .admin-page-heading h1,
+    .admin-login h1 {
+      margin: 0;
+      font-size: clamp(27px, 4vw, 36px);
+      line-height: 1.2;
+      letter-spacing: -.045em;
+    }
+
+    .admin-subtitle {
+      margin: 10px 0 0;
+      color: var(--admin-muted);
+      font-size: 14px;
+    }
+
+    .admin-account-pill {
+      display: inline-flex;
+      align-items: center;
+      gap: 9px;
+      padding: 9px 13px;
+      border: 1px solid var(--admin-border);
+      border-radius: 999px;
+      background: #15161c;
+      color: #d6d7df;
+      font-size: 12px;
+      overflow-wrap: anywhere;
+    }
+
+    .admin-account-dot {
+      width: 8px;
+      height: 8px;
+      flex: 0 0 8px;
+      border-radius: 50%;
+      background: var(--admin-green);
+      box-shadow: 0 0 12px rgba(50, 196, 141, .4);
+    }
+
+    .admin-status-banner {
+      display: flex;
+      align-items: flex-start;
+      gap: 13px;
+      margin: 0 0 28px;
+      padding: 17px 19px;
+      border: 1px solid rgba(243, 185, 79, .22);
+      border-radius: 12px;
+      background: rgba(243, 185, 79, .055);
+    }
+
+    .admin-status-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 36px;
+      width: 36px;
+      height: 36px;
+      border-radius: 10px;
+      background: rgba(243, 185, 79, .12);
+      color: var(--admin-amber);
+      font-size: 18px;
+    }
+
+    .admin-status-banner strong {
+      display: block;
+      margin-bottom: 3px;
+      color: #f5d28a;
+      font-size: 13px;
+    }
+
+    .admin-status-banner p {
+      margin: 0;
+      color: #b7b4ac;
+      font-size: 12px;
+      line-height: 1.7;
+    }
+
+    .admin-section-heading {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 15px;
+      margin: 0 0 17px;
+    }
+
+    .admin-section-heading h2 {
+      margin: 0;
+      font-size: 18px;
+      letter-spacing: -.02em;
+    }
+
+    .admin-section-heading p {
+      margin: 4px 0 0;
+      color: var(--admin-muted);
+      font-size: 12px;
     }
 
     .admin-grid {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-      gap: 18px;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 19px;
     }
 
     .admin-card {
-      padding: 22px;
-      border: 1px solid #333;
-      border-radius: 14px;
-      background: #151515;
-      color: #fff;
+      min-width: 0;
+      padding: 24px;
+      border: 1px solid var(--admin-border);
+      border-radius: 15px;
+      background: linear-gradient(145deg, #17181f, #121319);
+      box-shadow: 0 10px 30px rgba(0, 0, 0, .12);
+      transition: border-color .2s ease, transform .2s ease;
     }
 
-    .admin-card h2 { font-size: 19px; margin-top: 0; }
+    .admin-card:hover {
+      border-color: #41424f;
+      transform: translateY(-2px);
+    }
 
-    .admin-card p {
-      color: #bbb;
-      line-height: 1.6;
+    .admin-card-head {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+      margin-bottom: 20px;
+    }
+
+    .admin-card-icon {
+      display: grid;
+      place-items: center;
+      flex: 0 0 45px;
+      width: 45px;
+      height: 45px;
+      border: 1px solid rgba(223, 23, 50, .25);
+      border-radius: 12px;
+      background: rgba(223, 23, 50, .1);
+      color: #ff687b;
+      font-size: 20px;
+    }
+
+    .admin-card-head h2 {
+      margin: 0 0 5px;
+      font-size: 17px;
+      line-height: 1.35;
+      letter-spacing: -.025em;
+    }
+
+    .admin-card-head p {
+      margin: 0;
+      color: var(--admin-muted);
+      font-size: 12px;
+      line-height: 1.65;
     }
 
     .admin-label {
       display: block;
-      margin: 12px 0 6px;
+      margin: 15px 0 7px;
+      color: #d9dae2;
+      font-size: 12px;
+      font-weight: 650;
     }
 
     .admin-input {
+      display: block;
       width: 100%;
-      box-sizing: border-box;
-      padding: 12px;
-      border: 1px solid #444;
-      border-radius: 8px;
-      background: #101010;
-      color: #fff;
+      min-height: 45px;
+      padding: 11px 13px;
+      border: 1px solid #343540;
+      border-radius: 9px;
+      outline: none;
+      background: #0d0e13;
+      color: #f6f6f8;
+      transition: border-color .18s ease, box-shadow .18s ease;
     }
 
-    .admin-btn {
-      padding: 11px 16px;
-      border: 0;
-      border-radius: 8px;
-      background: #d62828;
-      color: #fff;
-      cursor: pointer;
-      margin-top: 12px;
+    .admin-input::placeholder {
+      color: #777986;
     }
 
-    .admin-btn:disabled {
-      opacity: .6;
+    .admin-input:focus {
+      border-color: #d72b43;
+      box-shadow: 0 0 0 3px rgba(223, 23, 50, .1);
+    }
+
+    .admin-input:disabled {
+      opacity: .65;
       cursor: not-allowed;
     }
 
-    .admin-note {
-      margin-top: 22px;
-      padding: 15px;
-      border-left: 4px solid #d62828;
-      background: #211616;
-      color: #fff;
+    .admin-card-action {
+      width: 100%;
+      margin-top: 20px;
+    }
+
+    .admin-card-footnote {
+      margin: 12px 0 0;
+      color: #858795;
+      font-size: 11px;
       line-height: 1.6;
     }
 
-    .admin-status { color: #ffcc80; }
+    .admin-metric-box {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      margin: 21px 0;
+      padding: 15px;
+      border: 1px solid #292a34;
+      border-radius: 10px;
+      background: #101116;
+    }
+
+    .admin-metric-label {
+      display: block;
+      color: var(--admin-muted);
+      font-size: 11px;
+    }
+
+    .admin-metric-value {
+      display: block;
+      margin-top: 4px;
+      color: #f4f4f6;
+      font-size: 17px;
+      font-weight: 750;
+    }
+
+    .admin-mini-status {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      padding: 6px 9px;
+      border: 1px solid #363742;
+      border-radius: 7px;
+      color: #b8bac6;
+      font-size: 10px;
+      white-space: nowrap;
+    }
+
+    .admin-mini-status::before {
+      content: "";
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: #777986;
+    }
+
+    .admin-card-description {
+      margin: 0;
+      color: var(--admin-muted);
+      font-size: 13px;
+      line-height: 1.8;
+    }
+
+    .admin-footer {
+      display: flex;
+      justify-content: space-between;
+      gap: 15px;
+      flex-wrap: wrap;
+      margin-top: 32px;
+      padding-top: 19px;
+      border-top: 1px solid var(--admin-border);
+      color: #777986;
+      font-size: 11px;
+    }
+
+    /* Login screen */
+
+    .admin-login-shell {
+      display: grid;
+      place-items: center;
+      min-height: 100vh;
+      padding: 28px 16px;
+    }
 
     .admin-login {
-      max-width: 420px;
-      margin: 60px auto;
-      padding: 25px;
-      border: 1px solid #333;
-      border-radius: 14px;
-      background: #151515;
-      color: #fff;
+      width: min(440px, 100%);
+      padding: 34px;
+      border: 1px solid #30313c;
+      border-radius: 18px;
+      background: linear-gradient(145deg, #181920, #111217);
+      box-shadow: 0 24px 80px rgba(0, 0, 0, .38);
     }
 
-    .admin-login h1 { font-size: 24px; }
+    .admin-login-brand {
+      display: block;
+      width: 165px;
+      max-height: 60px;
+      margin-bottom: 28px;
+      padding: 6px;
+      border-radius: 6px;
+      background: #fff;
+      object-fit: contain;
+    }
+
+    .admin-login h1 {
+      font-size: 27px;
+    }
+
+    .admin-login-intro {
+      margin: 10px 0 24px;
+      color: var(--admin-muted);
+      font-size: 13px;
+      line-height: 1.7;
+    }
 
     .login-message {
+      min-height: 22px;
+      margin: 13px 0;
+      color: #ff9aa7;
+      font-size: 12px;
       overflow-wrap: anywhere;
-      line-height: 1.5;
+      line-height: 1.6;
     }
 
-    a { color: #ff7777; }
+    .admin-login-back {
+      display: inline-block;
+      margin-top: 8px;
+      font-size: 12px;
+    }
 
-    @media (max-width: 600px) {
-      .admin-wrap { padding: 14px; margin: 20px auto; }
-      .admin-login { margin: 25px 14px; }
+    .admin-login .admin-card-action {
+      margin-top: 22px;
+    }
+
+    @media (max-width: 760px) {
+      .admin-topbar {
+        padding: 13px 4%;
+      }
+
+      .admin-brand img {
+        width: 110px;
+      }
+
+      .admin-brand-copy {
+        display: none;
+      }
+
+      .admin-wrap {
+        width: 92%;
+        padding-top: 30px;
+      }
+
+      .admin-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .admin-card {
+        padding: 20px;
+      }
+
+      .admin-page-heading {
+        align-items: flex-start;
+      }
+    }
+
+    @media (max-width: 430px) {
+      .admin-topbar {
+        align-items: flex-start;
+      }
+
+      .admin-brand img {
+        width: 94px;
+      }
+
+      .admin-top-actions {
+        gap: 8px;
+      }
+
+      .top-link {
+        font-size: 11px;
+      }
+
+      .admin-btn-small {
+        min-height: 33px;
+        padding: 6px 9px;
+      }
+
+      .admin-login {
+        padding: 25px 21px;
+      }
+
+      .admin-status-banner {
+        padding: 13px;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *,
+      *::before,
+      *::after {
+        scroll-behavior: auto !important;
+        transition: none !important;
+      }
     }
   </style>
 </head>
 
 <body>
 
-  <section id="admin-login" class="admin-login">
-    <h1>Texas Campus Admin Login</h1>
-    <p>Sign in using your registered administrator account.</p>
-
-    <form id="admin-login-form">
-      <label class="admin-label" for="admin-email">Admin Email</label>
-      <input
-        class="admin-input"
-        id="admin-email"
-        type="email"
-        autocomplete="username"
-        required
+  <!-- Administrator login -->
+  <section id="admin-login" class="admin-login-shell">
+    <div class="admin-login">
+      <img
+        class="admin-login-brand"
+        src="./assets/texas-campus-logo.png"
+        alt="Texas Campus"
       >
 
-      <label class="admin-label" for="admin-password">Password</label>
-      <input
-        class="admin-input"
-        id="admin-password"
-        type="password"
-        autocomplete="current-password"
-        required
-      >
+      <p class="admin-eyebrow">SECURE ADMINISTRATION</p>
+      <h1>Welcome back</h1>
+      <p class="admin-login-intro">
+        Sign in with your registered administrator account to access the Texas Campus dashboard.
+      </p>
 
-      <button class="admin-btn" id="login-button" type="submit">
-        Login
-      </button>
+      <form id="admin-login-form">
+        <label class="admin-label" for="admin-email">Administrator Email</label>
+        <input
+          class="admin-input"
+          id="admin-email"
+          type="email"
+          autocomplete="username"
+          placeholder="Enter administrator email"
+          required
+        >
 
-      <p id="login-message" class="login-message" role="status" aria-live="polite"></p>
-      <a href="index.html">Back to Website</a>
-    </form>
+        <label class="admin-label" for="admin-password">Password</label>
+        <input
+          class="admin-input"
+          id="admin-password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter password"
+          required
+        >
+
+        <button class="admin-btn admin-card-action" id="login-button" type="submit">
+          Sign In to Dashboard →
+        </button>
+
+        <p id="login-message" class="login-message" role="status" aria-live="polite"></p>
+        <a class="admin-login-back" href="index.html">← Back to Texas Campus website</a>
+      </form>
+    </div>
   </section>
 
-  <main id="admin-content" class="admin-wrap" hidden>
-    <div class="admin-header">
-      <div>
-        <h1>Texas Campus — Admin Panel</h1>
-        <p>Manage students, courses and payment requests.</p>
-        <p id="admin-account"></p>
-      </div>
+  <!-- Dashboard -->
+  <main id="admin-content" hidden>
+    <header class="admin-topbar">
+      <a class="admin-brand" href="index.html" aria-label="Texas Campus home">
+        <img src="./assets/texas-campus-logo.png" alt="Texas Campus">
+        <span class="admin-brand-copy">
+          <strong>ADMINISTRATION</strong>
+          <span>Learning Management System</span>
+        </span>
+      </a>
 
-      <div>
-        <a href="index.html">← Back to Website</a>
-        <button class="admin-btn" id="logout-button" type="button">
-          Logout
+      <div class="admin-top-actions">
+        <a class="top-link" href="index.html">View Website ↗</a>
+        <button class="admin-btn admin-btn-secondary admin-btn-small" id="logout-button" type="button">
+          Log Out
         </button>
       </div>
+    </header>
+
+    <div class="admin-wrap">
+      <section class="admin-page-heading">
+        <div>
+          <p class="admin-eyebrow">TEXAS CAMPUS / CONTROL CENTRE</p>
+          <h1>Admin Dashboard</h1>
+          <p class="admin-subtitle">Manage student accounts, learning content and course access.</p>
+        </div>
+
+        <div class="admin-account-pill">
+          <span class="admin-account-dot"></span>
+          <span id="admin-account">Administrator</span>
+        </div>
+      </section>
+
+      <section class="admin-status-banner" aria-label="System status">
+        <div class="admin-status-icon" aria-hidden="true">!</div>
+        <div>
+          <strong>Some features require setup</strong>
+          <p>
+            Administrator login verification is active. Student account creation,
+            course saving, payment approval and course unlocking are not yet connected.
+          </p>
+        </div>
+      </section>
+
+      <section aria-labelledby="management-heading">
+        <div class="admin-section-heading">
+          <div>
+            <h2 id="management-heading">Management Workspace</h2>
+            <p>Access the main areas of your learning platform.</p>
+          </div>
+        </div>
+
+        <div class="admin-grid">
+
+          <!-- Student accounts -->
+          <article class="admin-card">
+            <div class="admin-card-head">
+              <div class="admin-card-icon" aria-hidden="true">♙</div>
+              <div>
+                <h2>Student Accounts</h2>
+                <p>Create student profiles and assign usernames.</p>
+              </div>
+            </div>
+
+            <form id="student-create-form">
+              <label class="admin-label" for="student-name">Student Full Name</label>
+              <input
+                class="admin-input"
+                id="student-name"
+                name="studentName"
+                placeholder="Enter student's full name"
+                autocomplete="name"
+                disabled
+              >
+
+              <label class="admin-label" for="student-email">Student Email</label>
+              <input
+                class="admin-input"
+                id="student-email"
+                name="studentEmail"
+                type="email"
+                placeholder="student@example.com"
+                autocomplete="email"
+                disabled
+              >
+
+              <label class="admin-label" for="student-username">Assigned Username</label>
+              <input
+                class="admin-input"
+                id="student-username"
+                name="studentUsername"
+                placeholder="Create a username"
+                autocomplete="off"
+                disabled
+              >
+
+              <button class="admin-btn admin-card-action" type="button" disabled>
+                + Create Student Account
+              </button>
+            </form>
+
+            <p class="admin-card-footnote">
+              Account creation will be enabled after secure backend setup.
+            </p>
+          </article>
+
+          <!-- Course management -->
+          <article class="admin-card">
+            <div class="admin-card-head">
+              <div class="admin-card-icon" aria-hidden="true">▤</div>
+              <div>
+                <h2>Course Management</h2>
+                <p>Configure courses, prices and lesson resources.</p>
+              </div>
+            </div>
+
+            <form id="course-create-form">
+              <label class="admin-label" for="course-name">Course Name</label>
+              <input
+                class="admin-input"
+                id="course-name"
+                name="courseName"
+                placeholder="Enter course name"
+                disabled
+              >
+
+              <label class="admin-label" for="course-price">Course Price (LKR)</label>
+              <input
+                class="admin-input"
+                id="course-price"
+                name="coursePrice"
+                type="number"
+                min="0"
+                step="1"
+                placeholder="12500"
+                disabled
+              >
+
+              <label class="admin-label" for="drive-link">Google Drive Lesson Link</label>
+              <input
+                class="admin-input"
+                id="drive-link"
+                name="driveLink"
+                type="url"
+                placeholder="https://drive.google.com/..."
+                disabled
+              >
+
+              <button class="admin-btn admin-card-action" type="button" disabled>
+                Save Course Details
+              </button>
+            </form>
+
+            <p class="admin-card-footnote">
+              Course saving will be enabled after secure database access is configured.
+            </p>
+          </article>
+
+          <!-- Payment requests -->
+          <article class="admin-card">
+            <div class="admin-card-head">
+              <div class="admin-card-icon" aria-hidden="true">▣</div>
+              <div>
+                <h2>Payment Requests</h2>
+                <p>Review receipts and manage payment decisions.</p>
+              </div>
+            </div>
+
+            <div class="admin-metric-box">
+              <div>
+                <span class="admin-metric-label">Pending Requests</span>
+                <strong class="admin-metric-value">Not connected</strong>
+              </div>
+              <span class="admin-mini-status">Setup required</span>
+            </div>
+
+            <p class="admin-card-description">
+              Payment receipt review and approval tools will appear here once the payment workflow is connected.
+            </p>
+
+            <button class="admin-btn admin-card-action" type="button" disabled>
+              View Payment Requests →
+            </button>
+
+            <p class="admin-card-footnote">
+              Payment approval is not active yet.
+            </p>
+          </article>
+
+          <!-- Course access -->
+          <article class="admin-card">
+            <div class="admin-card-head">
+              <div class="admin-card-icon" aria-hidden="true">◈</div>
+              <div>
+                <h2>Course Access</h2>
+                <p>Control which courses students can access.</p>
+              </div>
+            </div>
+
+            <div class="admin-metric-box">
+              <div>
+                <span class="admin-metric-label">Access Management</span>
+                <strong class="admin-metric-value">Not connected</strong>
+              </div>
+              <span class="admin-mini-status">Setup required</span>
+            </div>
+
+            <p class="admin-card-description">
+              After payment verification, approved students will be granted access to their purchased lessons.
+            </p>
+
+            <button class="admin-btn admin-card-action" type="button" disabled>
+              Manage Course Access →
+            </button>
+
+            <p class="admin-card-footnote">
+              Course access controls are not active yet.
+            </p>
+          </article>
+
+        </div>
+      </section>
+
+      <footer class="admin-footer">
+        <span>© <span id="admin-year"></span> Texas Campus. All rights reserved.</span>
+        <span>Administrator Dashboard · Secure Access</span>
+      </footer>
     </div>
-
-    <div class="admin-note">
-      <strong>System Status:</strong>
-      <span class="admin-status">Backend features are not yet connected.</span>
-      <br>
-      Admin login verification is enabled. Student account creation, course
-      management, payment approval and course unlocking are not yet available.
-    </div>
-
-    <section class="admin-grid" style="margin-top:24px;">
-
-      <div class="admin-card">
-        <h2>Student Accounts</h2>
-        <p>Create student accounts and assign usernames and passwords.</p>
-
-        <label class="admin-label" for="student-name">Student Name</label>
-        <input class="admin-input" id="student-name" placeholder="Student name" disabled>
-
-        <label class="admin-label" for="student-email">Student Email</label>
-        <input class="admin-input" id="student-email" type="email" placeholder="student@example.com" disabled>
-
-        <label class="admin-label" for="student-username">Assigned Username</label>
-        <input class="admin-input" id="student-username" placeholder="Username" disabled>
-
-        <button class="admin-btn" type="button" disabled>Create Student</button>
-        <p>Available after secure account-creation setup.</p>
-      </div>
-
-      <div class="admin-card">
-        <h2>Course Management</h2>
-        <p>Add courses, update prices and attach Google Drive lesson links.</p>
-
-        <label class="admin-label" for="course-name">Course Name</label>
-        <input class="admin-input" id="course-name" placeholder="Course name" disabled>
-
-        <label class="admin-label" for="course-price">Price (LKR)</label>
-        <input class="admin-input" id="course-price" type="number" min="0" placeholder="12500" disabled>
-
-        <label class="admin-label" for="drive-link">Google Drive Lesson Link</label>
-        <input class="admin-input" id="drive-link" type="url" placeholder="https://drive.google.com/..." disabled>
-
-        <button class="admin-btn" type="button" disabled>Save Course</button>
-        <p>Course saving will be enabled after secure database access is configured.</p>
-      </div>
-
-      <div class="admin-card">
-        <h2>Payment Requests</h2>
-        <p>Review student payment receipts and approve or reject requests.</p>
-        <p><strong>Pending Requests:</strong> Not connected</p>
-        <button class="admin-btn" type="button" disabled>View Requests</button>
-      </div>
-
-      <div class="admin-card">
-        <h2>Course Access</h2>
-        <p>Grant access after a student's payment has been verified.</p>
-        <p>Course access controls are not connected yet.</p>
-        <button class="admin-btn" type="button" disabled>Manage Access</button>
-      </div>
-
-    </section>
   </main>
 
   <script type="module">
@@ -248,6 +888,8 @@
 
     let verificationInProgress = false;
 
+    document.getElementById("admin-year").textContent = new Date().getFullYear();
+
     function showLogin(message = "") {
       loginBox.hidden = false;
       adminContent.hidden = true;
@@ -257,7 +899,7 @@
     function showAdmin(user) {
       loginBox.hidden = true;
       adminContent.hidden = false;
-      adminAccount.textContent = "Signed in as: " + (user.email || "Administrator");
+      adminAccount.textContent = user.email || "Administrator";
     }
 
     loginForm.addEventListener("submit", async (event) => {
@@ -324,12 +966,16 @@
     });
 
     logoutButton.addEventListener("click", async () => {
+      logoutButton.disabled = true;
+
       try {
         await signOut(auth);
         showLogin("You have been signed out.");
       } catch (error) {
-        console.error("Logout failed:", error);
+        console.error("Logout failed:", error.code || error.message);
         alert("Logout failed. Please try again.");
+      } finally {
+        logoutButton.disabled = false;
       }
     });
   </script>
