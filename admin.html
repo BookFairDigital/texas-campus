@@ -672,8 +672,8 @@
         <div>
           <strong>Some features require setup</strong>
           <p>
-            Administrator login verification is active. Student account creation,
-            course saving, payment approval and course unlocking are not yet connected.
+            Administrator login and student account creation use Supabase.
+            Course saving, payment approval and course unlocking are not yet connected.
           </p>
         </div>
       </section>
@@ -700,43 +700,38 @@
 
             <form id="student-create-form">
               <label class="admin-label" for="student-name">Student Full Name</label>
-              <input
-                class="admin-input"
-                id="student-name"
-                name="studentName"
-                placeholder="Enter student's full name"
-                autocomplete="name"
-                disabled
-              >
+              <input class="admin-input" id="student-name" name="studentName"
+                placeholder="Enter student's full name" autocomplete="name"
+                maxlength="120" required>
 
               <label class="admin-label" for="student-email">Student Email</label>
-              <input
-                class="admin-input"
-                id="student-email"
-                name="studentEmail"
-                type="email"
-                placeholder="student@example.com"
-                autocomplete="email"
-                disabled
-              >
+              <input class="admin-input" id="student-email" name="studentEmail"
+                type="email" placeholder="student@example.com" autocomplete="email"
+                maxlength="254" required>
 
               <label class="admin-label" for="student-username">Assigned Username</label>
-              <input
-                class="admin-input"
-                id="student-username"
-                name="studentUsername"
-                placeholder="Create a username"
-                autocomplete="off"
-                disabled
-              >
+              <input class="admin-input" id="student-username" name="studentUsername"
+                placeholder="Create a username" autocomplete="off" minlength="3"
+                maxlength="40" pattern="[a-zA-Z0-9._-]+"
+                title="Use 3–40 letters, numbers, dots, underscores or hyphens" required>
 
-              <button class="admin-btn admin-card-action" type="button" disabled>
+              <label class="admin-label" for="student-mobile">Student Mobile (optional)</label>
+              <input class="admin-input" id="student-mobile" name="studentMobile"
+                type="tel" placeholder="Enter mobile number" autocomplete="tel" maxlength="30">
+
+              <label class="admin-label" for="student-password">Temporary Password</label>
+              <input class="admin-input" id="student-password" name="studentPassword"
+                type="password" placeholder="At least 10 characters" minlength="10"
+                maxlength="128" autocomplete="new-password" required>
+
+              <button class="admin-btn admin-card-action" id="create-student-button" type="submit">
                 + Create Student Account
               </button>
+              <p id="student-message" class="login-message" role="status" aria-live="polite"></p>
             </form>
 
             <p class="admin-card-footnote">
-              Account creation will be enabled after secure backend setup.
+              Student accounts are created through the verified Supabase administrator backend.
             </p>
           </article>
 
@@ -865,18 +860,11 @@
   </main>
 
   <script type="module">
-    import { auth, db } from "./firebase-config.js";
+    import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-    import {
-      signInWithEmailAndPassword,
-      onAuthStateChanged,
-      signOut
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-auth.js";
-
-    import {
-      doc,
-      getDoc
-    } from "https://www.gstatic.com/firebasejs/11.10.0/firebase-firestore.js";
+    const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
+    const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
+    const supabase = createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 
     const loginBox = document.getElementById("admin-login");
     const loginForm = document.getElementById("admin-login-form");
@@ -885,8 +873,9 @@
     const adminContent = document.getElementById("admin-content");
     const adminAccount = document.getElementById("admin-account");
     const logoutButton = document.getElementById("logout-button");
-
-    let verificationInProgress = false;
+    const studentForm = document.getElementById("student-create-form");
+    const studentButton = document.getElementById("create-student-button");
+    const studentMessage = document.getElementById("student-message");
 
     document.getElementById("admin-year").textContent = new Date().getFullYear();
 
@@ -902,9 +891,37 @@
       adminAccount.textContent = user.email || "Administrator";
     }
 
+    async function verifyAdmin(user) {
+      if (!user) {
+        showLogin("");
+        return false;
+      }
+
+      const { data, error } = await supabase
+        .from("campus_admins")
+        .select("user_id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+
+      if (error) {
+        console.error("Administrator verification failed:", error.message);
+        await supabase.auth.signOut();
+        showLogin("Could not verify administrator access. Check campus_admins permissions.");
+        return false;
+      }
+
+      if (!data) {
+        await supabase.auth.signOut();
+        showLogin("This account does not have administrator access.");
+        return false;
+      }
+
+      showAdmin(user);
+      return true;
+    }
+
     loginForm.addEventListener("submit", async (event) => {
       event.preventDefault();
-
       loginButton.disabled = true;
       loginMessage.textContent = "Signing in...";
 
@@ -912,72 +929,97 @@
       const password = document.getElementById("admin-password").value;
 
       try {
-        await signInWithEmailAndPassword(auth, email, password);
-        loginMessage.textContent = "Login successful. Verifying administrator access...";
+        const { data, error } = await supabase.auth.signInWithPassword({ email, password });
+        if (error) throw error;
+        loginMessage.textContent = "Verifying administrator access...";
+        await verifyAdmin(data.user);
       } catch (error) {
-        console.error("Login failed:", error.code);
-
-        if (
-          error.code === "auth/invalid-credential" ||
-          error.code === "auth/wrong-password" ||
-          error.code === "auth/user-not-found"
-        ) {
-          showLogin("Email or password is incorrect.");
-        } else {
-          showLogin("Login failed. Please check your credentials and Firebase settings.");
-        }
+        console.error("Admin login failed:", error.message);
+        showLogin("Sign-in failed. Check your Supabase email/password and try again.");
       } finally {
         loginButton.disabled = false;
       }
     });
 
-    onAuthStateChanged(auth, async (user) => {
-      if (verificationInProgress) return;
+    studentForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      studentButton.disabled = true;
+      studentMessage.style.color = "";
+      studentMessage.textContent = "Creating student account...";
 
-      if (!user) {
-        showLogin("");
-        return;
-      }
-
-      verificationInProgress = true;
-      loginMessage.textContent = "Verifying administrator permissions...";
+      const payload = {
+        fullName: document.getElementById("student-name").value.trim(),
+        email: document.getElementById("student-email").value.trim(),
+        username: document.getElementById("student-username").value.trim(),
+        mobile: document.getElementById("student-mobile").value.trim(),
+        password: document.getElementById("student-password").value
+      };
 
       try {
-        const adminRef = doc(db, "admins", user.uid);
-        const adminSnapshot = await getDoc(adminRef);
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+        if (!sessionData.session) throw new Error("Your session has expired. Please sign in again.");
 
-        if (
-          adminSnapshot.exists() &&
-          adminSnapshot.data().role === "admin"
-        ) {
-          showAdmin(user);
-        } else {
-          await signOut(auth);
-          showLogin("This account does not have administrator access.");
+        const { data, error } = await supabase.functions.invoke("admin-create-student", {
+          body: payload
+        });
+
+        if (error) {
+          let message = error.message || "Student account could not be created.";
+          try {
+            if (error.context && typeof error.context.json === "function") {
+              const responseBody = await error.context.json();
+              if (responseBody?.error) message = responseBody.error;
+            }
+          } catch (_) {}
+          throw new Error(message);
         }
-      } catch (error) {
-        console.error("Admin verification failed:", error.code || error.message);
 
-        await signOut(auth).catch(() => {});
-        showLogin("Could not verify admin access. Please check Firestore rules.");
+        studentMessage.style.color = "#32c48d";
+        studentMessage.textContent = data?.message || "Student account created successfully.";
+        studentForm.reset();
+      } catch (error) {
+        console.error("Student creation failed:", error.message);
+        studentMessage.style.color = "#ff9aa7";
+        studentMessage.textContent = error.message || "Could not create student account. Please try again.";
       } finally {
-        verificationInProgress = false;
+        studentButton.disabled = false;
       }
     });
 
     logoutButton.addEventListener("click", async () => {
       logoutButton.disabled = true;
-
       try {
-        await signOut(auth);
+        const { error } = await supabase.auth.signOut();
+        if (error) throw error;
         showLogin("You have been signed out.");
       } catch (error) {
-        console.error("Logout failed:", error.code || error.message);
+        console.error("Logout failed:", error.message);
         alert("Logout failed. Please try again.");
       } finally {
         logoutButton.disabled = false;
       }
     });
+
+    supabase.auth.onAuthStateChange((event, session) => {
+      if (event === "SIGNED_OUT") {
+        showLogin("");
+        return;
+      }
+      if (session?.user && event === "SIGNED_IN") {
+        // Schedule verification outside the auth callback to avoid re-entrant auth operations.
+        Promise.resolve().then(() => verifyAdmin(session.user));
+      }
+    });
+
+    const { data: initialSession, error: initialSessionError } = await supabase.auth.getSession();
+    if (initialSessionError) {
+      showLogin("Could not load your session. Please sign in again.");
+    } else if (initialSession.session?.user) {
+      await verifyAdmin(initialSession.session.user);
+    } else {
+      showLogin("");
+    }
   </script>
 
 </body>
