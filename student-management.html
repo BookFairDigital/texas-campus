@@ -136,11 +136,37 @@ $('rows').addEventListener('click',async e=>{
  }
 });
 $('cancelReset').addEventListener('click',()=>$('resetDialog').close());
+$('toggleNewPassword').addEventListener('click',()=>{
+  const field=$('newPassword');
+  const show=field.type==='password';
+  field.type=show?'text':'password';
+  $('toggleNewPassword').textContent=show?'Hide':'Show';
+});
+$('copyNewPassword').addEventListener('click',async()=>{
+  const value=$('resultPassword').value;
+  try {
+    await navigator.clipboard.writeText(value);
+    $('copyNewPassword').textContent='Copied';
+    setTimeout(()=>$('copyNewPassword').textContent='Copy',1400);
+  } catch (_) {
+    $('resultPassword').focus();
+    $('resultPassword').select();
+    $('resetMsg').textContent='Clipboard access unavailable. Password selected — copy it manually.';
+  }
+});
 $('cancelExpiry').addEventListener('click',()=>$('expiryDialog').close());
 $('resetForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!currentStudent)return;
  $('saveReset').disabled=true;message('resetMsg','Resetting password…');
- try{const d=await callApi({action:'reset_password',studentId:currentStudent.id,password:$('newPassword').value});message('resetMsg',d.message,true);message('pageMsg',`Password reset for ${currentStudent.username}. Share the new temporary password privately.`,true);$('newPassword').value='';setTimeout(()=>$('resetDialog').close(),1200)}
+ const newPassword=$('newPassword').value;
+ try{
+   const d=await callApi({action:'reset_password',studentId:currentStudent.id,password:newPassword});
+   $('resultPassword').value=newPassword;
+   $('passwordResult').hidden=false;
+   $('newPassword').value='';
+   message('resetMsg',d.message+' The new password is shown below; copy it before closing this window.',true);
+   message('pageMsg',`Password reset for ${currentStudent.username}. Share the new temporary password privately.`,true);
+ }
  catch(err){message('resetMsg',err.message)}
  finally{$('saveReset').disabled=false}
 });
