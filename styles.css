@@ -568,62 +568,22 @@ html{scroll-behavior:smooth;scroll-padding-top:96px}
 .footer-socials a:hover { transform:translateY(-3px); background:#202127; border-color:currentColor; box-shadow:0 5px 16px #0006; }
 
 
-/* =====================================================
-   TEXAS CAMPUS LOGO — FINAL TRANSPARENT BACKGROUND FIX
-   ===================================================== */
-.site-header .brand,
-.site-header .brand a,
-.site-footer .footer-logo {
-  display: flex;
-  align-items: center;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 0;
-  text-decoration: none;
-}
-
-.site-header .official-logo {
-  display: block;
-  width: 230px;
-  height: 72px;
-  max-width: 100%;
-  object-fit: contain;
-  object-position: center;
-  background: transparent !important;
-  border: 0 !important;
-  border-radius: 0 !important;
-  box-shadow: none !important;
-  padding: 0;
-  margin: 0;
-  filter: none !important;
-}
-
+/* FINAL LOGO FIX: white-fill transparent areas inside the logo image,
+   preventing the dark header/footer from showing through as a black strip. */
+.site-header .official-logo,
 .site-footer .footer-official-logo {
-  display: block;
-  width: 300px;
-  height: 94px;
-  max-width: 100%;
-  object-fit: contain;
-  object-position: left center;
+  background-color: #ffffff !important;
+  background-image: none !important;
+  border: 0 !important;
+  border-radius: 0 !important;
+  box-shadow: none !important;
+  filter: none !important;
+}
+
+.site-header .brand,
+.site-footer .footer-logo {
   background: transparent !important;
   border: 0 !important;
   border-radius: 0 !important;
   box-shadow: none !important;
-  padding: 0;
-  margin: 0;
-  filter: none !important;
-}
-
-@media (max-width: 700px) {
-  .site-header .official-logo {
-    width: 165px;
-    height: 58px;
-  }
-
-  .site-footer .footer-official-logo {
-    width: 230px;
-    height: 76px;
-  }
 }
