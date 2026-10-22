@@ -1,0 +1,50 @@
+Add this code to the END of your existing script.js (do not replace the existing file).
+
+It uses the existing student-login-form, student-username, student-password and student-login-message IDs in index.html.
+The Edge Function must be deployed first and profiles must have username/email columns.
+
+(() => {
+  const form = document.getElementById("student-login-form");
+  if (!form || !window.supabase) return;
+
+  const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
+  const SUPABASE_KEY = "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
+  const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
+  const message = document.getElementById("student-login-message");
+  const submit = form.querySelector('button[type="submit"]');
+
+  form.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    message.textContent = "";
+    submit.disabled = true;
+    submit.textContent = "Signing in…";
+
+    try {
+      const { data, error } = await client.functions.invoke("student-login", {
+        body: {
+          username: document.getElementById("student-username").value.trim(),
+          password: document.getElementById("student-password").value
+        }
+      });
+      if (error || !data?.access_token || !data?.refresh_token) {
+        let detail = data?.error || error?.message || "Check your username and password.";
+        throw new Error(detail);
+      }
+
+      const { error: sessionError } = await client.auth.setSession({
+        access_token: data.access_token,
+        refresh_token: data.refresh_token
+      });
+      if (sessionError) throw sessionError;
+
+      message.textContent = "Login successful. Opening your dashboard…";
+      window.location.href = "./student-dashboard.html";
+    } catch (err) {
+      message.textContent = err?.message || "Unable to sign in. Please try again.";
+      message.style.color = "#ff6578";
+    } finally {
+      submit.disabled = false;
+      submit.textContent = "Log In";
+    }
+  });
+})();
