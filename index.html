@@ -10,7 +10,93 @@
 </head>
 <body>
   <header class="site-header">
-    <a class="brand" href="index.html#home" aria-label="Texas Campus home"><img class="official-logo" src="./assets/texas-campus-logo.png" alt="Texas Campus logo">Log In</button></div></div>
+    <a class="brand" href="index.html#home" aria-label="Texas Campus home"><img class="official-logo" src="./assets/texas-campus-logo.png" alt="Texas Campus logo" onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span class=&quot;brand-wordmark-fallback&quot;><b>TEXAS</b><small>CAMPUS</small></span>')"></a>
+
+    <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false">
+      <span></span><span></span><span></span>
+    </button>
+
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="index.html#home">Home</a>
+      <a href="courses.html">Courses</a>
+      <a href="index.html#about">About</a>
+      <a href="index.html#corporate">Corporate Training</a>
+      <a href="index.html#inquiries">Inquiries</a>
+    </nav>
+    <a class="login-button" href="#student-login" onclick="event.preventDefault(); document.getElementById('student-modal').hidden=false"><span aria-hidden="true">♙</span> Student Log In</a>
+  </header>
+
+  <main>
+    <section class="hero" id="home">
+      <div class="hero-glow hero-glow-one"></div>
+      <div class="hero-glow hero-glow-two"></div>
+      <div class="hero-content">
+        <p class="eyebrow">SRI LANKA'S ONLINE LEARNING PLATFORM</p>
+        <h1>Build Your Future with <span>Digital Accounting &amp; AI</span></h1>
+        <p class="hero-description">Gain practical, job-ready skills with industry-relevant digital accounting and AI-powered tools, designed for the modern workplace.</p>
+        <div class="hero-actions">
+          <a class="button button-primary" href="#courses">Explore Courses <span aria-hidden="true">→</span></a>
+          <a class="button button-outline" href="#how-it-works"><span class="play-icon" aria-hidden="true">▶</span> How It Works</a>
+        </div>
+        <div class="hero-points">
+          <div class="hero-point"><span class="point-icon">▤</span><span><b>Practical Learning</b><small>Industry-relevant skills</small></span></div>
+          <div class="hero-point"><span class="point-icon">▶</span><span><b>Video Lessons</b><small>Learn at your own pace</small></span></div>
+          <div class="hero-point"><span class="point-icon">✦</span><span><b>AI-Powered Skills</b><small>Tools for modern work</small></span></div>
+        </div>
+      </div>
+      <div class="hero-visual hero-video-visual" aria-label="Texas Campus accounting and AI learning video">
+        <video class="hero-promo-video" autoplay muted loop playsinline preload="metadata" poster="./assets/accounting-visual.png" aria-label="Animated accounting dashboard and AI learning robot">
+          <source src="./assets/texas-campus-hero.mp4" type="video/mp4">
+        </video>
+      </div>
+    </section>
+
+    <section class="courses-section section-wrap" id="courses">
+      <div class="section-heading">
+        <p class="eyebrow dark-eyebrow">OUR COURSES</p>
+        <h2>Explore Our <span>Course Categories</span></h2>
+        <p>Choose from our specialized learning paths and gain in-demand skills for a brighter future.</p>
+      </div>
+
+      <div class="category-grid">
+        <a class="category-card category-accounting" href="courses.html?category=digital">
+          <div class="category-copy">
+            <div class="category-heading-row"><span class="category-icon accounting-icon">▦</span><div><h3>Digital Accounting</h3><p>Master today’s leading accounting platforms with hands-on training.</p></div></div>
+            <ul class="category-points"><li>MYOB Accounting</li><li>Xero Accounting</li><li>QuickBooks</li></ul>
+            <span class="text-link category-cta">Explore Courses <b>→</b></span>
+          </div>
+          <div class="category-art accounting-art" aria-hidden="true">
+            <div class="art-screen"><div class="art-top"></div><div class="art-chart"><i></i><i></i><i></i><i></i><i></i></div><div class="art-lines"></div></div>
+            <div class="brand-float brand-myob">myob</div><div class="brand-float brand-xero">xero</div><div class="brand-float brand-qb">qb</div>
+          </div>
+        </a>
+        <a class="category-card category-ai" href="courses.html?category=ai">
+          <div class="category-copy">
+            <div class="category-heading-row"><span class="category-icon ai-category-icon">✦</span><div><h3>Artificial Intelligence for Accounting</h3><p>Work smarter with AI tools designed for accounting and finance.</p></div></div>
+            <ul class="category-points"><li>ChatGPT for Accounting</li><li>Gemini AI for Accounting</li><li>Claude AI &amp; Gamma</li></ul>
+            <span class="text-link category-cta">Explore Courses <b>→</b></span>
+          </div>
+          <div class="category-art ai-art" aria-hidden="true">
+            <div class="ai-dashboard"><div class="ai-dashboard-top"><i></i><i></i><i></i><span>AI WORKSPACE</span></div><div class="ai-dashboard-content"><div class="ai-dashboard-sidebar"></div><div class="ai-dashboard-lines"><i></i><i></i><i></i><b>✦</b></div></div></div>
+            <div class="ai-logo-float chatgpt-mark">✳</div><div class="ai-logo-float gemini-mark">✦</div><div class="ai-logo-float claude-mark">✺</div>
+          </div>
+        </a>
+      </div>
+
+      <div class="feature-strip" id="how-it-works">
+        <div class="feature-item"><span>▶</span><div><b>Video Lessons</b><small>Learn at your own pace</small></div></div>
+        <div class="feature-item"><span>▤</span><div><b>Tutorial Materials</b><small>Downloadable resources</small></div></div>
+        <div class="feature-item"><span>⚙</span><div><b>Software Installation Guides</b><small>Step-by-step instructions</small></div></div>
+        <div class="feature-item"><span>♟</span><div><b>Student Dashboard</b><small>Track your progress</small></div></div>
+      </div>
+    </section>
+    <section class="info-sections section-wrap" aria-label="About Texas Campus">
+      <article class="info-panel" id="about"><p class="eyebrow">ABOUT TEXAS CAMPUS</p><h2>Skills for the <span>real world.</span></h2><p>Learn practical digital accounting software and AI tools through guided lessons, tutorials, and job-focused training.</p></article>
+      <article class="info-panel" id="corporate"><p class="eyebrow">CORPORATE TRAINING</p><h2>Upskill your <span>team.</span></h2><p>Contact us to discuss practical accounting software and AI training tailored to your organization.</p><a class="button button-outline" href="https://wa.me/94779011780" target="_blank" rel="noopener">Discuss team training →</a></article>
+    </section>
+  </main>
+
+  <div class="login-modal" id="student-modal" hidden role="dialog" aria-modal="true" aria-labelledby="student-modal-title"><div class="login-modal-card"><button class="modal-close" aria-label="Close" onclick="document.getElementById('student-modal').hidden=true">×</button><p class="eyebrow">STUDENT PORTAL</p><h2 id="student-modal-title">Student Log In</h2><p>Student usernames are assigned by Texas Campus staff. Secure sign-in will be enabled during backend setup.</p><label>Assigned username<input type="text" autocomplete="username" placeholder="Enter your assigned username"></label><label>Password<input type="password" autocomplete="current-password" placeholder="Enter password"></label><button class="button button-primary" type="button" onclick="alert('Student login will be activated after secure backend setup.');">Log In</button></div></div>
   <div class="login-modal" id="admin-modal" hidden role="dialog" aria-modal="true" aria-labelledby="admin-modal-title"><div class="login-modal-card"><button class="modal-close" aria-label="Close" onclick="document.getElementById('admin-modal').hidden=true">×</button><p class="eyebrow">AUTHORIZED ACCESS</p><h2 id="admin-modal-title">Admin Panel Login</h2><p>This is a design preview. Secure admin authentication will be connected during the backend setup.</p><label>Admin username<input type="text" autocomplete="username" placeholder="Enter admin username"></label><label>Password<input type="password" autocomplete="current-password" placeholder="Enter password"></label><button class="button button-primary" type="button" onclick="alert('Admin login will be activated after secure backend setup.');">Continue</button></div></div>
 
   <footer class="site-footer">
