@@ -47,11 +47,7 @@ dialog{background:#171820;color:white;border:1px solid #444550;border-radius:14p
     <h2>Reset student password</h2><p class="sub" id="resetFor"></p>
     <label for="newPassword">New temporary password (10–128 characters)</label>
     <input class="field full" id="newPassword" type="password" minlength="10" maxlength="128" autocomplete="new-password" required>
-    <p class="small">The old password cannot be recovered. Resetting creates a new password; share it privately with the student.</p>
-    <div id="passwordResult" hidden style="margin-top:14px;padding:12px;border:1px solid #32c48d;border-radius:10px;background:#10251d">
-      <label for="resultPassword">New password — save it now</label>
-      <div style="display:flex;gap:8px;align-items:center"><input class="field" id="resultPassword" type="password" readonly style="flex:1;min-width:0"><button type="button" class="btn secondary" id="toggleNewPassword">Show</button><button type="button" class="btn secondary" id="copyNewPassword">Copy</button></div>
-    </div>
+    <p class="small">The old password cannot be recovered or displayed. Save the new password securely and share it privately with the student.</p>
     <p class="msg" id="resetMsg"></p>
     <div class="dialog-actions"><button type="button" class="btn secondary" id="cancelReset">Cancel</button><button class="btn" id="saveReset" type="submit">Reset password</button></div>
   </form>
@@ -66,7 +62,6 @@ dialog{background:#171820;color:white;border:1px solid #444550;border-radius:14p
     <div class="dialog-actions"><button type="button" class="btn secondary" id="cancelExpiry">Cancel</button><button class="btn" id="saveExpiry" type="submit">Save expiry</button></div>
   </form>
 </dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
 const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
@@ -144,33 +139,11 @@ $('rows').addEventListener('click',async e=>{
  }
 });
 $('cancelReset').addEventListener('click',()=>$('resetDialog').close());
-$('toggleNewPassword').addEventListener('click',()=>{
-  const field=$('resultPassword');
-  const show=field.type==='password';
-  field.type=show?'text':'password';
-  $('toggleNewPassword').textContent=show?'Hide':'Show';
-});
-$('copyNewPassword').addEventListener('click',async()=>{
-  const value=$('resultPassword').value;
-  try { await navigator.clipboard.writeText(value); $('copyNewPassword').textContent='Copied'; }
-  catch (_) { $('resultPassword').type='text'; $('resultPassword').focus(); $('resultPassword').select(); message('resetMsg','Clipboard access unavailable. Password selected — copy it manually.'); }
-});
 $('cancelExpiry').addEventListener('click',()=>$('expiryDialog').close());
 $('resetForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!currentStudent)return;
  $('saveReset').disabled=true;message('resetMsg','Resetting password…');
- const newPassword=$('newPassword').value;
- try{
-   const d=await callApi({action:'reset_password',studentId:currentStudent.id,password:newPassword});
-   $('resultPassword').value=newPassword;
-   $('resultPassword').type='password';
-   $('toggleNewPassword').textContent='Show';
-   $('copyNewPassword').textContent='Copy';
-   $('passwordResult').hidden=false;
-   $('newPassword').value='';
-   message('resetMsg',d.message+' New password is shown below. Copy it before closing this window.',true);
-   message('pageMsg',`Password reset for ${currentStudent.username}. Share the new temporary password privately.`,true);
- }
+ try{const d=await callApi({action:'reset_password',studentId:currentStudent.id,password:$('newPassword').value});message('resetMsg',d.message,true);message('pageMsg',`Password reset for ${currentStudent.username}. Share the new temporary password privately.`,true);$('newPassword').value='';setTimeout(()=>$('resetDialog').close(),1200)}
  catch(err){message('resetMsg',err.message)}
  finally{$('saveReset').disabled=false}
 });
