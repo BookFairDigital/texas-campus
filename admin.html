@@ -8,9 +8,7 @@
   <link rel="stylesheet" href="style.css">
 
   <style>
-    [hidden] {
-      display: none !important;
-    }
+    [hidden] { display: none !important; }
 
     .admin-wrap {
       max-width: 1100px;
@@ -41,10 +39,7 @@
       color: #fff;
     }
 
-    .admin-card h2 {
-      font-size: 19px;
-      margin-top: 0;
-    }
+    .admin-card h2 { font-size: 19px; margin-top: 0; }
 
     .admin-card p {
       color: #bbb;
@@ -77,7 +72,7 @@
     }
 
     .admin-btn:disabled {
-      opacity: 0.6;
+      opacity: .6;
       cursor: not-allowed;
     }
 
@@ -90,9 +85,7 @@
       line-height: 1.6;
     }
 
-    .admin-status {
-      color: #ffcc80;
-    }
+    .admin-status { color: #ffcc80; }
 
     .admin-login {
       max-width: 420px;
@@ -104,24 +97,24 @@
       color: #fff;
     }
 
-    .admin-login h1 {
-      font-size: 24px;
-    }
+    .admin-login h1 { font-size: 24px; }
 
     .login-message {
       overflow-wrap: anywhere;
       line-height: 1.5;
     }
 
-    a {
-      color: #ff7777;
+    a { color: #ff7777; }
+
+    @media (max-width: 600px) {
+      .admin-wrap { padding: 14px; margin: 20px auto; }
+      .admin-login { margin: 25px 14px; }
     }
   </style>
 </head>
 
 <body>
 
-  <!-- Admin login -->
   <section id="admin-login" class="admin-login">
     <h1>Texas Campus Admin Login</h1>
     <p>Sign in using your registered administrator account.</p>
@@ -154,7 +147,6 @@
     </form>
   </section>
 
-  <!-- Hidden until Firebase confirms admin role -->
   <main id="admin-content" class="admin-wrap" hidden>
     <div class="admin-header">
       <div>
@@ -172,59 +164,59 @@
     </div>
 
     <div class="admin-note">
-      <strong>System status:</strong>
-      <span class="admin-status">Backend features not connected yet.</span>
+      <strong>System Status:</strong>
+      <span class="admin-status">Backend features are not yet connected.</span>
       <br>
-      මෙම panel එකේ login verification සම්බන්ධ කර ඇත.
-      Student creation, payment approval සහ course unlocking තවම සක්‍රිය කර නැත.
+      Admin login verification is enabled. Student account creation, course
+      management, payment approval and course unlocking are not yet available.
     </div>
 
     <section class="admin-grid" style="margin-top:24px;">
 
       <div class="admin-card">
         <h2>Student Accounts</h2>
-        <p>Create student accounts and assign their usernames and passwords.</p>
+        <p>Create student accounts and assign usernames and passwords.</p>
 
-        <label class="admin-label" for="student-name">Student name</label>
+        <label class="admin-label" for="student-name">Student Name</label>
         <input class="admin-input" id="student-name" placeholder="Student name" disabled>
 
-        <label class="admin-label" for="student-email">Student email</label>
+        <label class="admin-label" for="student-email">Student Email</label>
         <input class="admin-input" id="student-email" type="email" placeholder="student@example.com" disabled>
 
-        <label class="admin-label" for="student-username">Assigned username</label>
+        <label class="admin-label" for="student-username">Assigned Username</label>
         <input class="admin-input" id="student-username" placeholder="Username" disabled>
 
         <button class="admin-btn" type="button" disabled>Create Student</button>
-        <p>Available after secure account-creation backend setup.</p>
+        <p>Available after secure account-creation setup.</p>
       </div>
 
       <div class="admin-card">
         <h2>Course Management</h2>
         <p>Add courses, update prices and attach Google Drive lesson links.</p>
 
-        <label class="admin-label" for="course-name">Course name</label>
+        <label class="admin-label" for="course-name">Course Name</label>
         <input class="admin-input" id="course-name" placeholder="Course name" disabled>
 
         <label class="admin-label" for="course-price">Price (LKR)</label>
         <input class="admin-input" id="course-price" type="number" min="0" placeholder="12500" disabled>
 
-        <label class="admin-label" for="drive-link">Google Drive lesson link</label>
+        <label class="admin-label" for="drive-link">Google Drive Lesson Link</label>
         <input class="admin-input" id="drive-link" type="url" placeholder="https://drive.google.com/..." disabled>
 
         <button class="admin-btn" type="button" disabled>Save Course</button>
-        <p>Course saving will be enabled after secure Firestore access is configured.</p>
+        <p>Course saving will be enabled after secure database access is configured.</p>
       </div>
 
       <div class="admin-card">
         <h2>Payment Requests</h2>
-        <p>Review payment receipts and approve or reject requests.</p>
-        <p><strong>Pending requests:</strong> Not connected</p>
+        <p>Review student payment receipts and approve or reject requests.</p>
+        <p><strong>Pending Requests:</strong> Not connected</p>
         <button class="admin-btn" type="button" disabled>View Requests</button>
       </div>
 
       <div class="admin-card">
         <h2>Course Access</h2>
-        <p>Grant access after payment has been verified.</p>
+        <p>Grant access after a student's payment has been verified.</p>
         <p>Course access controls are not connected yet.</p>
         <button class="admin-btn" type="button" disabled>Manage Access</button>
       </div>
@@ -265,7 +257,7 @@
     function showAdmin(user) {
       loginBox.hidden = true;
       adminContent.hidden = false;
-      adminAccount.textContent = "Signed in: " + user.email;
+      adminAccount.textContent = "Signed in as: " + (user.email || "Administrator");
     }
 
     loginForm.addEventListener("submit", async (event) => {
@@ -279,15 +271,19 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        loginMessage.textContent = "Login accepted. Verifying admin access...";
+        loginMessage.textContent = "Login successful. Verifying administrator access...";
       } catch (error) {
         console.error("Login failed:", error.code);
 
-        showLogin(
-          error.code === "auth/invalid-credential"
-            ? "Email or password is incorrect."
-            : "Login failed. Check your credentials and Firebase settings."
-        );
+        if (
+          error.code === "auth/invalid-credential" ||
+          error.code === "auth/wrong-password" ||
+          error.code === "auth/user-not-found"
+        ) {
+          showLogin("Email or password is incorrect.");
+        } else {
+          showLogin("Login failed. Please check your credentials and Firebase settings.");
+        }
       } finally {
         loginButton.disabled = false;
       }
@@ -321,9 +317,7 @@
         console.error("Admin verification failed:", error.code || error.message);
 
         await signOut(auth).catch(() => {});
-        showLogin(
-          "Could not verify admin access. Firestore rules may block this check."
-        );
+        showLogin("Could not verify admin access. Please check Firestore rules.");
       } finally {
         verificationInProgress = false;
       }
