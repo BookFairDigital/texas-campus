@@ -1,1 +1,82 @@
+ 
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Admin Panel | Texas Campus</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    .admin-wrap { max-width: 1100px; margin: 40px auto; padding: 20px; }
+    .admin-header { display:flex; justify-content:space-between; align-items:center; gap:15px; flex-wrap:wrap; margin-bottom:25px; }
+    .admin-grid { display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:18px; }
+    .admin-card { padding:22px; border:1px solid #333; border-radius:14px; background:#151515; }
+    .admin-card h2 { font-size:19px; margin-top:0; }
+    .admin-card p { color:#bbb; line-height:1.6; }
+    .admin-label { display:block; margin:12px 0 6px; }
+    .admin-input { width:100%; box-sizing:border-box; padding:12px; border:1px solid #444; border-radius:8px; background:#101010; color:#fff; }
+    .admin-btn { padding:11px 16px; border:0; border-radius:8px; background:#d62828; color:#fff; cursor:pointer; margin-top:12px; }
+    .admin-note { margin-top:22px; padding:15px; border-left:4px solid #d62828; background:#211616; line-height:1.6; }
+    .admin-status { color:#ffcc80; }
+    a { color:#ff7777; }
+  </style>
+</head>
+<body>
+  <main class="admin-wrap">
+    <div class="admin-header">
+      <div>
+        <h1>Texas Campus — Admin Panel</h1>
+        <p>Manage students, courses and payment requests.</p>
+      </div>
+      <a href="index.html">← Back to Website</a>
+    </div>
 
+    <div class="admin-note">
+      <strong>Setup status:</strong>
+      <span class="admin-status">Admin backend not connected yet.</span>
+      <br>මෙහි buttons දැනට preview සඳහා පමණයි. Backend එක සහ security rules සකස් කරන තුරු student accounts හෝ payments මෙතැනින් process වෙන්නේ නැහැ.
+    </div>
+
+    <section class="admin-grid" style="margin-top:24px;">
+      <div class="admin-card">
+        <h2>Student Accounts</h2>
+        <p>Create student accounts and assign their usernames and passwords.</p>
+        <label class="admin-label" for="student-name">Student name</label>
+        <input class="admin-input" id="student-name" placeholder="Student name">
+        <label class="admin-label" for="student-email">Student email</label>
+        <input class="admin-input" id="student-email" type="email" placeholder="student@example.com">
+        <label class="admin-label" for="student-username">Assigned username</label>
+        <input class="admin-input" id="student-username" placeholder="Username">
+        <button class="admin-btn" type="button" onclick="alert('Backend එක සම්බන්ධ කළ පසු student account create කිරීම සක්‍රිය කරමු.')">Create Student</button>
+      </div>
+
+      <div class="admin-card">
+        <h2>Course Management</h2>
+        <p>Add courses, update prices and attach Google Drive lesson links.</p>
+        <label class="admin-label" for="course-name">Course name</label>
+        <input class="admin-input" id="course-name" placeholder="Course name">
+        <label class="admin-label" for="course-price">Price (LKR)</label>
+        <input class="admin-input" id="course-price" type="number" min="0" placeholder="12500">
+        <label class="admin-label" for="drive-link">Google Drive lesson link</label>
+        <input class="admin-input" id="drive-link" type="url" placeholder="https://drive.google.com/...">
+        <button class="admin-btn" type="button" onclick="alert('Backend එක සම්බන්ධ කළ පසු course save කිරීම සක්‍රිය කරමු.')">Save Course</button>
+      </div>
+
+      <div class="admin-card">
+        <h2>Payment Requests</h2>
+        <p>Review student payment receipts and approve or reject requests.</p>
+        <p><strong>Pending requests:</strong> Not connected</p>
+        <p>Payment records සහ uploaded receipts backend එක සම්බන්ධ කළ පසු මෙතැන පෙන්වමු.</p>
+        <button class="admin-btn" type="button" onclick="alert('Payment request system එක තවම සම්බන්ධ කර නැහැ.')">View Requests</button>
+      </div>
+
+      <div class="admin-card">
+        <h2>Course Access</h2>
+        <p>Grant course access after a payment has been verified.</p>
+        <p>Access controls will be connected to the student's account after backend setup.</p>
+        <button class="admin-btn" type="button" onclick="alert('Course unlocking backend එක සකස් කළ පසු සක්‍රිය කරමු.')">Manage Access</button>
+      </div>
+    </section>
+  </main>
+</body>
+</html>
