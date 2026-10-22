@@ -62,12 +62,14 @@ dialog{background:#171820;color:white;border:1px solid #444550;border-radius:14p
     <div class="dialog-actions"><button type="button" class="btn secondary" id="cancelExpiry">Cancel</button><button class="btn" id="saveExpiry" type="submit">Save expiry</button></div>
   </form>
 </dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const createClient = window.supabase.createClient;
-const URL='https://dykxmozruyzgkiyopvlp.supabase.co';
-const KEY='sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH';
-const sb=createClient(URL,KEY);
+const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
+const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
+if (!window.supabase || typeof window.supabase.createClient !== "function") {
+  document.getElementById("loginMsg").textContent = "Supabase library did not load. Please refresh and try again.";
+  throw new Error("Supabase JS client is not available.");
+}
+const sb = window.supabase.createClient(SUPABASE_URL, SUPABASE_PUBLISHABLE_KEY);
 const $=id=>document.getElementById(id);
 let students=[], currentStudent=null;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -137,14 +139,6 @@ $('rows').addEventListener('click',async e=>{
  }
 });
 $('cancelReset').addEventListener('click',()=>$('resetDialog').close());
-$('toggleNewPassword').addEventListener('click',()=>{
- const field=$('newPassword'),show=field.type==='password';
- field.type=show?'text':'password';$('toggleNewPassword').textContent=show?'Hide':'Show';
-});
-$('copyNewPassword').addEventListener('click',async()=>{
- try{await navigator.clipboard.writeText($('resultPassword').value);$('copyNewPassword').textContent='Copied';setTimeout(()=>$('copyNewPassword').textContent='Copy',1300)}
- catch(_){$('resultPassword').focus();$('resultPassword').select();message('resetMsg','Password selected — copy it manually.')}
-});
 $('cancelExpiry').addEventListener('click',()=>$('expiryDialog').close());
 $('resetForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!currentStudent)return;
@@ -160,13 +154,6 @@ $('expiryForm').addEventListener('submit',async e=>{
  catch(err){message('expiryMsg',err.message)}
  finally{$('saveExpiry').disabled=false}
 });
-if (!window.supabase || !window.supabase.createClient) {
-  $('loginMsg').textContent = 'Supabase library failed to load. Refresh the page or try again in a minute.';
-} else {
-  init().catch(error => {
-    console.error('Student Management initialization failed:', error);
-    $('loginMsg').textContent = 'Could not load admin session: ' + (error.message || 'Unknown error') + '. Go back to Admin Dashboard, sign in again, then reopen this page.';
-  });
-}
+init().catch(error => { console.error(error); $('loginMsg').textContent = 'Could not initialize student management. Please refresh the page and try again.'; });
 </script>
 </body></html>
