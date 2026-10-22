@@ -125,16 +125,53 @@
   </main>
 
   <div class="login-modal" id="student-modal" hidden role="dialog" aria-modal="true" aria-labelledby="student-modal-title">
-    <div class="login-modal-card">
-      <button class="modal-close" aria-label="Close" onclick="document.getElementById('student-modal').hidden=true">×</button>
-      <p class="eyebrow">STUDENT PORTAL</p>
-      <h2 id="student-modal-title">Student Log In</h2>
-      <p>Student usernames are assigned by Texas Campus staff. Secure sign-in will be enabled during backend setup.</p>
-      <label>Assigned username<input type="text" autocomplete="username" placeholder="Enter your assigned username"></label>
-      <label>Password<input type="password" autocomplete="current-password" placeholder="Enter password"></label>
-      <button class="button button-primary" type="button" onclick="alert('Student login will be activated after secure backend setup.');">Log In</button>
-    </div>
+    
+<div class="login-modal" id="student-modal" hidden role="dialog" aria-modal="true" aria-labelledby="student-modal-title">
+  <div class="login-modal-card">
+    <button
+      class="modal-close"
+      aria-label="Close"
+      type="button"
+      onclick="document.getElementById('student-modal').hidden=true"
+    >×</button>
+
+    <p class="eyebrow">STUDENT PORTAL</p>
+    <h2 id="student-modal-title">Student Log In</h2>
+
+    <p>
+      Sign in using the username and password assigned
+      to you by Texas Campus staff.
+    </p>
+
+    <form id="student-login-form">
+      <label for="student-username">Assigned Username</label>
+      <input
+        id="student-username"
+        name="username"
+        type="text"
+        autocomplete="username"
+        placeholder="Enter your assigned username"
+        required
+      >
+
+      <label for="student-password">Password</label>
+      <input
+        id="student-password"
+        name="password"
+        type="password"
+        autocomplete="current-password"
+        placeholder="Enter your password"
+        required
+      >
+
+      <button class="button button-primary" type="submit">
+        Log In
+      </button>
+
+      <p id="student-login-message" role="status" aria-live="polite"></p>
+    </form>
   </div>
+</div>
 
   <footer class="site-footer">
     <div class="footer-brand">
