@@ -58,6 +58,23 @@
   </style>
 </head>
 <body>
+ 
+<div id="admin-login" style="max-width:400px;margin:60px auto;padding:24px;background:#151515;color:white;border-radius:12px;">
+  <h2>Texas Campus Admin Login</h2>
+  <form id="admin-login-form">
+    <label for="admin-email">Admin Email</label>
+    <input id="admin-email" type="email" required autocomplete="username"
+      style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
+
+    <label for="admin-password">Password</label>
+    <input id="admin-password" type="password" required autocomplete="current-password"
+      style="display:block;box-sizing:border-box;width:100%;padding:12px;margin:8px 0 16px;">
+
+    <button type="submit" style="padding:12px 18px;cursor:pointer;">Login</button>
+    <p id="login-message" role="status"></p>
+  </form>
+</div>
+
   <main class="admin-wrap">
     <div class="admin-header">
       <div>
