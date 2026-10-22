@@ -62,11 +62,11 @@ dialog{background:#171820;color:white;border:1px solid #444550;border-radius:14p
     <div class="dialog-actions"><button type="button" class="btn secondary" id="cancelExpiry">Cancel</button><button class="btn" id="saveExpiry" type="submit">Save expiry</button></div>
   </form>
 </dialog>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script>
+<script type="module">
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const URL='https://dykxmozruyzgkiyopvlp.supabase.co';
 const KEY='sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH';
-const sb=window.supabase.createClient(URL,KEY);
+const sb=createClient(URL,KEY);
 const $=id=>document.getElementById(id);
 let students=[], currentStudent=null;
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
@@ -151,6 +151,6 @@ $('expiryForm').addEventListener('submit',async e=>{
  catch(err){message('expiryMsg',err.message)}
  finally{$('saveExpiry').disabled=false}
 });
-init();
+init().catch(error => { console.error(error); $('loginMsg').textContent = 'Could not initialize student management. Please refresh the page and try again.'; });
 </script>
 </body></html>
