@@ -1002,6 +1002,212 @@
       }
     });
 
+const platformAction = async (payload) => {
+  const { data, error } = await supabase.functions.invoke(
+    "admin-platform-manage",
+    { body: payload }
+  );
+
+  if (error) throw new Error(error.message);
+  if (data?.error) throw new Error(data.error);
+  return data;
+};
+
+const courseForm = document.getElementById("course-create-form");
+const courseList = document.getElementById("course-list");
+const courseMessage = document.getElementById("course-message");
+const ordersList = document.getElementById("orders-list");
+const ordersMessage = document.getElementById("orders-message");
+const queueCount = document.getElementById("payment-queue-count");
+
+function safeText(value) {
+  const el = document.createElement("span");
+  el.textContent = value ?? "";
+  return el.innerHTML;
+}
+
+async function loadCourses() {
+  courseList.textContent = "Loading courses...";
+
+  try {
+    const result = await platformAction({ action: "list_courses" });
+    courseList.replaceChildren();
+
+    result.courses.forEach(course => {
+      const row = document.createElement("div");
+      row.className = "admin-metric-box";
+
+      const info = document.createElement("div");
+      info.innerHTML =
+        `<strong>${safeText(course.title)}</strong><br>` +
+        `<small>${safeText(course.slug)} · ` +
+        `${course.price == null ? "Price not set" :
+          "LKR " + Number(course.price).toLocaleString()} · ` +
+        `${course.is_published ? "Published" : "Draft"}</small>`;
+
+      const edit = document.createElement("button");
+      edit.className = "admin-btn admin-btn-secondary admin-btn-small";
+      edit.textContent = "Edit";
+      edit.type = "button";
+      edit.onclick = () => {
+        document.getElementById("course-id").value = course.id;
+        document.getElementById("course-name").value = course.title || "";
+        document.getElementById("course-slug").value = course.slug || "";
+        document.getElementById("course-category").value = course.category;
+        document.getElementById("course-summary").value = course.summary || "";
+        document.getElementById("course-price").value = course.price ?? "";
+        document.getElementById("drive-link").value = course.drive_folder_url || "";
+        document.getElementById("save-course-button").textContent = "Update Course";
+        courseForm.scrollIntoView({ behavior: "smooth" });
+      };
+
+      const publish = document.createElement("button");
+      publish.className = "admin-btn admin-btn-small";
+      publish.textContent = course.is_published ? "Unpublish" : "Publish";
+      publish.type = "button";
+      publish.onclick = async () => {
+        publish.disabled = true;
+        try {
+          await platformAction({
+            action: "set_course_published",
+            id: course.id,
+            is_published: !course.is_published
+          });
+          await loadCourses();
+        } catch (e) {
+          courseMessage.textContent = e.message;
+        } finally {
+          publish.disabled = false;
+        }
+      };
+
+      const actions = document.createElement("div");
+      actions.append(edit, publish);
+      row.append(info, actions);
+      courseList.append(row);
+    });
+
+    if (!result.courses.length) courseList.textContent = "No courses found.";
+  } catch (e) {
+    courseList.textContent = "Could not load courses.";
+    courseMessage.textContent = e.message;
+  }
+}
+
+courseForm.addEventListener("submit", async event => {
+  event.preventDefault();
+  const button = document.getElementById("save-course-button");
+  button.disabled = true;
+  courseMessage.textContent = "Saving...";
+
+  try {
+    const result = await platformAction({
+      action: "save_course",
+      id: document.getElementById("course-id").value || undefined,
+      title: document.getElementById("course-name").value.trim(),
+      slug: document.getElementById("course-slug").value.trim().toLowerCase(),
+      category: document.getElementById("course-category").value,
+      summary: document.getElementById("course-summary").value.trim(),
+      price: document.getElementById("course-price").value,
+      drive_folder_url: document.getElementById("drive-link").value.trim()
+    });
+
+    courseMessage.textContent = result.message;
+    courseForm.reset();
+    document.getElementById("course-id").value = "";
+    button.textContent = "Save Course";
+    await loadCourses();
+  } catch (e) {
+    courseMessage.textContent = e.message;
+  } finally {
+    button.disabled = false;
+  }
+});
+
+document.getElementById("refresh-courses-button")
+  .addEventListener("click", loadCourses);
+
+async function loadOrders() {
+  ordersList.textContent = "Loading payments...";
+
+  try {
+    const result = await platformAction({ action: "list_orders" });
+    const orders = result.orders || [];
+    queueCount.textContent =
+      `${orders.filter(o => o.payment_status === "pending").length} pending · ${orders.length} total`;
+
+    ordersList.replaceChildren();
+
+    orders.forEach(order => {
+      const row = document.createElement("div");
+      row.className = "admin-metric-box";
+
+      const info = document.createElement("div");
+      const student = Array.isArray(order.profiles) ? order.profiles[0] : order.profiles;
+      const course = Array.isArray(order.courses) ? order.courses[0] : order.courses;
+
+      info.innerHTML =
+        `<strong>${safeText(course?.title || "Course")}</strong><br>` +
+        `<small>${safeText(student?.full_name || student?.email || "Student")} · ` +
+        `LKR ${Number(order.amount).toLocaleString()} · ` +
+        `${safeText(order.payment_status)}</small><br>` +
+        `<small>Reference: ${safeText(order.payment_reference || "Not provided")}</small>`;
+
+      row.append(info);
+
+      if (order.payment_status === "pending") {
+        ["approved", "rejected"].forEach(status => {
+          const btn = document.createElement("button");
+          btn.className = "admin-btn admin-btn-small";
+          btn.textContent = status === "approved" ? "Approve" : "Reject";
+          btn.type = "button";
+
+          btn.onclick = async () => {
+            const confirmed = confirm(
+              status === "approved"
+                ? "Confirm payment has been verified and approve?"
+                : "Reject this payment request?"
+            );
+            if (!confirmed) return;
+
+            btn.disabled = true;
+            try {
+              const note = prompt("Optional admin note:") || "";
+              await platformAction({
+                action: "review_order",
+                id: order.id,
+                status,
+                admin_note: note
+              });
+              ordersMessage.textContent =
+                status === "approved"
+                  ? "Payment approved; course access flag enabled."
+                  : "Payment rejected.";
+              await loadOrders();
+            } catch (e) {
+              ordersMessage.textContent = e.message;
+            } finally {
+              btn.disabled = false;
+            }
+          };
+
+          row.append(btn);
+        });
+      }
+
+      ordersList.append(row);
+    });
+
+    if (!orders.length) ordersList.textContent = "No payment requests yet.";
+  } catch (e) {
+    ordersList.textContent = "Could not load payment requests.";
+    ordersMessage.textContent = e.message;
+  }
+}
+
+document.getElementById("refresh-orders-button")
+  .addEventListener("click", loadOrders);
+
     logoutButton.addEventListener("click", async () => {
       logoutButton.disabled = true;
       try {
