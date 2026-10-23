@@ -15,23 +15,64 @@ let courses = [];
 const params = new URLSearchParams(window.location.search);
 const requestedCategory = params.get("category");
 
-function escapeHTML(value) {
-  return String(value ?? "").replace(/[&<>"']/g, char => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  })[char]);
-}
+// Known course logos. Other/new courses use a clean text fallback.
+const brandLogos = {
+  "myob-accounting": {
+    name: "MYOB",
+    url: "https://cdn.simpleicons.org/myob/7B2D8E"
+  },
+  "quickbooks-desktop": {
+    name: "QuickBooks",
+    url: "https://cdn.simpleicons.org/quickbooks/2CA01C"
+  },
+  "quickbooks-online": {
+    name: "QuickBooks",
+    url: "https://cdn.simpleicons.org/quickbooks/2CA01C"
+  },
+  "tally-erp-accounting": {
+    name: "Tally ERP",
+    url: null
+  },
+  "sage-50-accounting": {
+    name: "Sage 50",
+    url: "https://cdn.simpleicons.org/sage/00DC82"
+  },
+  "xero-cloud-accounting": {
+    name: "Xero",
+    url: "https://cdn.simpleicons.org/xero/13B5EA"
+  },
+  "zoho-books-cloud": {
+    name: "Zoho Books",
+    url: "https://cdn.simpleicons.org/zoho/EA4335"
+  },
+  "freshbooks-accounting": {
+    name: "FreshBooks",
+    url: "https://cdn.simpleicons.org/freshbooks/0075DD"
+  },
+  "chatgpt-accounting": {
+    name: "ChatGPT",
+    url: "https://cdn.simpleicons.org/openai/10A37F"
+  },
+  "gemini-ai-accounting": {
+    name: "Gemini",
+    url: "https://cdn.simpleicons.org/googlegemini/4285F4"
+  },
+  "claude-ai-accounting": {
+    name: "Claude",
+    url: "https://cdn.simpleicons.org/claude/D97757"
+  },
+  "gamma-ai-accounting": {
+    name: "Gamma",
+    url: null
+  }
+};
 
 function formatPrice(course) {
   if (course.price == null || course.price === "") {
     return "Contact us";
   }
 
-  const currency = course.currency || "LKR";
-  return `${currency} ${Number(course.price).toLocaleString("en-LK")}`;
+  return `${course.currency || "LKR"} ${Number(course.price).toLocaleString("en-LK")}`;
 }
 
 function makeCard(course) {
@@ -44,47 +85,79 @@ function makeCard(course) {
       ? "Digital Accounting"
       : "AI for Accounting";
 
-  const artClass =
-    course.category === "ai"
-      ? "catalog-card-art ai-art-card"
-      : "catalog-card-art";
+  const art = document.createElement("div");
+  art.className = course.category === "ai"
+    ? "catalog-card-art ai-art-card"
+    : "catalog-card-art";
 
-  const name = escapeHTML(course.name);
-  const description = escapeHTML(course.desc);
-  const mark = escapeHTML(course.mark);
-  const tone = escapeHTML(course.tone);
-  const price = escapeHTML(course.price);
+  const logoBox = document.createElement("div");
+  logoBox.className = "real-course-logo";
+
+  const brand = brandLogos[course.id];
+
+  if (brand?.url) {
+    const img = document.createElement("img");
+    img.src = brand.url;
+    img.alt = `${brand.name} logo`;
+    img.loading = "lazy";
+    img.referrerPolicy = "no-referrer";
+
+    img.onerror = () => {
+      img.remove();
+      logoBox.textContent = brand.name;
+      logoBox.classList.add("logo-text-fallback");
+    };
+
+    logoBox.appendChild(img);
+  } else {
+    logoBox.textContent = brand?.name || course.name;
+    logoBox.classList.add("logo-text-fallback");
+  }
+
+  art.appendChild(logoBox);
+
+  const content = document.createElement("div");
+  content.className = "catalog-card-content";
+
+  const category = document.createElement("span");
+  category.className = "course-category-label";
+  category.textContent = categoryLabel;
+
+  const title = document.createElement("h3");
+  title.textContent = course.name;
+
+  const description = document.createElement("p");
+  description.textContent = course.desc;
+
+  const bottom = document.createElement("div");
+  bottom.className = "catalog-card-bottom";
+
+  const price = document.createElement("div");
+  price.className = "catalog-price";
+
+  const priceText = document.createElement("b");
+  priceText.textContent = course.price;
+  price.appendChild(priceText);
+
+  const actions = document.createElement("div");
+  actions.className = "catalog-actions";
+
   const slug = encodeURIComponent(course.id);
 
-  card.innerHTML = `
-    <div class="${artClass}">
-      <div class="course-laptop" aria-label="${name} logo on a laptop screen">
-        <div class="laptop-screen">
-          <div class="screen-brand ${tone}">
-            <span class="screen-mark">${mark}</span>
-            <span class="screen-name">${name}</span>
-          </div>
-          <div class="screen-glint"></div>
-        </div>
-        <div class="laptop-base"></div>
-      </div>
-    </div>
+  const details = document.createElement("a");
+  details.className = "small-action details";
+  details.href = `course.html?course=${slug}`;
+  details.textContent = "View Details";
 
-    <div class="catalog-card-content">
-      <span class="course-category-label">${categoryLabel}</span>
-      <h3>${name}</h3>
-      <p>${description}</p>
-      <div class="catalog-card-bottom">
-        <div class="catalog-price"><b>${price}</b></div>
-        <div class="catalog-actions">
-          <a class="small-action details"
-             href="course.html?course=${slug}">View Details</a>
-          <a class="small-action buy"
-             href="course.html?course=${slug}#buy">Buy Now</a>
-        </div>
-      </div>
-    </div>
-  `;
+  const buy = document.createElement("a");
+  buy.className = "small-action buy";
+  buy.href = `course.html?course=${slug}#buy`;
+  buy.textContent = "Buy Now";
+
+  actions.append(details, buy);
+  bottom.append(price, actions);
+  content.append(category, title, description, bottom);
+  card.append(art, content);
 
   return card;
 }
@@ -93,9 +166,7 @@ function setFilter(filter) {
   let visible = 0;
 
   [...grid.children].forEach(card => {
-    const show =
-      filter === "all" || card.dataset.category === filter;
-
+    const show = filter === "all" || card.dataset.category === filter;
     card.hidden = !show;
     if (show) visible++;
   });
@@ -128,14 +199,17 @@ document.querySelectorAll(".filter-button, .category-intro")
   });
 
 async function loadCourses() {
+  if (!grid || !count) {
+    console.error("Course grid or results count element is missing.");
+    return;
+  }
+
   grid.replaceChildren();
   count.textContent = "Loading courses...";
 
   const { data, error } = await supabase
     .from("courses")
-    .select(
-      "slug, title, category, summary, price, currency, is_published, created_at"
-    )
+    .select("slug, title, category, summary, price, currency, is_published, created_at")
     .eq("is_published", true)
     .order("created_at", { ascending: true });
 
@@ -154,60 +228,28 @@ async function loadCourses() {
         : course.category === "ai_accounting"
           ? "ai"
           : null,
-    mark:
-      course.category === "digital_accounting" ? "TC" : "✦",
-    tone:
-      course.category === "digital_accounting" ? "purple" : "blue",
     desc: course.summary || "Explore this course at Texas Campus.",
-    price: formatPrice(course)
+    price: formatPrice(course),
+    currency: course.currency || "LKR"
   })).filter(course => course.category !== null);
 
   grid.replaceChildren(...courses.map(makeCard));
 
-  const digitalCount = courses.filter(
-    course => course.category === "digital"
-  ).length;
+  const digitalCount = courses.filter(c => c.category === "digital").length;
+  const aiCount = courses.filter(c => c.category === "ai").length;
 
-  const aiCount = courses.filter(
-    course => course.category === "ai"
-  ).length;
+  const allButton = document.querySelector('.filter-button[data-filter="all"]');
+  const digitalButton = document.querySelector('.filter-button[data-filter="digital"]');
+  const aiButton = document.querySelector('.filter-button[data-filter="ai"]');
 
-  const allButton = document.querySelector(
-    '.filter-button[data-filter="all"]'
-  );
-  const digitalButton = document.querySelector(
-    '.filter-button[data-filter="digital"]'
-  );
-  const aiButton = document.querySelector(
-    '.filter-button[data-filter="ai"]'
-  );
+  if (allButton) allButton.innerHTML = `All Courses <span>${courses.length}</span>`;
+  if (digitalButton) digitalButton.innerHTML = `Digital Accounting <span>${digitalCount}</span>`;
+  if (aiButton) aiButton.innerHTML = `AI for Accounting <span>${aiCount}</span>`;
 
-  if (allButton) {
-    allButton.innerHTML =
-      `All Courses <span>${courses.length}</span>`;
-  }
-
-  if (digitalButton) {
-    digitalButton.innerHTML =
-      `Digital Accounting <span>${digitalCount}</span>`;
-  }
-
-  if (aiButton) {
-    aiButton.innerHTML =
-      `AI for Accounting <span>${aiCount}</span>`;
-  }
-
-  const initialFilter =
-    ["digital", "ai"].includes(requestedCategory)
-      ? requestedCategory
-      : "all";
-
-  setFilter(initialFilter);
+  setFilter(["digital", "ai"].includes(requestedCategory) ? requestedCategory : "all");
 }
 
 const yearElement = document.querySelector("#year");
-if (yearElement) {
-  yearElement.textContent = new Date().getFullYear();
-}
+if (yearElement) yearElement.textContent = new Date().getFullYear();
 
 loadCourses();
