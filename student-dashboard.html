@@ -103,7 +103,7 @@ async function loadDashboard(user){
  renderChart([0,0,0,0,0,0,0]);renderStreak(0);
  const {data:profile,error:pe}=await sb.from('profiles').select('*').eq('id',user.id).maybeSingle();
  if(!pe&&profile){const pn=profile.full_name||profile.name||profile.username||name;el('profileName').textContent=pn;el('welcomeName').textContent=pn;el('accountDetails').textContent=`Name: ${pn} · Username: ${profile.username||'Not set'} · Email: ${profile.email||user.email||'Not available'}`;}
- const {data:orders,error:oe}=await sb.from('course_orders').select('*').eq('user_id',user.id).order('created_at',{ascending:false});
+ const {data:orders,error:oe}=await sb   .from('course_orders')   .select('*')   .eq('student_id',user.id)   .order('created_at',{ascending:false});
  if(oe){el('courseList').innerHTML='<div class="empty"><strong>Courses could not be loaded yet</strong>Please check the course_orders table access policy and column names.</div>';el('enrolledCount').textContent='—';el('overallProgress').textContent='—';el('paymentList').textContent='Payment records are not accessible yet.';showNotice('You are signed in. Course data needs a database query/policy adjustment: '+oe.message);return;}
  const all=orders||[], eligible=all.filter(paid), waiting=all.filter(pending);
  el('enrolledCount').textContent=eligible.length;el('activeNote').textContent=eligible.length?`${eligible.length} approved course order${eligible.length===1?'':'s'}`:'No approved course orders yet';
