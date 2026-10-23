@@ -4,7 +4,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
 const SUPABASE_KEY = "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage
+  }
+});
 
 const $ = (selector) => document.querySelector(selector);
 const params = new URLSearchParams(window.location.search);
@@ -18,9 +25,9 @@ const buyButton = $("#buy-button");
 const closeButton = $(".checkout-close");
 const finishButton = $("#finish-demo-order");
 const checkoutForm = $("#demo-order-form");
+const registrationForm = $("#student-checkout-form");
 
 let selectedCourse = null;
-let signedInUser = null;
 let submitting = false;
 
 function showMessage(message) {
@@ -28,30 +35,19 @@ function showMessage(message) {
   if (note) {
     note.textContent = message;
     note.style.color = "#df1732";
+  } else {
+    console.info(message);
   }
-}
-
-function resetDialog() {
-  registerStep.hidden = true;
-  paymentStep.hidden = false;
-  doneStep.hidden = true;
-}
-
-function formatPrice(course) {
-  if (course.price === null || course.price === undefined || course.price === "") {
-    return "Contact us";
-  }
-
-  return `${course.currency || "LKR"} ${Number(course.price).toLocaleString("en-LK")}`;
 }
 
 function showStep(step) {
-  registerStep.hidden = step !== "register";
-  paymentStep.hidden = step !== "payment";
-  doneStep.hidden = step !== "done";
+  if (registerStep) registerStep.hidden = step !== "register";
+  if (paymentStep) paymentStep.hidden = step !== "payment";
+  if (doneStep) doneStep.hidden = step !== "done";
 }
 
 function openDialog() {
+  if (!dialog) return;
   if (typeof dialog.showModal === "function") {
     if (!dialog.open) dialog.showModal();
   } else {
@@ -60,6 +56,7 @@ function openDialog() {
 }
 
 function closeDialog() {
+  if (!dialog) return;
   if (typeof dialog.close === "function" && dialog.open) {
     dialog.close();
   } else {
@@ -82,9 +79,16 @@ function setText(selector, value) {
   if (element) element.textContent = value;
 }
 
+function formatPrice(course) {
+  if (course.price === null || course.price === undefined || course.price === "") {
+    return "Contact us";
+  }
+  return `${course.currency || "LKR"} ${Number(course.price).toLocaleString("en-LK")}`;
+}
+
 async function loadCourse() {
   if (!requestedSlug) {
-    showMessage("Course slug eka URL eke naha. Course catalogue eken course eka select karanna.");
+    showMessage("Course eka catalogue eken select karala aye try karanna.");
     if (buyButton) buyButton.disabled = true;
     return;
   }
@@ -104,7 +108,7 @@ async function loadCourse() {
   }
 
   if (!data) {
-    showMessage("Me course eka available naha, nathnam publish karala naha.");
+    showMessage("Me course eka available naha nathnam publish karala naha.");
     if (buyButton) buyButton.disabled = true;
     return;
   }
@@ -120,11 +124,12 @@ async function loadCourse() {
   setText("#checkout-course-name", data.title);
   setText("#checkout-course-price", formatPrice(data));
 
-  const categoryLabel = data.category === "ai_accounting"
-    ? "ARTIFICIAL INTELLIGENCE FOR ACCOUNTING"
-    : "DIGITAL ACCOUNTING";
-
-  setText("#detail-category", categoryLabel);
+  setText(
+    "#detail-category",
+    data.category === "ai_accounting"
+      ? "ARTIFICIAL INTELLIGENCE FOR ACCOUNTING"
+      : "DIGITAL ACCOUNTING"
+  );
 
   const mark = $("#detail-mark");
   if (mark) {
@@ -147,14 +152,19 @@ async function loadCourse() {
 
 async function getCurrentUser() {
   const { data, error } = await supabase.auth.getSession();
+  if (error) throw new Error("Login session check failed: " + error.message);
+  return data.session?.user || null;
+}
 
-  if (error) {
-    throw new Error("Login session check failed: " + error.message);
-  }
+async function getStudentProfile(user) {
+  const { data, error } = await supabase
+    .from("profiles")
+    .select("id,full_name,username,email,mobile,account_status,access_expires_at")
+    .eq("id", user.id)
+    .maybeSingle();
 
-  if (!data.session?.user) return null;
-
-  return data.session.user;
+  if (error) throw new Error("Student profile load failed: " + error.message);
+  return data;
 }
 
 async function startCheckout() {
@@ -164,83 +174,166 @@ async function startCheckout() {
   }
 
   try {
-    signedInUser = await getCurrentUser();
-  } catch (error) {
-    showMessage(error.message);
-    return;
-  }
+    const user = await getCurrentUser();
 
-  if (!signedInUser) {
-    const note = $("#checkout-step-register .checkout-intro");
-    if (note) {
-      note.innerHTML =
-        'Course order ekak submit karanna student account eken login wenna one. ' +
-        '<a href="./index.html#student-login">Student Log In</a>';
+    if (!user) {
+      const intro = $(".checkout-intro", registerStep || document);
+      if (intro) {
+        intro.innerHTML =
+          'Course purchase karanna student account ekak one. ' +
+          '<a href="./index.html#student-login">Existing student? Log in here</a>. ' +
+          'New student kenek nam pahala account form eka fill karanna.';
+      }
+
+      showStep("register");
+      openDialog();
+      return;
     }
 
-    showStep("register");
+    const profile = await getStudentProfile(user);
+
+    if (!profile) {
+      showMessage("Student profile eka hambune naha. Admin ta contact karanna.");
+      return;
+    }
+
+    if (profile.account_status && profile.account_status !== "active") {
+      showMessage("Student account eka active naha. Admin ta contact karanna.");
+      return;
+    }
+
+    if (
+      profile.access_expires_at &&
+      new Date(profile.access_expires_at).getTime() < Date.now()
+    ) {
+      showMessage("Student account access eka expire wela. Admin ta contact karanna.");
+      return;
+    }
+
+    const depositor = checkoutForm?.elements.namedItem("depositor");
+    if (depositor && profile.full_name) depositor.value = profile.full_name;
+
+    const intro = $("#checkout-step-payment .checkout-intro");
+    if (intro) {
+      intro.innerHTML =
+        "Course: <strong>" + escapeHTML(selectedCourse.title) +
+        "</strong><br>Student: <strong>" +
+        escapeHTML(profile.full_name || profile.username || user.email || "Student") +
+        "</strong>";
+    }
+
+    setText("#checkout-course-name", selectedCourse.title);
+    setText("#checkout-course-price", formatPrice(selectedCourse));
+    showStep("payment");
     openDialog();
+  } catch (error) {
+    console.error("Checkout start error:", error);
+    showMessage(error.message || "Checkout start karanna bari una.");
+  }
+}
+
+async function registerStudent(event) {
+  event.preventDefault();
+  if (submitting) return;
+
+  const form = event.currentTarget;
+  const getValue = (...names) => {
+    for (const name of names) {
+      const field = form.elements.namedItem(name);
+      if (field && String(field.value || "").trim()) {
+        return String(field.value).trim();
+      }
+    }
+    return "";
+  };
+
+  const fullName = getValue("full_name", "name", "fullName");
+  const username = getValue("username");
+  const email = getValue("email");
+  const mobile = getValue("mobile", "phone");
+  const passwordField = form.elements.namedItem("password");
+  const password = String(passwordField?.value || "");
+
+  if (!fullName || !username || !email || !mobile || !password) {
+    alert("Full name, username, email, mobile saha password okkoma fill karanna.");
     return;
   }
 
-  const { data: profile, error: profileError } = await supabase
-    .from("profiles")
-    .select("full_name,username,email,mobile,account_status")
-    .eq("id", signedInUser.id)
-    .maybeSingle();
-
-  if (profileError) {
-    console.error("Student profile lookup failed:", profileError);
-    showMessage("Student profile eka load karanna bari una: " + profileError.message);
+  if (password.length < 8) {
+    alert("Password eka at least characters 8k wenna one.");
     return;
   }
 
-  if (!profile) {
-    showMessage("Student profile eka hambune naha. Admin ta contact karanna.");
-    return;
+  const button = form.querySelector('button[type="submit"]');
+  submitting = true;
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Creating account...";
   }
 
-  if (profile.account_status && profile.account_status !== "active") {
-    showMessage("Student account eka active naha. Admin ta contact karanna.");
-    return;
+  try {
+    const { data, error } = await supabase.auth.signUp({
+      email,
+      password,
+      options: {
+        data: {
+          full_name: fullName,
+          username,
+          mobile
+        }
+      }
+    });
+
+    if (error) throw error;
+    if (!data.user) throw new Error("Account eka create une naha.");
+
+    if (!data.session) {
+      alert(
+        "Account request eka create una. Email confirmation required nam email eka confirm karala student login wenna. Eeta passe course eka purchase karanna."
+      );
+      window.location.href = "./index.html#student-login";
+      return;
+    }
+
+    const { error: profileError } = await supabase
+      .from("profiles")
+      .upsert({
+        id: data.user.id,
+        full_name: fullName,
+        username,
+        email,
+        mobile,
+        account_status: "active"
+      }, { onConflict: "id" });
+
+    if (profileError) {
+      console.error("Profile save error:", profileError);
+      throw new Error(
+        "Account eka create una, namuth student profile eka save karanna bari una. Admin ta contact karanna. " +
+        profileError.message
+      );
+    }
+
+    alert("Account eka haduna! Dan course checkout eka continue karanna.");
+    await startCheckout();
+  } catch (error) {
+    console.error("Student registration failed:", error);
+    alert("Account create karanna bari una: " + (error.message || "Unknown error"));
+  } finally {
+    submitting = false;
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Create Student Account";
+    }
   }
-
-  if (
-    profile.access_expires_at &&
-    new Date(profile.access_expires_at).getTime() < Date.now()
-  ) {
-    showMessage("Student account access eka expire wela. Admin ta contact karanna.");
-    return;
-  }
-
-  const depositor = checkoutForm?.elements.namedItem("depositor");
-  if (depositor && profile.full_name) {
-    depositor.value = profile.full_name;
-  }
-
-  setText("#checkout-course-name", selectedCourse.title);
-  setText("#checkout-course-price", formatPrice(selectedCourse));
-
-  const intro = $("#checkout-step-payment .checkout-intro");
-  if (intro) {
-    intro.innerHTML =
-      "Course: <strong>" + escapeHTML(selectedCourse.title) +
-      "</strong><br>Student: <strong>" +
-      escapeHTML(profile.full_name || profile.username || signedInUser.email || "Student") +
-      "</strong>";
-  }
-
-  showStep("payment");
-  openDialog();
 }
 
 async function submitOrder(event) {
   event.preventDefault();
-
   if (submitting) return;
 
   if (!selectedCourse) {
-    alert("Course details are not available. Please refresh and try again.");
+    alert("Course eka load wela naha. Refresh karala try karanna.");
     return;
   }
 
@@ -254,21 +347,16 @@ async function submitOrder(event) {
   }
 
   submitting = true;
-
-  const submitButton = form.querySelector('button[type="submit"]');
-  if (submitButton) {
-    submitButton.disabled = true;
-    submitButton.textContent = "Submitting order...";
+  const button = form.querySelector('button[type="submit"]');
+  if (button) {
+    button.disabled = true;
+    button.textContent = "Submitting order...";
   }
 
   try {
     const user = await getCurrentUser();
+    if (!user) throw new Error("Student login session eka naha. Login wela aye try karanna.");
 
-    if (!user) {
-      throw new Error("Login session eka expire wela. Login wela aye try karanna.");
-    }
-
-    // Re-read the course from Supabase; do not trust the price in the browser.
     const { data: course, error: courseError } = await supabase
       .from("courses")
       .select("id,slug,title,price,currency,is_published")
@@ -278,18 +366,11 @@ async function submitOrder(event) {
 
     if (courseError) throw courseError;
     if (!course) throw new Error("Course eka dan available naha.");
-
-    if (course.price === null || course.price === undefined || Number(course.price) < 0) {
-      throw new Error("Me course eke valid price ekak set karala naha. Admin ta contact karanna.");
+    if (course.price === null || Number(course.price) < 0) {
+      throw new Error("Me course eke valid price ekak set karala naha.");
     }
 
-    const { data: profile, error: profileError } = await supabase
-      .from("profiles")
-      .select("account_status,access_expires_at")
-      .eq("id", user.id)
-      .maybeSingle();
-
-    if (profileError) throw profileError;
+    const profile = await getStudentProfile(user);
     if (!profile) throw new Error("Student profile eka hambune naha.");
 
     if (profile.account_status && profile.account_status !== "active") {
@@ -309,47 +390,43 @@ async function submitOrder(event) {
       .eq("student_id", user.id)
       .eq("course_id", course.id)
       .in("payment_status", ["pending", "approved"])
-      .limit(1);
+      .limit(10);
 
     if (existingError) throw existingError;
 
-    if (existingOrders?.some(order => order.payment_status === "approved" && order.course_access === true)) {
-      throw new Error("Oya me course ekata already access thiyenawa. Student dashboard eka check karanna.");
+    if (existingOrders?.some(order =>
+      order.payment_status === "approved" && order.course_access === true
+    )) {
+      throw new Error("Oya me course ekata already access thiyenawa. Dashboard eka check karanna.");
     }
 
     if (existingOrders?.some(order => order.payment_status === "pending")) {
-      throw new Error("Me course ekata pending order ekak danatama thiyenawa. Admin payment review eka complete karana thuru wait karanna.");
+      throw new Error("Me course ekata pending order ekak thiyenawa. Admin review eka iwara wenakan wait karanna.");
     }
-
-    const orderRecord = {
-      student_id: user.id,
-      course_id: course.id,
-      amount: Number(course.price),
-      currency: course.currency || "LKR",
-      payment_method: "bank_deposit",
-      payment_reference: reference,
-      payment_status: "pending",
-      course_access: false,
-      admin_note: `Depositor name: ${depositor}`
-    };
 
     const { data: order, error: orderError } = await supabase
       .from("course_orders")
-      .insert(orderRecord)
+      .insert({
+        student_id: user.id,
+        course_id: course.id,
+        amount: Number(course.price),
+        currency: course.currency || "LKR",
+        payment_method: "bank_deposit",
+        payment_reference: reference,
+        payment_status: "pending",
+        course_access: false,
+        admin_note: `Depositor name: ${depositor}`
+      })
       .select("id,payment_status,course_access,amount,currency,created_at")
       .single();
 
     if (orderError) {
-      console.error("Order submission failed:", orderError);
       throw new Error(
         orderError.code === "42501"
           ? "Database permission denied. course_orders INSERT RLS policy eka check karanna."
-          : orderError.message || "Order eka save karanna bari una."
+          : orderError.message
       );
     }
-
-    setText("#checkout-course-name", course.title);
-    setText("#checkout-course-price", formatPrice(course));
 
     const summary = $("#demo-order-summary");
     if (summary) {
@@ -366,7 +443,7 @@ async function submitOrder(event) {
     const doneText = $("#checkout-step-done > p");
     if (doneText) {
       doneText.textContent =
-        "Order eka Supabase ekata save una. Payment eka admin verify karala approve karana thuru course access unlock wenne naha.";
+        "Order eka save una. Admin payment eka verify karala approve karana thuru course access unlock wenne naha.";
     }
 
     showStep("done");
@@ -376,25 +453,16 @@ async function submitOrder(event) {
     alert("Order submit karanna bari una: " + (error.message || "Unknown error"));
   } finally {
     submitting = false;
-
-    if (submitButton) {
-      submitButton.disabled = false;
-      submitButton.innerHTML = 'Submit Bank Deposit Details <span>→</span>';
+    if (button) {
+      button.disabled = false;
+      button.textContent = "Submit Bank Deposit Details →";
     }
   }
 }
 
-if (buyButton) {
-  buyButton.addEventListener("click", startCheckout);
-}
-
-if (closeButton) {
-  closeButton.addEventListener("click", closeDialog);
-}
-
-if (finishButton) {
-  finishButton.addEventListener("click", closeDialog);
-}
+if (buyButton) buyButton.addEventListener("click", startCheckout);
+if (closeButton) closeButton.addEventListener("click", closeDialog);
+if (finishButton) finishButton.addEventListener("click", closeDialog);
 
 if (dialog) {
   dialog.addEventListener("click", event => {
@@ -402,29 +470,23 @@ if (dialog) {
   });
 }
 
+if (registrationForm) {
+  registrationForm.addEventListener("submit", registerStudent);
+
+  const passwordInput = registrationForm.elements.namedItem("password");
+  if (passwordInput) {
+    passwordInput.autocomplete = "new-password";
+    passwordInput.minLength = 8;
+  }
+}
+
 if (checkoutForm) {
   checkoutForm.addEventListener("submit", submitOrder);
 
-  // A receipt upload is not implemented until a private Storage bucket is configured.
   const receiptInput = checkoutForm.elements.namedItem("receipt");
   if (receiptInput) {
     const receiptLabel = receiptInput.closest("label");
     if (receiptLabel) receiptLabel.hidden = true;
-  }
-}
-
-// Prevent the old prototype registration form from collecting passwords.
-const registrationForm = $("#student-checkout-form");
-if (registrationForm) {
-  registrationForm.addEventListener("submit", event => {
-    event.preventDefault();
-    alert("Aluth account hadanna checkout form eka use karanna epa. Student account eka hadaganna/admin ta contact karanna, passe login wela purchase karanna.");
-  });
-
-  const passwordInput = registrationForm.elements.namedItem("password");
-  if (passwordInput) {
-    const passwordLabel = passwordInput.closest("label");
-    if (passwordLabel) passwordLabel.hidden = true;
   }
 }
 
