@@ -16,54 +16,55 @@ const params = new URLSearchParams(window.location.search);
 const requestedCategory = params.get("category");
 
 // Logo URLs for known courses. Unavailable logos fall back to text.
+
 const brandLogos = {
   "myob-accounting": {
     name: "MYOB",
-    url: "https://cdn.simpleicons.org/myob/7B2D8E"
+    url: "./assets/logos/myob.svg"
   },
   "quickbooks-desktop": {
     name: "QuickBooks",
-    url: "https://cdn.simpleicons.org/quickbooks/2CA01C"
+    url: "./assets/logos/quickbooks.svg"
   },
   "quickbooks-online": {
     name: "QuickBooks",
-    url: "https://cdn.simpleicons.org/quickbooks/2CA01C"
+    url: "./assets/logos/quickbooks.svg"
   },
   "tally-erp-accounting": {
     name: "Tally ERP",
-    url: "https://tallysolutions.com/wp-content/uploads/2023/08/TallyPrime-Logo.png"
+    url: "./assets/logos/tally.svg"
   },
   "sage-50-accounting": {
     name: "Sage 50",
-    url: "https://cdn.simpleicons.org/sage/00DC82"
+    url: "./assets/logos/sage-50.svg"
   },
   "xero-cloud-accounting": {
     name: "Xero",
-    url: "https://cdn.simpleicons.org/xero/13B5EA"
+    url: "./assets/logos/xero.svg"
   },
   "zoho-books-cloud": {
     name: "Zoho Books",
-    url: "https://www.zoho.com/books/images/zoho-books-logo.svg"
+    url: "./assets/logos/zoho-books.svg"
   },
   "freshbooks-accounting": {
     name: "FreshBooks",
-    url: "https://cdn.simpleicons.org/freshbooks/0075DD"
+    url: "./assets/logos/freshbooks.svg"
   },
   "chatgpt-accounting": {
     name: "ChatGPT",
-    url: "https://cdn.simpleicons.org/openai/10A37F"
+    url: "./assets/logos/chatgpt.svg"
   },
   "gemini-ai-accounting": {
     name: "Gemini",
-    url: "https://cdn.simpleicons.org/googlegemini/4285F4"
+    url: "./assets/logos/gemini.svg"
   },
   "claude-ai-accounting": {
     name: "Claude",
-    url: "https://cdn.simpleicons.org/claude/D97757"
+    url: "./assets/logos/claude.svg"
   },
   "gamma-ai-accounting": {
     name: "Gamma",
-    url: "https://cdn.simpleicons.org/gamma/8B5CF6"
+    url: "./assets/logos/gamma.svg"
   }
 };
 
