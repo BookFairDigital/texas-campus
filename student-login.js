@@ -4,7 +4,14 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 const SUPABASE_URL = "https://dykxmozruyzgkiyopvlp.supabase.co";
 const SUPABASE_KEY = "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH";
 
-const supabase = createClient(SUPABASE_URL, SUPABASE_KEY);
+const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
+  auth: {
+    persistSession: true,
+    autoRefreshToken: true,
+    detectSessionInUrl: true,
+    storage: window.localStorage
+  }
+});
 
 const form = document.querySelector("#student-login-form");
 const message = document.querySelector("#student-login-message");
@@ -30,7 +37,10 @@ if (form) {
         try {
           details = await error.context?.json?.();
         } catch {}
-        throw new Error(details?.error || error.message || "Login failed.");
+
+        throw new Error(
+          details?.error || error.message || "Student login failed."
+        );
       }
 
       if (!data?.access_token || !data?.refresh_token) {
@@ -45,16 +55,29 @@ if (form) {
 
       if (sessionError) throw sessionError;
 
-      if (!sessionData.session) {
+      if (!sessionData.session?.user) {
         throw new Error("Session was not saved. Please try again.");
+      }
+
+      // Verify that the session can be read back from persistent storage.
+      const { data: checkData, error: checkError } =
+        await supabase.auth.getSession();
+
+      if (checkError) throw checkError;
+
+      if (!checkData.session?.user) {
+        throw new Error("Login session could not be restored from storage.");
       }
 
       if (message) message.textContent = "Login successful. Opening dashboard...";
 
-      window.location.replace("./student-dashboard.html");
+      window.location.href = "./student-dashboard.html";
     } catch (err) {
       console.error("Student login error:", err);
-      if (message) message.textContent = err.message || "Login failed.";
+
+      if (message) {
+        message.textContent = err.message || "Login failed.";
+      }
     } finally {
       if (button) button.disabled = false;
     }
