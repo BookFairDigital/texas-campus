@@ -15,66 +15,48 @@ if (form) {
 
     const username = form.querySelector('[name="username"]').value.trim();
     const password = form.querySelector('[name="password"]').value;
-    const submitButton = form.querySelector('button[type="submit"]');
+    const button = form.querySelector('button[type="submit"]');
 
-    if (message) {
-      message.textContent = "Signing in...";
-      message.style.color = "";
-    }
-
-    if (submitButton) submitButton.disabled = true;
+    if (message) message.textContent = "Signing in...";
+    if (button) button.disabled = true;
 
     try {
-      const { data, error } = await supabase.functions.invoke(
-        "student-login",
-        {
-          body: { username, password }
-        }
-      );
+      const { data, error } = await supabase.functions.invoke("student-login", {
+        body: { username, password }
+      });
 
       if (error) {
-        let detail = "";
-
+        let details = null;
         try {
-          detail = await error.context?.json?.();
-        } catch {
-          // Keep the generic message if the response isn't JSON.
-        }
-
-        throw new Error(
-          detail?.error || "Login failed. Please check your details."
-        );
+          details = await error.context?.json?.();
+        } catch {}
+        throw new Error(details?.error || error.message || "Login failed.");
       }
 
       if (!data?.access_token || !data?.refresh_token) {
-        throw new Error(
-          data?.error || "Login response was incomplete. Please try again."
-        );
+        throw new Error(data?.error || "Login response did not include a session.");
       }
 
-      const { error: sessionError } = await supabase.auth.setSession({
-        access_token: data.access_token,
-        refresh_token: data.refresh_token
-      });
+      const { data: sessionData, error: sessionError } =
+        await supabase.auth.setSession({
+          access_token: data.access_token,
+          refresh_token: data.refresh_token
+        });
 
       if (sessionError) throw sessionError;
 
-      if (message) {
-        message.textContent = "Login successful. Opening your dashboard...";
-        message.style.color = "green";
+      if (!sessionData.session) {
+        throw new Error("Session was not saved. Please try again.");
       }
 
-      window.location.href = "student-dashboard.html";
-    } catch (error) {
-      console.error("Student login error:", error);
+      if (message) message.textContent = "Login successful. Opening dashboard...";
 
-      if (message) {
-        message.textContent =
-          error.message || "Unable to sign in. Please try again.";
-        message.style.color = "crimson";
-      }
+      window.location.replace("./student-dashboard.html");
+    } catch (err) {
+      console.error("Student login error:", err);
+      if (message) message.textContent = err.message || "Login failed.";
     } finally {
-      if (submitButton) submitButton.disabled = false;
+      if (button) button.disabled = false;
     }
   });
 }
