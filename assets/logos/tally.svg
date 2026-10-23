@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" role="img" aria-label="Tally ERP">
+<rect width="320" height="120" rx="14" fill="#fff"/>
+<text x="160" y="62" font-family="Arial,sans-serif" font-size="48" font-style="italic" font-weight="800" text-anchor="middle" fill="#222">Tally</text>
+<path d="M62 76 Q160 92 258 76" stroke="#E53935" stroke-width="5" fill="none"/>
+<text x="160" y="103" font-family="Arial,sans-serif" font-size="18" font-weight="700" text-anchor="middle" fill="#E53935">ERP</text>
+</svg>

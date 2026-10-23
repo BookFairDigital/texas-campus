@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" role="img" aria-label="Books">
+<rect width="320" height="120" rx="14" fill="#fff"/>
+<rect x="18" y="24" width="72" height="72" rx="18" fill="#E42527"/>
+<text x="54" y="69" font-family="Arial,sans-serif" font-size="38" font-weight="800" text-anchor="middle" fill="#fff">ZOHO</text>
+<text x="112" y="69" font-family="Arial,sans-serif" font-size="34" font-weight="700" fill="#202124">Books</text>
+</svg>

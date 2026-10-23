@@ -1,0 +1,6 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 320 120" role="img" aria-label="QuickBooks">
+<rect width="320" height="120" rx="14" fill="#fff"/>
+<circle cx="62" cy="60" r="35" fill="#2CA01C"/>
+<text x="62" y="72" font-family="Arial,sans-serif" font-size="32" font-weight="700" text-anchor="middle" fill="#fff">qb</text>
+<text x="112" y="70" font-family="Arial,sans-serif" font-size="28" font-weight="700" fill="#202124">QuickBooks</text>
+</svg>
