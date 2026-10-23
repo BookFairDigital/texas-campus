@@ -71,7 +71,7 @@ if (form) {
 
       if (message) message.textContent = "Login successful. Opening dashboard...";
 
-      window.location.href = "./student-dashboard.html";
+      window.location.replace("/texas-campus/student-dashboard.html");
     } catch (err) {
       console.error("Student login error:", err);
 
