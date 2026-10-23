@@ -904,6 +904,8 @@
       loginBox.hidden = true;
       adminContent.hidden = false;
       adminAccount.textContent = user.email || "Administrator";
+      loadCourses();
+loadOrders();
     }
 
     async function verifyAdmin(user) {
