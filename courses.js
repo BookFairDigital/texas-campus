@@ -15,7 +15,7 @@ let courses = [];
 const params = new URLSearchParams(window.location.search);
 const requestedCategory = params.get("category");
 
-// Known course logos. Other/new courses use a clean text fallback.
+// Logo URLs for known courses. Unavailable logos fall back to text.
 const brandLogos = {
   "myob-accounting": {
     name: "MYOB",
@@ -31,7 +31,7 @@ const brandLogos = {
   },
   "tally-erp-accounting": {
     name: "Tally ERP",
-    url: null
+    url: "https://tallysolutions.com/wp-content/uploads/2023/08/TallyPrime-Logo.png"
   },
   "sage-50-accounting": {
     name: "Sage 50",
@@ -43,7 +43,7 @@ const brandLogos = {
   },
   "zoho-books-cloud": {
     name: "Zoho Books",
-    url: "https://cdn.simpleicons.org/zoho/EA4335"
+    url: "https://www.zoho.com/books/images/zoho-books-logo.svg"
   },
   "freshbooks-accounting": {
     name: "FreshBooks",
@@ -63,12 +63,12 @@ const brandLogos = {
   },
   "gamma-ai-accounting": {
     name: "Gamma",
-    url: null
+    url: "https://cdn.simpleicons.org/gamma/8B5CF6"
   }
 };
 
 function formatPrice(course) {
-  if (course.price == null || course.price === "") {
+  if (course.price === null || course.price === undefined || course.price === "") {
     return "Contact us";
   }
 
@@ -93,9 +93,12 @@ function makeCard(course) {
   const logoBox = document.createElement("div");
   logoBox.className = "real-course-logo";
 
-  const brand = brandLogos[course.id];
+  const brand = brandLogos[course.id] || {
+    name: course.name,
+    url: null
+  };
 
-  if (brand?.url) {
+  if (brand.url) {
     const img = document.createElement("img");
     img.src = brand.url;
     img.alt = `${brand.name} logo`;
@@ -110,7 +113,7 @@ function makeCard(course) {
 
     logoBox.appendChild(img);
   } else {
-    logoBox.textContent = brand?.name || course.name;
+    logoBox.textContent = brand.name;
     logoBox.classList.add("logo-text-fallback");
   }
 
@@ -229,8 +232,7 @@ async function loadCourses() {
           ? "ai"
           : null,
     desc: course.summary || "Explore this course at Texas Campus.",
-    price: formatPrice(course),
-    currency: course.currency || "LKR"
+    price: formatPrice(course)
   })).filter(course => course.category !== null);
 
   grid.replaceChildren(...courses.map(makeCard));
