@@ -112,7 +112,33 @@ function openCheckout() {
   }
 }
 
-$("#buy-button")?.addEventListener("click", openCheckout);
+
+const buyButton = document.querySelector("#buy-button");
+
+if (buyButton) {
+  buyButton.addEventListener("click", () => {
+    console.log("Buy Now clicked");
+
+    if (!checkoutDialog) {
+      alert("Checkout dialog eka page eke hoyaganna ba.");
+      return;
+    }
+
+    if (!course) {
+      alert("Course details load wenakan poddak inna.");
+      return;
+    }
+
+    registerStep.hidden = false;
+    paymentStep.hidden = true;
+    doneStep.hidden = true;
+
+    checkoutDialog.showModal();
+  });
+} else {
+  console.error("Buy button not found in course.html");
+}
+
 
 $(".checkout-close")?.addEventListener("click", () => {
   checkoutDialog?.close();
