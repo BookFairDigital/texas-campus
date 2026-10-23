@@ -491,7 +491,7 @@ async function loadDashboard(user) {
     el("taskList").innerHTML =
       '<div class="empty">Your upcoming assignments will appear here when assignment records are connected.</div>';
 
-    el("assignmentCount").textContent = "—";
+    if (el("assignmentCount")) {   el("assignmentCount").textContent = "—"; }
     renderChart([0, 0, 0, 0, 0, 0, 0]);
     renderStreak(0);
 
