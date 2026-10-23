@@ -71,7 +71,7 @@ if (form) {
 
       if (message) message.textContent = "Login successful. Opening dashboard...";
 
-      window.location.replace("/texas-campus/student-dashboard.html");
+      window.location.replace("https://bookfairdigital.github.io/texas-campus/student-dashboard.html");
     } catch (err) {
       console.error("Student login error:", err);
 
