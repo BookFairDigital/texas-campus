@@ -96,7 +96,10 @@ async function loadCourse() {
 }
 
 function openCheckout() {
-  if (!course || !checkoutDialog) return;
+  if (!course || !checkoutDialog) {
+    console.error("Course or checkout dialog missing");
+    return;
+  }
 
   registerStep.hidden = false;
   paymentStep.hidden = true;
@@ -104,6 +107,8 @@ function openCheckout() {
 
   if (typeof checkoutDialog.showModal === "function") {
     checkoutDialog.showModal();
+  } else {
+    checkoutDialog.setAttribute("open", "");
   }
 }
 
