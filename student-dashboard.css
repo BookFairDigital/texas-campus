@@ -229,3 +229,31 @@ body{background:radial-gradient(ellipse at 78% 0%,#16101a 0%,var(--d-bg) 46%);co
 .account-details { padding:14px; color:#e7e8ed; background:#17181f; border:1px solid #2b2d38; border-radius:12px; line-height:1.8; overflow-wrap:anywhere; font-size:13px; }
 .account-help { color:#9ea1ad; font-size:11px; line-height:1.6; margin:12px 2px 0; }
 @media(max-width:850px) { .portal-extra-grid { grid-template-columns:1fr; } }
+
+
+/* Notification bell icon */
+.notification-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #f5f6fa;
+  cursor: pointer;
+}
+
+.notification-btn .bell-icon {
+  display: block;
+  width: 20px;
+  height: 20px;
+  flex-shrink: 0;
+}
+
+.notification-btn:hover {
+  color: #ff5269;
+  border-color: #ff5269;
+}
+
+.notification-btn:focus-visible {
+  outline: 2px solid #ff5269;
+  outline-offset: 3px;
+}
+
