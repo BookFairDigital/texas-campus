@@ -438,7 +438,7 @@ async function loadDashboard(user) {
     }
 
     const allOrders = orders || [];
-    const eligibleOrders = allOrders.filter(paid);
+    const eligibleOrders = allOrders.filter(   order => paid(order) && order.course_access === true );
     const waitingOrders = allOrders.filter(pending);
 
     el("enrolledCount").textContent = eligibleOrders.length;
