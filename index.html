@@ -2,22 +2,30 @@
 <!doctype html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-  <meta name="theme-color" content="#181818" />
-  <meta name="description" content="Texas Campus — practical Digital Accounting and AI for Accounting courses." />
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#181818">
+  <meta name="description" content="Texas Campus — practical Digital Accounting and AI for Accounting courses.">
   <title>Texas Campus | Digital Accounting &amp; AI</title>
-  <link rel="stylesheet" href="styles.css" />
+
+  <link rel="icon" href="./favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="./styles.css">
 </head>
+
 <body>
   <header class="site-header">
     <a class="brand" href="index.html#home" aria-label="Texas Campus home">
-      <img class="official-logo" src="./assets/texas-campus-logo.png" alt="Texas Campus logo"
+      <img
+        class="official-logo"
+        src="./assets/texas-campus-logo.png"
+        alt="Texas Campus logo"
         onerror="this.style.display='none';this.insertAdjacentHTML('afterend','<span class=&quot;brand-wordmark-fallback&quot;><b>TEXAS</b><small>CAMPUS</small></span>')">
     </a>
 
     <button class="menu-toggle" aria-label="Open navigation menu" aria-expanded="false">
-      <span></span><span></span><span></span>
+      <span></span>
+      <span></span>
+      <span></span>
     </button>
 
     <nav class="main-nav" aria-label="Main navigation">
@@ -28,8 +36,10 @@
       <a href="index.html#inquiries">Inquiries</a>
     </nav>
 
-    <a class="login-button" href="#student-login"
-       onclick="event.preventDefault(); document.getElementById('student-modal').hidden=false">
+    <a
+      class="login-button"
+      href="#student-login"
+      onclick="event.preventDefault(); document.getElementById('student-modal').hidden=false">
       <span aria-hidden="true">♙</span> Student Log In
     </a>
   </header>
@@ -41,24 +51,62 @@
 
       <div class="hero-content">
         <p class="eyebrow">SRI LANKA'S ONLINE LEARNING PLATFORM</p>
+
         <h1>Build Your Future with <span>Digital Accounting &amp; AI</span></h1>
-        <p class="hero-description">Gain practical, job-ready skills with industry-relevant digital accounting and AI-powered tools, designed for the modern workplace.</p>
+
+        <p class="hero-description">
+          Gain practical, job-ready skills with industry-relevant digital accounting
+          and AI-powered tools, designed for the modern workplace.
+        </p>
 
         <div class="hero-actions">
-          <a class="button button-primary" href="#courses">Explore Courses <span aria-hidden="true">→</span></a>
-          <a class="button button-outline" href="#how-it-works"><span class="play-icon" aria-hidden="true">▶</span> How It Works</a>
+          <a class="button button-primary" href="#courses">
+            Explore Courses <span aria-hidden="true">→</span>
+          </a>
+
+          <a class="button button-outline" href="#how-it-works">
+            <span class="play-icon" aria-hidden="true">▶</span>
+            How It Works
+          </a>
         </div>
 
         <div class="hero-points">
-          <div class="hero-point"><span class="point-icon">▤</span><span><b>Practical Learning</b><small>Industry-relevant skills</small></span></div>
-          <div class="hero-point"><span class="point-icon">▶</span><span><b>Video Lessons</b><small>Learn at your own pace</small></span></div>
-          <div class="hero-point"><span class="point-icon">✦</span><span><b>AI-Powered Skills</b><small>Tools for modern work</small></span></div>
+          <div class="hero-point">
+            <span class="point-icon">▤</span>
+            <span>
+              <b>Practical Learning</b>
+              <small>Industry-relevant skills</small>
+            </span>
+          </div>
+
+          <div class="hero-point">
+            <span class="point-icon">▶</span>
+            <span>
+              <b>Video Lessons</b>
+              <small>Learn at your own pace</small>
+            </span>
+          </div>
+
+          <div class="hero-point">
+            <span class="point-icon">✦</span>
+            <span>
+              <b>AI-Powered Skills</b>
+              <small>Tools for modern work</small>
+            </span>
+          </div>
         </div>
       </div>
 
       <div class="hero-visual hero-video-visual" aria-label="Texas Campus accounting and AI learning video">
-        <video class="hero-promo-video" autoplay muted loop playsinline preload="metadata"
-          poster="./assets/accounting-visual.png" aria-label="Animated accounting dashboard and AI learning robot">
+        <video
+          class="hero-promo-video"
+          autoplay
+          muted
+          loop
+          playsinline
+          preload="metadata"
+          poster="./assets/accounting-visual.png"
+          aria-label="Animated accounting dashboard and AI learning robot">
           <source src="./assets/texas-campus-hero.mp4" type="video/mp4">
         </video>
       </div>
@@ -68,7 +116,10 @@
       <div class="section-heading">
         <p class="eyebrow dark-eyebrow">OUR COURSES</p>
         <h2>Explore Our <span>Course Categories</span></h2>
-        <p>Choose from our specialized learning paths and gain in-demand skills for a brighter future.</p>
+        <p>
+          Choose from our specialized learning paths and gain in-demand skills
+          for a brighter future.
+        </p>
       </div>
 
       <div class="category-grid">
@@ -81,13 +132,27 @@
                 <p>Master today’s leading accounting platforms with hands-on training.</p>
               </div>
             </div>
+
             <ul class="category-points">
-              <li>MYOB Accounting</li><li>Xero Accounting</li><li>QuickBooks</li>
+              <li>MYOB Accounting</li>
+              <li>Xero Accounting</li>
+              <li>QuickBooks</li>
             </ul>
-            <span class="text-link category-cta">Explore Courses <b>→</b></span>
+
+            <span class="text-link category-cta">
+              Explore Courses <b>→</b>
+            </span>
           </div>
+
           <div class="category-art accounting-art" aria-hidden="true">
-            <div class="art-screen"><div class="art-top"></div><div class="art-chart"><i></i><i></i><i></i><i></i><i></i></div><div class="art-lines"></div></div>
+            <div class="art-screen">
+              <div class="art-top"></div>
+              <div class="art-chart">
+                <i></i><i></i><i></i><i></i><i></i>
+              </div>
+              <div class="art-lines"></div>
+            </div>
+
             <div class="brand-float brand-myob">myob</div>
             <div class="brand-float brand-xero">xero</div>
             <div class="brand-float brand-qb">qb</div>
@@ -103,19 +168,33 @@
                 <p>Work smarter with AI tools designed for accounting and finance.</p>
               </div>
             </div>
+
             <ul class="category-points">
-              <li>ChatGPT for Accounting</li><li>Gemini AI for Accounting</li><li>Claude AI &amp; Gamma</li>
+              <li>ChatGPT for Accounting</li>
+              <li>Gemini AI for Accounting</li>
+              <li>Claude AI &amp; Gamma</li>
             </ul>
-            <span class="text-link category-cta">Explore Courses <b>→</b></span>
+
+            <span class="text-link category-cta">
+              Explore Courses <b>→</b>
+            </span>
           </div>
+
           <div class="category-art ai-art" aria-hidden="true">
             <div class="ai-dashboard">
-              <div class="ai-dashboard-top"><i></i><i></i><i></i><span>AI WORKSPACE</span></div>
+              <div class="ai-dashboard-top">
+                <i></i><i></i><i></i>
+                <span>AI WORKSPACE</span>
+              </div>
+
               <div class="ai-dashboard-content">
                 <div class="ai-dashboard-sidebar"></div>
-                <div class="ai-dashboard-lines"><i></i><i></i><i></i><b>✦</b></div>
+                <div class="ai-dashboard-lines">
+                  <i></i><i></i><i></i><b>✦</b>
+                </div>
               </div>
             </div>
+
             <div class="ai-logo-float chatgpt-mark">✳</div>
             <div class="ai-logo-float gemini-mark">✦</div>
             <div class="ai-logo-float claude-mark">✺</div>
@@ -124,10 +203,37 @@
       </div>
 
       <div class="feature-strip" id="how-it-works">
-        <div class="feature-item"><span>▶</span><div><b>Video Lessons</b><small>Learn at your own pace</small></div></div>
-        <div class="feature-item"><span>▤</span><div><b>Tutorial Materials</b><small>Downloadable resources</small></div></div>
-        <div class="feature-item"><span>⚙</span><div><b>Software Installation Guides</b><small>Step-by-step instructions</small></div></div>
-        <div class="feature-item"><span>♟</span><div><b>Student Dashboard</b><small>Track your progress</small></div></div>
+        <div class="feature-item">
+          <span>▶</span>
+          <div>
+            <b>Video Lessons</b>
+            <small>Learn at your own pace</small>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <span>▤</span>
+          <div>
+            <b>Tutorial Materials</b>
+            <small>Downloadable resources</small>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <span>⚙</span>
+          <div>
+            <b>Software Installation Guides</b>
+            <small>Step-by-step instructions</small>
+          </div>
+        </div>
+
+        <div class="feature-item">
+          <span>♟</span>
+          <div>
+            <b>Student Dashboard</b>
+            <small>Track your progress</small>
+          </div>
+        </div>
       </div>
     </section>
 
@@ -135,40 +241,80 @@
       <article class="info-panel" id="about">
         <p class="eyebrow">ABOUT TEXAS CAMPUS</p>
         <h2>Skills for the <span>real world.</span></h2>
-        <p>Learn practical digital accounting software and AI tools through guided lessons, tutorials, and job-focused training.</p>
+        <p>
+          Learn practical digital accounting software and AI tools through guided
+          lessons, tutorials, and job-focused training.
+        </p>
       </article>
 
       <article class="info-panel" id="corporate">
         <p class="eyebrow">CORPORATE TRAINING</p>
         <h2>Upskill your <span>team.</span></h2>
-        <p>Contact us to discuss practical accounting software and AI training tailored to your organization.</p>
-        <a class="button button-outline" href="https://wa.me/94779011780" target="_blank" rel="noopener">Discuss team training →</a>
+        <p>
+          Contact us to discuss practical accounting software and AI training
+          tailored to your organization.
+        </p>
+        <a
+          class="button button-outline"
+          href="https://wa.me/94779011780"
+          target="_blank"
+          rel="noopener noreferrer">
+          Discuss team training →
+        </a>
       </article>
     </section>
   </main>
 
   <!-- Student Login Modal -->
-  <div class="login-modal" id="student-modal" hidden role="dialog"
-       aria-modal="true" aria-labelledby="student-modal-title">
+  <div
+    class="login-modal"
+    id="student-modal"
+    hidden
+    role="dialog"
+    aria-modal="true"
+    aria-labelledby="student-modal-title">
+
     <div class="login-modal-card">
-      <button class="modal-close" aria-label="Close" type="button"
-        onclick="document.getElementById('student-modal').hidden=true">×</button>
+      <button
+        class="modal-close"
+        aria-label="Close"
+        type="button"
+        onclick="document.getElementById('student-modal').hidden=true">
+        ×
+      </button>
 
       <p class="eyebrow">STUDENT PORTAL</p>
       <h2 id="student-modal-title">Student Log In</h2>
-      <p>Sign in using the username and password assigned to you by Texas Campus staff.</p>
+      <p>
+        Sign in using the username and password assigned to you by Texas Campus staff.
+      </p>
 
       <form id="student-login-form">
         <label for="student-username">Assigned Username</label>
-        <input id="student-username" name="username" type="text"
-          autocomplete="username" placeholder="Enter your assigned username" required>
+        <input
+          id="student-username"
+          name="username"
+          type="text"
+          autocomplete="username"
+          placeholder="Enter your assigned username"
+          required>
 
         <label for="student-password">Password</label>
-        <input id="student-password" name="password" type="password"
-          autocomplete="current-password" placeholder="Enter your password" required>
+        <input
+          id="student-password"
+          name="password"
+          type="password"
+          autocomplete="current-password"
+          placeholder="Enter your password"
+          required>
 
         <button class="button button-primary" type="submit">Log In</button>
-        <p class="login-message" id="student-login-message" role="status" aria-live="polite"></p>
+
+        <p
+          class="login-message"
+          id="student-login-message"
+          role="status"
+          aria-live="polite"></p>
       </form>
     </div>
   </div>
@@ -176,17 +322,54 @@
   <footer class="site-footer">
     <div class="footer-brand">
       <a class="brand footer-logo" href="index.html#home" aria-label="Texas Campus home">
-        <img class="official-logo footer-official-logo" src="./assets/texas-campus-logo.png" alt="Texas Campus logo">
+        <img
+          class="official-logo footer-official-logo"
+          src="./assets/texas-campus-logo.png"
+          alt="Texas Campus logo">
       </a>
-      <p>Practical, job-ready digital accounting and AI-powered courses for your future.</p>
+
+      <p>
+        Practical, job-ready digital accounting and AI-powered courses for your future.
+      </p>
 
       <div class="footer-socials" aria-label="Social media links">
-        <a class="social-facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M13.5 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v1.9H7V13h2.8v8z"/></svg></a>
-        <a class="social-x" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X" title="X"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.6 22H2.4l7.3-8.4L1.8 2h6.5l4.5 6.8zM17.8 19.8h1.7L7.2 4.1H5.4z"/></svg></a>
-        <a class="social-linkedin" href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M5.2 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM3.5 9h3.4v11.5H3.5zM9 9h3.2v1.6h.1A3.5 3.5 0 0 1 15.5 8c3.5 0 4.1 2.3 4.1 5.3v7.2h-3.4v-6.4c0-1.5 0-3.4-2.1-3.4s-2.4 1.6-2.4 3.3v6.5H9z"/></svg></a>
-        <a class="social-instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram"><svg viewBox="0 0 24 24" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/><circle cx="17.6" cy="6.7" r="1.2" fill="currentColor"/></svg></a>
-        <a class="social-youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/></svg></a>
-        <a class="social-tiktok" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok"><svg viewBox="0 0 24 24" aria-hidden="true"><path fill="currentColor" d="M19.6 7.1a6.8 6.8 0 0 1-4.1-1.4v8.1a6.1 6.1 0 1 1-5.3-6.1v3.4a2.8 2.8 0 1 0 1.9 2.7V2h3.4a6.8 6.8 0 0 0 4.1 4.1z"/></svg></a>
+        <a class="social-facebook" href="https://www.facebook.com/" target="_blank" rel="noopener noreferrer" aria-label="Facebook" title="Facebook">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M13.5 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.4-.1-2.6-.1-2.6 0-4.4 1.6-4.4 4.5v1.9H7V13h2.8v8z"/>
+          </svg>
+        </a>
+
+        <a class="social-x" href="https://x.com/" target="_blank" rel="noopener noreferrer" aria-label="X" title="X">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M18.9 2H22l-6.8 7.8L23.2 22h-6.3L12 14.6 5.6 22H2.4l7.3-8.4L1.8 2h6.5l4.5 6.8zM17.8 19.8h1.7L7.2 4.1H5.4z"/>
+          </svg>
+        </a>
+
+        <a class="social-linkedin" href="https://www.linkedin.com/" target="_blank" rel="noopener noreferrer" aria-label="LinkedIn" title="LinkedIn">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M5.2 3.5a2 2 0 1 1 0 4 2 2 0 0 1 0-4zM3.5 9h3.4v11.5H3.5zM9 9h3.2v1.6h.1A3.5 3.5 0 0 1 15.5 8c3.5 0 4.1 2.3 4.1 5.3v7.2h-3.4v-6.4c0-1.5 0-3.4-2.1-3.4s-2.4 1.6-2.4 3.3v6.5H9z"/>
+          </svg>
+        </a>
+
+        <a class="social-instagram" href="https://www.instagram.com/" target="_blank" rel="noopener noreferrer" aria-label="Instagram" title="Instagram">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <rect x="3" y="3" width="18" height="18" rx="5" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="12" cy="12" r="4" fill="none" stroke="currentColor" stroke-width="2"/>
+            <circle cx="17.6" cy="6.7" r="1.2" fill="currentColor"/>
+          </svg>
+        </a>
+
+        <a class="social-youtube" href="https://www.youtube.com/" target="_blank" rel="noopener noreferrer" aria-label="YouTube" title="YouTube">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M23.5 6.2a3 3 0 0 0-2.1-2.1C19.6 3.6 12 3.6 12 3.6s-7.6 0-9.4.5A3 3 0 0 0 .5 6.2 31 31 0 0 0 0 12a31 31 0 0 0 .5 5.8 3 3 0 0 0 2.1 2.1c1.8.5 9.4.5 9.4.5s7.6 0 9.4-.5a3 3 0 0 0 2.1-2.1A31 31 0 0 0 24 12a31 31 0 0 0-.5-5.8zM9.6 15.6V8.4l6.3 3.6z"/>
+          </svg>
+        </a>
+
+        <a class="social-tiktok" href="https://www.tiktok.com/" target="_blank" rel="noopener noreferrer" aria-label="TikTok" title="TikTok">
+          <svg viewBox="0 0 24 24" aria-hidden="true">
+            <path fill="currentColor" d="M19.6 7.1a6.8 6.8 0 0 1-4.1-1.4v8.1a6.1 6.1 0 1 1-5.3-6.1v3.4a2.8 2.8 0 1 0 1.9 2.7V2h3.4a6.8 6.8 0 0 0 4.1 4.1z"/>
+          </svg>
+        </a>
       </div>
     </div>
 
@@ -207,51 +390,39 @@
       <small>Authorized staff only</small>
     </div>
 
+    <!-- WhatsApp contact: one icon, one number, one link -->
     <div class="footer-column contact-column" id="inquiries">
       <h4>Get in Touch</h4>
-      <a class="whatsapp" href="https://wa.me/94779011780" target="_blank" rel="noopener noreferrer">
-        
-<a class="whatsapp" href="https://wa.me/94779011780"
-   target="_blank" rel="noopener noreferrer"
-   aria-label="Chat with Texas Campus on WhatsApp">
 
-  <span class="whatsapp-icon" aria-hidden="true">
-    <svg xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 32 32"
-         width="32" height="32"
-         fill="none">
-      <path fill="#25D366"
-            d="M16 2.5A13.3 13.3 0 0 0 4.5 22.5L2.7 29.3l7-1.8A13.3 13.3 0 1 0 16 2.5Z"/>
-      <path stroke="#fff" stroke-width="1.7"
-            stroke-linecap="round" stroke-linejoin="round"
-            d="M16 5.2a10.6 10.6 0 0 0-9.1 16l.5.8-1 3.7 3.8-1 .8.5a10.6 10.6 0 1 0 5-20Z"/>
-      <path fill="#fff"
-            d="M12.1 10.1c-.3-.7-.6-.7-.9-.7h-.7c-.3 0-.7.1-1 .5-.4.4-1.3 1.3-1.3 3.1s1.3 3.5 1.5 3.7c.2.3 2.6 4.1 6.3 5.5 3.1 1.2 3.7 1 4.4.9.7-.1 2.2-.9 2.5-1.8.3-.9.3-1.6.2-1.8-.1-.2-.4-.3-.8-.5l-2.5-1.2c-.3-.1-.6-.2-.8.2-.2.4-.9 1.2-1.1 1.5-.2.2-.4.3-.8.1-.4-.2-1.6-.6-3-1.8-1.1-1-1.8-2.2-2-2.6-.2-.4 0-.6.2-.8l.6-.7c.2-.2.3-.4.4-.7.1-.2 0-.5-.1-.7l-1.1-2.5Z"/>
-    </svg>
-  </span>
+      <a
+        class="whatsapp-contact"
+        href="https://wa.me/94779011780"
+        target="_blank"
+        rel="noopener noreferrer"
+        aria-label="Chat with Texas Campus on WhatsApp">
 
-  
-<a class="whatsapp-contact"
-   href="https://wa.me/94779011780"
-   target="_blank"
-   rel="noopener noreferrer"
-   aria-label="Chat with Texas Campus on WhatsApp">
+        <span class="whatsapp-icon" aria-hidden="true">
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            viewBox="0 0 32 32"
+            width="44"
+            height="44">
+            <circle cx="16" cy="16" r="15" fill="#25D366"/>
+            <path
+              fill="#fff"
+              d="M16 5.1A10.7 10.7 0 0 0 6.8 21.2L5.5 26l5-1.3A10.7 10.7 0 1 0 16 5.1Zm0 2a8.7 8.7 0 0 1 0 17.4 8.6 8.6 0 0 1-4.4-1.2l-.5-.3-3 .8.8-2.9-.3-.5A8.7 8.7 0 0 1 16 7.1Zm-3.7 4.3c-.3 0-.6.1-.9.4-.3.3-1 1-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.1 4.9 4.2 2.4 1 2.9.8 3.5.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.4l-2-.9c-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.4-.5-.7-.5Z"/>
+          </svg>
+        </span>
 
-  <span class="whatsapp-icon" aria-hidden="true">
-    <svg xmlns="http://www.w3.org/2000/svg"
-         viewBox="0 0 32 32"
-         width="42" height="42">
-      <circle cx="16" cy="16" r="15" fill="#25D366"/>
-      <path fill="#fff" d="M16 5.1A10.7 10.7 0 0 0 6.8 21.2L5.5 26l5-1.3A10.7 10.7 0 1 0 16 5.1Zm0 2a8.7 8.7 0 0 1 0 17.4 8.6 8.6 0 0 1-4.4-1.2l-.5-.3-3 .8.8-2.9-.3-.5A8.7 8.7 0 0 1 16 7.1Zm-3.7 4.3c-.3 0-.6.1-.9.4-.3.3-1 1-1 2.3s1 2.7 1.2 2.9c.1.2 2 3.1 4.9 4.2 2.4 1 2.9.8 3.5.7.5-.1 1.7-.7 1.9-1.4.2-.7.2-1.3.2-1.4-.1-.1-.3-.2-.6-.4l-2-.9c-.3-.1-.5-.2-.7.2-.2.3-.7.9-.9 1.1-.2.2-.3.2-.6.1-.3-.2-1.2-.5-2.2-1.4-.8-.7-1.3-1.6-1.5-1.9-.2-.3 0-.4.1-.6l.4-.5c.2-.2.2-.3.3-.5.1-.2 0-.4 0-.5l-.9-2.1c-.2-.5-.4-.5-.7-.5Z"/>
-    </svg>
-  </span>
+        <span class="whatsapp-contact-text">
+          <strong>077 901 1780</strong>
+          <small>Chat with us on WhatsApp<br>for course inquiries</small>
+        </span>
+      </a>
 
-  <span class="whatsapp-contact-text">
-    <strong>077 901 1780</strong>
-    <small>Chat with us on WhatsApp<br>for course inquiries</small>
-  </span>
-</a>
-    <a class="footer-email" href="mailto:info@texascampus.lk">info@texascampus.lk</a>
+      <a class="footer-email" href="mailto:info@texascampus.lk">
+        info@texascampus.lk
+      </a>
     </div>
 
     <div class="footer-bottom">
@@ -261,7 +432,7 @@
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-  <script src="script.js"></script>
-  <script type="module" src="student-login.js"></script>
+  <script src="./script.js"></script>
+  <script type="module" src="./student-login.js"></script>
 </body>
 </html>
