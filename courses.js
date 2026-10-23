@@ -17,8 +17,9 @@ const requestedCategory = params.get("category");
 
 // Logo URLs for known courses. Unavailable logos fall back to text.
 
+
 const brandLogos = {
-  "myob-accounting": {
+  "myob": {
     name: "MYOB",
     url: "./assets/logos/myob.svg"
   },
@@ -30,39 +31,39 @@ const brandLogos = {
     name: "QuickBooks",
     url: "./assets/logos/quickbooks.svg"
   },
-  "tally-erp-accounting": {
-    name: "Tally ERP",
+  "tally": {
+    name: "Tally",
     url: "./assets/logos/tally.svg"
   },
-  "sage-50-accounting": {
+  "sage": {
     name: "Sage 50",
     url: "./assets/logos/sage-50.svg"
   },
-  "xero-cloud-accounting": {
+  "xero": {
     name: "Xero",
     url: "./assets/logos/xero.svg"
   },
-  "zoho-books-cloud": {
+  "zoho": {
     name: "Zoho Books",
     url: "./assets/logos/zoho-books.svg"
   },
-  "freshbooks-accounting": {
+  "freshbooks": {
     name: "FreshBooks",
     url: "./assets/logos/freshbooks.svg"
   },
-  "chatgpt-accounting": {
+  "chatgpt": {
     name: "ChatGPT",
     url: "./assets/logos/chatgpt.svg"
   },
-  "gemini-ai-accounting": {
+  "gemini": {
     name: "Gemini",
     url: "./assets/logos/gemini.svg"
   },
-  "claude-ai-accounting": {
+  "claude": {
     name: "Claude",
     url: "./assets/logos/claude.svg"
   },
-  "gamma-ai-accounting": {
+  "gamma": {
     name: "Gamma",
     url: "./assets/logos/gamma.svg"
   }
