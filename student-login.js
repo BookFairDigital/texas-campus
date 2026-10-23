@@ -20,27 +20,34 @@ if (form) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
 
-    const username = form.querySelector('[name="username"]').value.trim();
-    const password = form.querySelector('[name="password"]').value;
+    const username = form.querySelector('[name="username"]')?.value.trim();
+    const password = form.querySelector('[name="password"]')?.value;
     const button = form.querySelector('button[type="submit"]');
 
+    if (!username || !password) {
+      if (message) message.textContent = "Username saha password enter karanna.";
+      return;
+    }
+
+    if (button) {
+      button.disabled = true;
+      button.textContent = "Signing in...";
+    }
+
     if (message) message.textContent = "Signing in...";
-    if (button) button.disabled = true;
 
     try {
-      const { data, error } = await supabase.functions.invoke("student-login", {
-        body: { username, password }
-      });
+      const { data, error } = await supabase.functions.invoke(
+        "student-login",
+        { body: { username, password } }
+      );
 
       if (error) {
         let details = null;
         try {
           details = await error.context?.json?.();
         } catch {}
-
-        throw new Error(
-          details?.error || error.message || "Student login failed."
-        );
+        throw new Error(details?.error || error.message || "Login failed.");
       }
 
       if (!data?.access_token || !data?.refresh_token) {
@@ -55,31 +62,28 @@ if (form) {
 
       if (sessionError) throw sessionError;
 
-      if (!sessionData.session?.user) {
-        throw new Error("Session was not saved. Please try again.");
-      }
-
-      // Verify that the session can be read back from persistent storage.
-      const { data: checkData, error: checkError } =
+      const { data: savedData, error: savedError } =
         await supabase.auth.getSession();
 
-      if (checkError) throw checkError;
+      if (savedError) throw savedError;
 
-      if (!checkData.session?.user) {
-        throw new Error("Login session could not be restored from storage.");
+      if (!savedData.session?.user?.id) {
+        throw new Error("Login session save une naha. Aye try karanna.");
       }
 
       if (message) message.textContent = "Login successful. Opening dashboard...";
 
-      window.location.replace("https://bookfairdigital.github.io/texas-campus/student-dashboard.html");
-    } catch (err) {
-      console.error("Student login error:", err);
-
-      if (message) {
-        message.textContent = err.message || "Login failed.";
-      }
+      window.location.assign(
+        "https://bookfairdigital.github.io/texas-campus/student-dashboard.html"
+      );
+    } catch (error) {
+      console.error("Student login error:", error);
+      if (message) message.textContent = error.message || "Login failed.";
     } finally {
-      if (button) button.disabled = false;
+      if (button) {
+        button.disabled = false;
+        button.textContent = "Log In";
+      }
     }
   });
 }
