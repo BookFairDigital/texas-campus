@@ -767,88 +767,71 @@
             </p>
           </article>
 
-          <!-- Course management -->
-          <article class="admin-card">
-            <div class="admin-card-head">
-              <div class="admin-card-icon" aria-hidden="true">▤</div>
-              <div>
-                <h2>Course Management</h2>
-                <p>Configure courses, prices and lesson resources.</p>
-              </div>
-            </div>
+          
+<!-- Course Management -->
+<article class="admin-card" style="grid-column:1/-1">
+  <div class="admin-card-head">
+    <div class="admin-card-icon">▤</div>
+    <div>
+      <h2>Course Management</h2>
+      <p>Add courses, set prices, attach Google Drive links and publish courses.</p>
+    </div>
+  </div>
 
-            <form id="course-create-form">
-              <label class="admin-label" for="course-name">Course Name</label>
-              <input
-                class="admin-input"
-                id="course-name"
-                name="courseName"
-                placeholder="Enter course name"
-                disabled
-              >
+  <form id="course-create-form">
+    <input type="hidden" id="course-id">
 
-              <label class="admin-label" for="course-price">Course Price (LKR)</label>
-              <input
-                class="admin-input"
-                id="course-price"
-                name="coursePrice"
-                type="number"
-                min="0"
-                step="1"
-                placeholder="12500"
-                disabled
-              >
+    <label class="admin-label" for="course-name">Course Name</label>
+    <input class="admin-input" id="course-name" maxlength="160" required>
 
-              <label class="admin-label" for="drive-link">Google Drive Lesson Link</label>
-              <input
-                class="admin-input"
-                id="drive-link"
-                name="driveLink"
-                type="url"
-                placeholder="https://drive.google.com/..."
-                disabled
-              >
+    <label class="admin-label" for="course-slug">URL Slug</label>
+    <input class="admin-input" id="course-slug"
+      placeholder="digital-accounting"
+      pattern="[a-z0-9]+(?:-[a-z0-9]+)*" required>
 
-              <button class="admin-btn admin-card-action" type="button" disabled>
-                Save Course Details
-              </button>
-            </form>
+    <label class="admin-label" for="course-category">Category</label>
+    <select class="admin-input" id="course-category" required>
+      <option value="digital_accounting">Digital Accounting</option>
+      <option value="ai_accounting">AI for Accounting</option>
+    </select>
 
-            <p class="admin-card-footnote">
-              Course saving will be enabled after secure database access is configured.
-            </p>
-          </article>
+    <label class="admin-label" for="course-summary">Description</label>
+    <textarea class="admin-input" id="course-summary" rows="3"></textarea>
 
-          <!-- Payment requests -->
-          <article class="admin-card">
-            <div class="admin-card-head">
-              <div class="admin-card-icon" aria-hidden="true">▣</div>
-              <div>
-                <h2>Payment Requests</h2>
-                <p>Review receipts and manage payment decisions.</p>
-              </div>
-            </div>
+    <label class="admin-label" for="course-price">Price (LKR)</label>
+    <input class="admin-input" id="course-price" type="number" min="0" step="1">
 
-            <div class="admin-metric-box">
-              <div>
-                <span class="admin-metric-label">Pending Requests</span>
-                <strong class="admin-metric-value">Not connected</strong>
-              </div>
-              <span class="admin-mini-status">Setup required</span>
-            </div>
+    <label class="admin-label" for="drive-link">Google Drive Link</label>
+    <input class="admin-input" id="drive-link" type="url"
+      placeholder="https://drive.google.com/...">
 
-            <p class="admin-card-description">
-              Payment receipt review and approval tools will appear here once the payment workflow is connected.
-            </p>
+    <button class="admin-btn admin-card-action" id="save-course-button" type="submit">
+      Save Course
+    </button>
+    <button class="admin-btn admin-btn-secondary admin-card-action"
+      id="refresh-courses-button" type="button">Refresh Courses</button>
+    <p id="course-message" class="login-message" role="status"></p>
+  </form>
 
-            <button class="admin-btn admin-card-action" type="button" disabled>
-              View Payment Requests →
-            </button>
+  <div id="course-list" style="margin-top:20px"></div>
+</article>
 
-            <p class="admin-card-footnote">
-              Payment approval is not active yet.
-            </p>
-          </article>
+<!-- Payment Requests -->
+<article class="admin-card" style="grid-column:1/-1">
+  <div class="admin-card-head">
+    <div class="admin-card-icon">▣</div>
+    <div>
+      <h2>Payment Requests</h2>
+      <p>Review and approve or reject course orders.</p>
+    </div>
+  </div>
+
+  <button class="admin-btn admin-btn-secondary"
+    id="refresh-orders-button" type="button">Refresh Payments</button>
+  <p id="payment-queue-count" class="admin-card-description"></p>
+  <p id="orders-message" class="login-message" role="status"></p>
+  <div id="orders-list"></div>
+</article>
 
           <!-- Course access -->
           <article class="admin-card">
