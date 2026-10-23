@@ -1,4 +1,4 @@
-
+```html
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="theme-color" content="#181818" />
   <meta name="description" content="Texas Campus — practical Digital Accounting and AI for Accounting courses." />
-  <title>Texas Campus | Digital Accounting & AI</title>
+  <title>Texas Campus | Digital Accounting &amp; AI</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
@@ -147,7 +147,7 @@
     </section>
   </main>
 
-  <!-- Student Login Modal: only one opening wrapper -->
+  <!-- Student Login Modal -->
   <div class="login-modal" id="student-modal" hidden role="dialog"
        aria-modal="true" aria-labelledby="student-modal-title">
     <div class="login-modal-card">
@@ -168,7 +168,7 @@
           autocomplete="current-password" placeholder="Enter your password" required>
 
         <button class="button button-primary" type="submit">Log In</button>
-        <p id="student-login-message" role="status" aria-live="polite"></p>
+        <p class="login-message" id="student-login-message" role="status" aria-live="polite"></p>
       </form>
     </div>
   </div>
@@ -223,7 +223,10 @@
       <span>Digital Accounting &amp; AI Learning Platform</span>
     </div>
   </footer>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="script.js"></script>
+
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script src="script.js"></script>
+  <script type="module" src="student-login.js"></script>
 </body>
 </html>
+```
