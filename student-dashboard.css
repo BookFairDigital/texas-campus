@@ -193,3 +193,39 @@ body{background:radial-gradient(ellipse at 78% 0%,#16101a 0%,var(--d-bg) 46%);co
 @media(max-width:1100px){.portal{grid-template-columns:225px minmax(0,1fr)}.sidebar{padding-inline:14px}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:minmax(0,1fr)}}
 @media(max-width:720px){.portal{display:block}.sidebar{position:relative;height:auto;min-height:0;padding:13px 14px;border-right:0;border-bottom:1px solid #252b38;gap:13px}.logo-row{min-height:46px}.sidebar-logo{height:46px;width:210px}.sidebar>nav:first-of-type .nav{display:flex;overflow-x:auto;gap:5px}.nav-label{display:none}.nav a{white-space:nowrap;min-height:39px;padding:8px 10px;font-size:12px}.nav a .ico{display:none}.sidebar-logout{margin-top:0;min-height:42px;width:auto;align-self:flex-end;padding:0 22px}.topbar{position:relative;min-height:62px;padding:10px 14px}.crumb{display:none}.search{display:none}.profile{padding-left:8px}.profile div:nth-child(2){display:none}.content{padding:21px 13px 32px}.welcome{align-items:flex-start;flex-direction:column}.stats{gap:10px}.stat{padding:14px}.stat-number{font-size:26px}.stat-icon{width:36px;height:36px;flex-basis:36px}.panel{padding:15px}.course{grid-template-columns:44px minmax(0,1fr);gap:10px}.course-art{width:44px;height:44px}.continue{grid-column:2;justify-self:start}.quick-grid{grid-template-columns:1fr}}
 @media(max-width:390px){.stats{grid-template-columns:1fr}.course{grid-template-columns:38px minmax(0,1fr)}.course-art{width:38px;height:38px}.course-progress{flex-wrap:wrap}.today-pill{white-space:normal}}
+
+
+/* Upgrade: professional enrolled-course cards and validity countdown */
+.course-list { display:grid; gap:14px; }
+.course.course-premium { display:grid; grid-template-columns:64px minmax(0,1fr) auto; align-items:center; gap:16px; padding:16px; border:1px solid #2b2d38; border-radius:16px; background:linear-gradient(120deg,rgba(25,27,36,.98),rgba(16,17,23,.98)); box-shadow:inset 0 1px 0 rgba(255,255,255,.025); transition:border-color .2s,transform .2s,box-shadow .2s; }
+.course.course-premium:hover { border-color:#78303d; transform:translateY(-2px); box-shadow:0 12px 28px rgba(0,0,0,.2); }
+.course-premium .course-art { width:64px; height:64px; border-radius:14px; display:grid; place-items:center; font-size:25px; background:linear-gradient(145deg,#451722,#24131b); color:#ff5269; }
+.course-premium .course-art.ai { background:linear-gradient(145deg,#34214a,#20172b); color:#c49bff; }
+.course-premium .course-art.excel { background:linear-gradient(145deg,#173c31,#142720); color:#62d6a1; }
+.course-premium .course-main { min-width:0; }
+.course-premium h3 { margin:0 0 5px; font-size:15px; color:#f6f6f8; }
+.course-premium p { margin:0 0 10px; color:#a9acb8; font-size:12px; }
+.course-premium .course-progress { display:flex; align-items:center; gap:10px; flex-wrap:wrap; }
+.course-premium .course-progress .bar { flex:1 1 130px; min-width:90px; height:7px; background:#2b2e3a; border-radius:99px; overflow:hidden; }
+.course-premium .course-progress .bar span { display:block; height:100%; border-radius:99px; background:linear-gradient(90deg,#ff2444,#c91430); }
+.course-premium .course-progress small { color:#aeb1bc; font-size:11px; }
+.course-validity { margin-top:10px; display:flex; align-items:center; gap:6px; color:#83d8ad; font-size:11px; line-height:1.4; }
+.course-validity.expired { color:#ff7485; }
+.course-expired { opacity:.78; }
+.course-premium .continue { white-space:nowrap; border:1px solid #e5223c; border-radius:10px; padding:11px 14px; background:linear-gradient(135deg,#f21d37,#b81427); color:#fff; font-weight:750; cursor:pointer; }
+.course-premium .continue:hover { filter:brightness(1.1); }
+.course-premium .continue:disabled { background:#343640; border-color:#454753; color:#a2a4ad; cursor:not-allowed; }
+@media(max-width:700px) { .course.course-premium { grid-template-columns:48px minmax(0,1fr); gap:12px; padding:12px; } .course-premium .course-art { width:48px; height:48px; font-size:20px; } .course-premium .continue { grid-column:2; justify-self:start; padding:9px 12px; } .course-premium h3 { font-size:13px; } .course-validity { font-size:10px; } }
+
+.portal-extra-grid { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); gap:18px; margin-top:18px; }
+.portal-extra-grid .panel { min-width:0; }
+.payment-list { display:grid; gap:9px; }
+.payment-list .task { display:flex; align-items:center; gap:12px; padding:12px; border:1px solid #2b2d38; border-radius:12px; background:#17181f; }
+.payment-list .task-text { flex:1; min-width:0; }
+.payment-list .task-text strong { display:block; color:#f4f4f7; font-size:13px; }
+.payment-list .task-text small { display:block; color:#a4a6b1; font-size:11px; margin-top:4px; }
+.payment-list .status { color:#ffb4bd; font-size:11px; padding:5px 8px; border-radius:99px; background:#3b2028; white-space:nowrap; }
+.payment-list .status.ready { color:#80dfb1; background:#173328; }
+.account-details { padding:14px; color:#e7e8ed; background:#17181f; border:1px solid #2b2d38; border-radius:12px; line-height:1.8; overflow-wrap:anywhere; font-size:13px; }
+.account-help { color:#9ea1ad; font-size:11px; line-height:1.6; margin:12px 2px 0; }
+@media(max-width:850px) { .portal-extra-grid { grid-template-columns:1fr; } }

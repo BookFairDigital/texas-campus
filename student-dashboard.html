@@ -24,7 +24,9 @@
       <a href="#my-courses"><span class="ico">▣</span>My Courses</a>
       <a href="./courses.html"><span class="ico">⌕</span>Course Catalogue</a>
       <a href="#tasks"><span class="ico">☑</span>Assignments <span class="count" id="assignmentCount">—</span></a>
-      <a href="#quick-access"><span class="ico">✧</span>Certificates</a>
+      <a href="#certificates"><span class="ico">✧</span>Certificates</a>
+      <a href="#payments"><span class="ico">＄</span>Payments</a>
+      <a href="#account-management"><span class="ico">⚙</span>Account Management</a>
     </div>
   </nav>
 
@@ -95,6 +97,22 @@
       </div>
     </div>
 
+
+    <div class="portal-extra-grid">
+      <section class="panel" id="payments">
+        <div class="panel-head"><div><h2>Payments</h2><p>Your course purchase and payment history</p></div></div>
+        <div id="paymentList" class="payment-list"><div class="empty">Loading payment history…</div></div>
+      </section>
+      <section class="panel" id="account-management">
+        <div class="panel-head"><div><h2>Account Management</h2><p>Your student account details</p></div></div>
+        <div id="accountDetails" class="account-details">Loading account details…</div>
+        <p class="account-help">Need to update your details or reset your password? Contact Texas Campus administration for assistance.</p>
+      </section>
+      <section class="panel" id="certificates">
+        <div class="panel-head"><div><h2>Certificates</h2><p>Certificates issued to your account</p></div></div>
+        <div class="empty">Issued certificates will appear here when certificate records are connected.</div>
+      </section>
+    </div>
 
     <footer style="color:#777;font-size:11px;text-align:center;margin-top:24px">Texas Campus · Learning Portal</footer>
   </div>
@@ -412,20 +430,34 @@ async function loadDashboard(user) {
             : 0;
 
           const art = ["▦", "✳", "▤"][index % 3];
-          const kind = ["", "ai", "excel"][index % 3];
+          const kind = String(course?.category || "").toLowerCase().includes("ai") ? "ai" : (index % 2 ? "excel" : "");
+          const slug = course?.slug || order.course_slug || "";
+          const baseDate = order.reviewed_at || order.approved_at || order.created_at;
+          const expiry = baseDate ? new Date(baseDate) : null;
+          if (expiry && !Number.isNaN(expiry.getTime())) expiry.setFullYear(expiry.getFullYear() + 2);
+          const remainingDays = expiry && !Number.isNaN(expiry.getTime())
+            ? Math.ceil((expiry.getTime() - Date.now()) / 86400000)
+            : null;
+          const validityText = remainingDays === null
+            ? "Validity: 2 years from approval"
+            : remainingDays <= 0
+              ? "Course access expired"
+              : `${remainingDays} day${remainingDays === 1 ? "" : "s"} remaining · Expires ${expiry.toLocaleDateString()}`;
+          const expired = remainingDays !== null && remainingDays <= 0;
 
           return `
-            <article class="course">
+            <article class="course course-premium ${expired ? "course-expired" : ""}">
               <div class="course-art ${kind}">${art}</div>
-              <div>
+              <div class="course-main">
                 <h3>${escapeHTML(title)}</h3>
                 <p>${escapeHTML(course?.category || course?.description || "Enrolled course")}${lessonCount ? " · " + lessonCount + " lessons" : ""}</p>
                 <div class="course-progress">
                   <div class="bar"><span style="width:${progress}%"></span></div>
                   <small>${lessonCount ? progress + "% complete" : "Progress not recorded"}</small>
                 </div>
+                <div class="course-validity ${expired ? "expired" : ""}"><span aria-hidden="true">◷</span> ${escapeHTML(validityText)}</div>
               </div>
-              <button class="continue" data-course-id="${escapeHTML(courseId(order) || "")}" type="button">Continue →</button>
+              <button class="continue" data-course-id="${escapeHTML(courseId(order) || "")}" data-course-slug="${escapeHTML(slug)}" type="button" ${expired ? "disabled" : ""}>${expired ? "Expired" : "Open course →"}</button>
             </article>
           `;
         }).join("")
@@ -458,12 +490,13 @@ async function loadDashboard(user) {
 
 el("courseList").addEventListener("click", event => {
   const button = event.target.closest("[data-course-id]");
-  if (!button) return;
-
-  showNotice(
-    "Course purchase is visible, but the lesson player route is not connected yet. Course ID: " +
-    (button.dataset.courseId || "not available")
-  );
+  if (!button || button.disabled) return;
+  const slug = button.dataset.courseSlug;
+  if (slug) {
+    window.location.href = `./course.html?course=${encodeURIComponent(slug)}`;
+    return;
+  }
+  showNotice("This course is approved, but its course slug is missing from the courses table. Please contact Texas Campus support.");
 });
 
 el("signOut").addEventListener("click", async () => {
