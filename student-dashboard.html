@@ -5,128 +5,16 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#101116">
-<title>Learning Portal | Texas Campus</title>
+<title>Student Dashboard | Texas Campus</title>
 <link rel="stylesheet" href="./styles.css">
-<style>
-:root{--d-bg:#0b0c10;--d-panel:#14151b;--d-panel2:#191a22;--d-border:#292a34;--d-text:#f5f5f7;--d-muted:#9b9daa;--d-red:#df1732;--d-green:#32c48d;--d-amber:#f3b94f}
-*{box-sizing:border-box}
-body{margin:0;background:var(--d-bg);color:var(--d-text);font:14px/1.55 Inter,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
-button,a{font:inherit}
-a{color:inherit;text-decoration:none}
-button{cursor:pointer}
-.portal{min-height:100vh;display:grid;grid-template-columns:250px minmax(0,1fr)}
-.sidebar{background:#101116;border-right:1px solid var(--d-border);padding:25px 15px;display:flex;flex-direction:column;gap:26px;min-height:100vh}
-.logo-row{display:flex;align-items:center;gap:10px;padding:0 10px}
-.logo-mark{width:37px;height:37px;border-radius:11px;background:var(--d-red);display:grid;place-items:center;font-size:22px;font-weight:900}
-.logo-title{font-weight:900;letter-spacing:.7px}
-.logo-sub{font-size:10px;letter-spacing:2px;color:var(--d-muted)}
-.nav-label{font-size:10px;letter-spacing:1.8px;color:#777b88;font-weight:800;padding:0 12px;margin-bottom:8px}
-.nav{display:grid;gap:5px}
-.nav a{display:flex;align-items:center;gap:12px;padding:11px 12px;border-radius:10px;color:#b9bac4;font-weight:600}
-.nav a .ico{width:20px;text-align:center;font-size:17px}
-.nav a.active,.nav a:hover{background:rgba(223,23,50,.13);color:#fff}
-.nav a.active{box-shadow:inset 3px 0 var(--d-red)}
-.nav .count{margin-left:auto;border-radius:7px;background:#292a34;padding:1px 7px;font-size:11px}
-.help-card{margin-top:auto;padding:15px;background:linear-gradient(145deg,#24151a,#17171e);border:1px solid #3b252b;border-radius:13px}
-.help-icon{color:#ff6679;font-size:20px}
-.help-card strong{display:block;margin:7px 0}
-.help-card p{color:var(--d-muted);font-size:12px;margin:0 0 12px}
-.help-card a{color:#ff7586;font-size:12px;font-weight:800}
-.main{min-width:0}
-.topbar{min-height:74px;border-bottom:1px solid var(--d-border);display:flex;align-items:center;justify-content:space-between;padding:12px clamp(18px,3vw,42px);gap:15px;background:rgba(16,17,22,.92)}
-.crumb{color:var(--d-muted);font-size:12px}
-.crumb b{color:#fff}
-.top-actions{display:flex;align-items:center;gap:12px}
-.search{width:220px;max-width:30vw;background:#0c0d12;border:1px solid var(--d-border);border-radius:9px;padding:9px 12px;color:#fff}
-.icon-btn{width:36px;height:36px;background:#181920;border:1px solid var(--d-border);border-radius:10px;color:#fff}
-.profile{display:flex;align-items:center;gap:10px;border-left:1px solid var(--d-border);padding-left:15px}
-.avatar{width:36px;height:36px;border-radius:50%;background:#662332;color:#ffdce1;display:grid;place-items:center;font-weight:800}
-.profile strong,.profile small{display:block}
-.profile small{color:var(--d-muted);font-size:11px}
-.content{max-width:1500px;margin:auto;padding:28px clamp(18px,3vw,42px) 45px}
-.eyebrow{font-size:10px;letter-spacing:2px;font-weight:900;color:#ff6578;margin:0 0 9px}
-.welcome{display:flex;justify-content:space-between;gap:18px;align-items:flex-end;margin-bottom:23px}
-.welcome h1{font-size:clamp(27px,3vw,36px);line-height:1.2;letter-spacing:-.8px;margin:0 0 8px}
-.welcome h1 span{color:#ff536a}
-.welcome p{margin:0;color:var(--d-muted)}
-.today-pill{border:1px solid var(--d-border);border-radius:9px;padding:8px 11px;color:#c8c9d2;font-size:12px;white-space:nowrap}
-.stats{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-bottom:23px}
-.stat,.panel{background:var(--d-panel);border:1px solid var(--d-border);border-radius:14px}
-.stat{padding:17px}
-.stat-top{display:flex;align-items:center;justify-content:space-between;color:var(--d-muted);font-size:12px}
-.stat-icon{width:32px;height:32px;border-radius:9px;background:#29202a;color:#ff7586;display:grid;place-items:center;font-size:17px}
-.stat-number{font-size:28px;font-weight:850;letter-spacing:-.6px;margin:9px 0 2px}
-.stat-note{color:var(--d-muted);font-size:11px}
-.positive{color:var(--d-green)}
-.layout{display:grid;grid-template-columns:minmax(0,1.65fr) minmax(280px,.95fr);gap:17px}
-.stack{display:grid;gap:17px;align-content:start}
-.panel{padding:19px;min-width:0}
-.panel-head{display:flex;justify-content:space-between;align-items:flex-start;gap:12px;margin-bottom:17px}
-.panel-head h2{font-size:15px;margin:0 0 3px}
-.panel-head p{font-size:11px;color:var(--d-muted);margin:0}
-.text-link{font-size:11px;color:#ff7182;font-weight:800;white-space:nowrap}
-.course-list{display:grid;gap:10px}
-.course{display:grid;grid-template-columns:49px minmax(0,1fr) auto;gap:12px;align-items:center;padding:13px;border:1px solid #292a34;background:#111218;border-radius:11px}
-.course-art{width:49px;height:49px;border-radius:10px;display:grid;place-items:center;font-size:21px;background:#32202a;color:#ff7586}
-.course-art.ai{background:#24213b;color:#b4a4ff}
-.course-art.excel{background:#1b342c;color:#74d7a9}
-.course h3{font-size:13px;margin:0 0 3px}
-.course p{font-size:11px;color:var(--d-muted);margin:0}
-.course-progress{margin-top:9px;display:flex;align-items:center;gap:8px}
-.bar{height:5px;background:#30313a;border-radius:9px;overflow:hidden;flex:1}
-.bar span{display:block;height:100%;background:var(--d-red);border-radius:9px}
-.course-progress small{font-size:10px;color:#c8c9d2;white-space:nowrap}
-.continue{border:1px solid #4a2730;background:#29151b;color:#ff7b8c;border-radius:8px;padding:8px 10px;font-size:11px;font-weight:800;white-space:nowrap}
-.chart-wrap{height:145px;display:flex;gap:12px;align-items:stretch}
-.chart-y{display:flex;flex-direction:column;justify-content:space-between;color:#747783;font-size:10px;padding:3px 0 20px}
-.chart{display:flex;flex:1;justify-content:space-around;gap:8px;border-bottom:1px solid #33343c;background:repeating-linear-gradient(to bottom,transparent 0,transparent 35px,#272832 36px,#272832 37px);padding:0 5px}
-.day{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;gap:7px;color:#888b96;font-size:10px}
-.bar-column{height:calc(100% - 20px);width:min(25px,80%);display:flex;align-items:flex-end}
-.bar-column span{width:100%;height:var(--h);border-radius:5px 5px 0 0;background:linear-gradient(180deg,#ff536a,#a7132a);opacity:.92}
-.chart-summary{display:flex;gap:10px;align-items:baseline;margin-top:15px}
-.chart-summary strong{font-size:23px}
-.chart-summary span{font-size:11px;color:var(--d-muted)}
-.tasks{display:grid;gap:12px}
-.task{display:flex;gap:11px;align-items:center}
-.task-icon{width:34px;height:34px;border-radius:9px;display:grid;place-items:center;background:#29202a;color:#ff7486;flex-shrink:0}
-.task:nth-child(2) .task-icon{background:#24213b;color:#b4a4ff}
-.task:nth-child(3) .task-icon{background:#1b342c;color:#74d7a9}
-.task-text{min-width:0;flex:1}
-.task-text strong{display:block;font-size:12px}
-.task-text small{display:block;color:var(--d-muted);font-size:10px}
-.status{font-size:10px;padding:4px 7px;border-radius:6px;background:#3a2b19;color:#f4c66e;white-space:nowrap}
-.status.ready{background:#16352a;color:#72d6a6}
-.streak-box{display:flex;gap:14px;align-items:center;padding:14px;background:#1c171a;border:1px solid #37242a;border-radius:11px}
-.flames{font-size:26px;letter-spacing:2px}
-.streak-box strong{display:block;font-size:14px}
-.streak-box p{color:var(--d-muted);font-size:11px;margin:3px 0 0}
-.week{display:flex;justify-content:space-between;margin-top:15px}
-.week span{text-align:center;color:var(--d-muted);font-size:10px}
-.week b{display:grid;place-items:center;width:26px;height:26px;border-radius:50%;margin-bottom:5px;border:1px solid #353640;font-size:11px}
-.week .done b{background:#16372b;border-color:#24694c;color:#7be0b1}
-.quick-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:10px}
-.quick{padding:13px;border:1px solid var(--d-border);background:#111218;border-radius:10px}
-.quick i{font-style:normal;color:#ff7182;font-size:18px}
-.quick strong{display:block;font-size:11px;margin:7px 0 3px}
-.quick small{font-size:10px;color:var(--d-muted)}
-.empty{border:1px dashed #41424c;border-radius:11px;padding:24px;text-align:center;color:var(--d-muted);font-size:12px}
-.empty strong{display:block;color:#fff;margin-bottom:5px}
-.error-msg{padding:11px 13px;background:#381820;color:#ffb7c1;border:1px solid #5a2632;border-radius:9px;font-size:12px;margin-bottom:15px;overflow-wrap:anywhere}
-.hidden{display:none!important}
-.dashboard-muted{color:var(--d-muted);font-size:12px;overflow-wrap:anywhere}
-.debug-actions{display:flex;gap:10px;flex-wrap:wrap;margin-top:10px}
-.debug-actions a{display:inline-block;padding:8px 12px;border:1px solid #5a2632;border-radius:8px;color:#ffb7c1}
-@media(max-width:1100px){.portal{grid-template-columns:210px minmax(0,1fr)}.stats{grid-template-columns:repeat(2,minmax(0,1fr))}.layout{grid-template-columns:minmax(0,1fr)}.sidebar{padding-inline:10px}.search{width:160px}}
-@media(max-width:720px){.portal{display:block}.sidebar{min-height:0;padding:13px 15px;border-right:0;border-bottom:1px solid var(--d-border);gap:12px}.logo-row{padding:0}.nav-label{display:none}.nav{display:flex;overflow:auto}.nav a{white-space:nowrap;padding:8px 10px;font-size:12px}.nav a .ico{display:none}.help-card{display:none}.topbar{height:auto;min-height:64px;padding:12px 15px}.crumb{display:none}.search{display:none}.profile{padding-left:8px}.profile div:nth-child(2){display:none}.content{padding:22px 14px 35px}.welcome{align-items:flex-start;flex-direction:column}.stats{gap:9px}.stat{padding:13px}.stat-number{font-size:24px}.course{grid-template-columns:40px minmax(0,1fr);gap:10px}.course-art{width:40px;height:40px}.continue{grid-column:2;justify-self:start}.quick-grid{grid-template-columns:1fr}.panel{padding:15px}}
-</style>
+<link rel="stylesheet" href="./student-dashboard.css">
 </head>
 <body>
 
 <div class="portal" id="portalApp">
 <aside class="sidebar">
-  <a class="logo-row" href="./index.html">
-    <span class="logo-mark">◆</span>
-    <span><span class="logo-title">TEXAS CAMPUS</span><br><span class="logo-sub">LEARNING PORTAL</span></span>
+  <a class="logo-row" href="./index.html" aria-label="Texas Campus home">
+    <img class="sidebar-logo" src="./assets/texas-campus-logo.png" alt="Texas Campus Learning Portal">
   </a>
 
   <nav>
@@ -140,21 +28,7 @@ button{cursor:pointer}
     </div>
   </nav>
 
-  <nav>
-    <div class="nav-label">YOUR ACCOUNT</div>
-    <div class="nav">
-      <a href="#quick-access"><span class="ico">✳</span>AI Learning Assistant</a>
-      <a href="#payments"><span class="ico">＄</span>Payments</a>
-      <a href="#account"><span class="ico">⚙</span>Settings</a>
-    </div>
-  </nav>
-
-  <div class="help-card">
-    <span class="help-icon">✦</span>
-    <strong>Need a hand?</strong>
-    <p>Get help with your courses or account.</p>
-    <a href="https://wa.me/94779011780" target="_blank" rel="noopener">Visit Help Centre ↗</a>
-  </div>
+  <button id="signOut" class="sidebar-logout" type="button"><span aria-hidden="true">⇥</span> Logout</button>
 </aside>
 
 <main class="main">
@@ -166,7 +40,7 @@ button{cursor:pointer}
       <div class="profile">
         <div class="avatar" id="avatar">ST</div>
         <div><strong id="profileName">Student Name</strong><small>Learner account</small></div>
-        <button id="signOut" class="icon-btn" type="button" title="Sign out" aria-label="Sign out">↪</button>
+
       </div>
     </div>
   </header>
@@ -184,10 +58,10 @@ button{cursor:pointer}
     </section>
 
     <section class="stats">
-      <article class="stat"><div class="stat-top">Enrolled Courses <span class="stat-icon">▦</span></div><div class="stat-number" id="enrolledCount">—</div><div class="stat-note" id="activeNote">Courses linked to your account</div></article>
-      <article class="stat"><div class="stat-top">Overall Progress <span class="stat-icon">◔</span></div><div class="stat-number" id="overallProgress">—</div><div class="stat-note" id="progressNote">Based on recorded lesson progress</div></article>
-      <article class="stat"><div class="stat-top">Certificates <span class="stat-icon">✧</span></div><div class="stat-number" id="certificateCount">0</div><div class="stat-note">Keep going to earn more</div></article>
-      <article class="stat"><div class="stat-top">Learning Time <span class="stat-icon">◷</span></div><div class="stat-number" id="learningTime">—</div><div class="stat-note">Recorded across your courses</div></article>
+      <article class="stat"><div class="stat-top"><span class="stat-label-icon">♙</span> Enrolled Courses <span class="stat-icon red-icon">▦</span></div><div class="stat-number" id="enrolledCount">—</div><div class="stat-note" id="activeNote">Courses linked to your account</div></article>
+      <article class="stat"><div class="stat-top">Overall Progress <span class="stat-icon blue-icon">◔</span></div><div class="stat-number" id="overallProgress">—</div><div class="stat-note" id="progressNote">Based on recorded lesson progress</div></article>
+      <article class="stat"><div class="stat-top">Certificates <span class="stat-icon green-icon">✧</span></div><div class="stat-number" id="certificateCount">0</div><div class="stat-note">Keep going to earn more</div></article>
+      <article class="stat"><div class="stat-top">Learning Time <span class="stat-icon amber-icon">◷</span></div><div class="stat-number" id="learningTime">—</div><div class="stat-note">Recorded across your courses</div></article>
     </section>
 
     <div class="layout">
@@ -221,24 +95,6 @@ button{cursor:pointer}
       </div>
     </div>
 
-    <section class="panel" id="quick-access" style="margin-top:17px">
-      <div class="panel-head"><div><h2>Quick Access</h2><p>Useful links for your studies</p></div></div>
-      <div class="quick-grid">
-        <a class="quick" href="#quick-access"><i>✧</i><strong>My Certificates</strong><small>View your achievements</small></a>
-        <a class="quick" href="#quick-access"><i>✳</i><strong>AI Learning Assistant</strong><small>Get help with a topic</small></a>
-        <a class="quick" href="https://wa.me/94779011780" target="_blank" rel="noopener"><i>✦</i><strong>Student Support</strong><small>Contact Texas Campus</small></a>
-      </div>
-    </section>
-
-    <section class="panel" id="payments" style="margin-top:17px">
-      <div class="panel-head"><div><h2>Payments</h2><p>Your course purchase status</p></div></div>
-      <div id="paymentList" class="empty">Payment history will appear here when connected to your order records.</div>
-    </section>
-
-    <section class="panel" id="account" style="margin-top:17px">
-      <div class="panel-head"><div><h2>Your Account</h2><p>Signed-in student information</p></div></div>
-      <div id="accountDetails" class="dashboard-muted">Checking account information…</div>
-    </section>
 
     <footer style="color:#777;font-size:11px;text-align:center;margin-top:24px">Texas Campus · Learning Portal</footer>
   </div>
@@ -286,15 +142,15 @@ function niceStatus(value) {
 
 function statusOf(order) {
   return String(
-    order.status ||
     order.payment_status ||
     order.order_status ||
+    order.status ||
     "pending"
-  ).toLowerCase();
+  ).toLowerCase().trim();
 }
 
 function paid(order) {
-  return /paid|complete|approved|success|active|confirmed/.test(statusOf(order));
+  return /^(paid|complete|completed|approved|success|active|confirmed)$/.test(statusOf(order));
 }
 
 function pending(order) {
@@ -438,8 +294,16 @@ async function loadDashboard(user) {
     }
 
     const allOrders = orders || [];
-    const eligibleOrders = allOrders.filter(   order => paid(order) && order.course_access === true );
+    console.log("Logged-in student ID:", user.id);
+    console.log("Student orders returned:", allOrders);
+
+    const eligibleOrders = allOrders.filter(order =>
+      paid(order) &&
+      (order.course_access === true || order.course_access === "true")
+    );
     const waitingOrders = allOrders.filter(pending);
+
+    console.log("Eligible approved course orders:", eligibleOrders);
 
     el("enrolledCount").textContent = eligibleOrders.length;
     el("activeNote").textContent = eligibleOrders.length
@@ -479,9 +343,11 @@ async function loadDashboard(user) {
         .in("id", ids);
 
       if (courseError) {
-        console.warn("Course details query:", courseError.message);
+        console.error("Course details query:", courseError);
+        showNotice("Your approved order was found, but course details could not load: " + courseError.message);
       } else {
         courses = courseData || [];
+        console.log("Course details returned:", courses);
       }
     }
 
@@ -566,7 +432,9 @@ async function loadDashboard(user) {
       : `
         <div class="empty">
           <strong>No courses unlocked yet</strong>
-          Courses you purchase will appear here after payment is approved by Texas Campus.
+          ${allOrders.length
+            ? "Your order was found, but no order matches approved payment status and course access. Please contact Texas Campus support if your payment was approved."
+            : "No course orders were returned for this student account. Check that the order student_id matches this logged-in account."}
         </div>
       `;
 
