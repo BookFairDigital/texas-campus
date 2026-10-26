@@ -4,7 +4,7 @@
 
   const css = document.createElement("link");
   css.rel = "stylesheet";
-  css.href = "./chatbot.css?v=1";
+  css.href = "./chatbot.css?v=2";
   document.head.appendChild(css);
 
   const start = () => {
