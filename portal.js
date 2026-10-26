@@ -104,7 +104,8 @@ function renderCourseCards(target,orders){
 }
 function renderPayments(target){
  if(!target)return;
- const payments=[...allOrders,...packageOrders];\n target.innerHTML=payments.length?payments.map(o=>`<div class="payment-row"><div class="task-icon">＄</div><div class="task-copy"><strong>${esc(titleFor(o))}</strong><small>${esc(dateText(o.created_at))} · ${esc(o.payment_reference||"No reference")} · ${esc(money(o.amount,o.currency||"LKR"))}</small></div><span class="status ${approved(o)?"approved":statusOf(o)==="rejected"?"rejected":""}">${esc(statusOf(o).replaceAll("_"," "))}</span></div>`).join(""):`<div class="empty">No payment records found for this account.</div>`;
+ const payments=[...allOrders,...packageOrders];
+ target.innerHTML=payments.length?payments.map(o=>`<div class="payment-row"><div class="task-icon">＄</div><div class="task-copy"><strong>${esc(titleFor(o))}</strong><small>${esc(dateText(o.created_at))} · ${esc(o.payment_reference||"No reference")} · ${esc(money(o.amount,o.currency||"LKR"))}</small></div><span class="status ${approved(o)?"approved":statusOf(o)==="rejected"?"rejected":""}">${esc(statusOf(o).replaceAll("_"," "))}</span></div>`).join(""):`<div class="empty">No payment records found for this account.</div>`;
 }
 function renderAccount(target){
  if(!target)return;
