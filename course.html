@@ -34,7 +34,7 @@
   </section>
   <section class="detail-lower">
     <div class="detail-overview"><p class="eyebrow dark-eyebrow">COURSE OVERVIEW</p><h2>What you'll learn</h2><p id="detail-overview">A practical introduction to the selected course.</p><div class="learn-grid"><div><span>01</span><b>Core concepts</b><small>Understand the key tools and workflow.</small></div><div><span>02</span><b>Practical examples</b><small>Follow guided, real-world style exercises.</small></div><div><span>03</span><b>Learning resources</b><small>Review supporting tutorial materials.</small></div><div><span>04</span><b>Learn at your pace</b><small>Revisit lessons as you progress.</small></div></div><p class="detail-disclaimer">Exact syllabus, lesson count and access duration will be confirmed by Texas Campus before purchase.</p></div>
-    <aside class="purchase-card" id="buy"><p class="eyebrow dark-eyebrow">COURSE ENROLMENT</p><h2>Start learning</h2><p class="purchase-name" id="purchase-name">Selected course</p><div class="purchase-price"><small>Sample price</small><b id="purchase-price">LKR 12,500</b></div><ul><li>Video lessons</li><li>Tutorial materials</li><li>Software installation guide where applicable</li><li>Student dashboard access after approval</li></ul><button class="button button-primary purchase-button" id="buy-button">Buy Now <span>→</span></button>
+    <aside class="purchase-card" id="buy"><p class="eyebrow dark-eyebrow">COURSE ENROLMENT</p><h2>Start learning</h2><p class="purchase-name" id="purchase-name">Selected course</p><div class="purchase-price"><small>Course / package price</small><b id="purchase-price">LKR 12,500</b></div><ul><li>Video lessons</li><li>Tutorial materials</li><li>Software installation guide where applicable</li><li>Student dashboard access after approval</li></ul><button class="button button-primary purchase-button" id="buy-button">Buy Now <span>→</span></button>
       <p class="purchase-note" id="purchase-note">Continue to student registration and bank deposit instructions.</p>
       <a class="back-courses" href="courses.html">← Back to all courses</a></aside>
   </section>
@@ -88,7 +88,7 @@
   <div class="checkout-step" id="checkout-step-register">
     <p class="eyebrow dark-eyebrow">STEP 1 OF 2</p>
     <h2>Create your student details</h2>
-    <p class="checkout-intro">Enter your details to continue with this course order. This is a front-end demo until Firebase is connected.</p>
+    <p class="checkout-intro">Create your student account details to continue with the course or package request.</p>
     <form id="student-checkout-form">
       <label>Full name<input name="fullName" autocomplete="name" required placeholder="Your full name"></label>
       <label>Username<input name="username" autocomplete="username" required minlength="3" placeholder="Choose a username"></label>
@@ -96,14 +96,14 @@
       <label>Mobile number<input name="mobile" type="tel" autocomplete="tel" required pattern="[0-9+() -]{7,20}" placeholder="07X XXX XXXX"></label>
       <label>Password<input name="password" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters"></label>
       <button class="button button-primary checkout-submit" type="submit">Continue to Bank Deposit <span>→</span></button>
-      <p class="checkout-security-note">Demo note: do not enter a real password here. This prototype does not create a secure account or save credentials.</p>
+      <p class="checkout-security-note">Your student account is managed through the Texas Campus sign-in service.</p>
     </form>
   </div>
   <div class="checkout-step" id="checkout-step-payment" hidden>
     <p class="eyebrow dark-eyebrow">STEP 2 OF 2</p>
     <h2>Bank deposit checkout</h2>
     <p class="checkout-intro">Course: <strong id="checkout-course-name"></strong></p>
-    <div class="checkout-total"><span>Sample course total</span><strong id="checkout-course-price">LKR 12,500</strong></div>
+    <div class="checkout-total"><span>Order total</span><strong id="checkout-course-price">LKR 12,500</strong></div>
     <div class="bank-instructions">
       <h3>Bank Deposit Details</h3>
       <p><span>Account Name</span><b>Texas Campus</b></p>
@@ -115,14 +115,14 @@
       <label>Depositor name<input name="depositor" required placeholder="Name on the bank deposit"></label>
       <label>Deposit reference / transaction ID<input name="reference" required placeholder="Enter your deposit reference"></label>
       <label>Payment receipt (optional)<input name="receipt" type="file" accept="image/*,.pdf"></label>
-      <button class="button button-primary checkout-submit" type="submit">Place Demo Order <span>→</span></button>
-      <p class="checkout-security-note">This demo does not send the receipt to an admin or verify a payment. Do not submit real financial information until the secure backend is connected.</p>
+      <button class="button button-primary checkout-submit" type="submit">Submit Bank Deposit Details <span>→</span></button>
+      <p class="checkout-security-note">Your deposit reference is sent to Texas Campus for manual review. Course and package video access stays locked until an administrator approves the request.</p>
     </form>
   </div>
   <div class="checkout-step" id="checkout-step-done" hidden>
     <div class="checkout-success-icon">✓</div>
-    <h2>Demo order prepared</h2>
-    <p>Your front-end checkout flow is working. No real order has been sent, no payment has been verified, and the course has not been unlocked.</p>
+    <h2>Payment request submitted</h2>
+    <p>Your payment request is awaiting administrator review. Course video access unlocks in your student dashboard after approval.</p>
     <div class="demo-order-summary" id="demo-order-summary"></div>
     <button class="button button-primary checkout-submit" type="button" id="finish-demo-order">Close</button>
   </div>
