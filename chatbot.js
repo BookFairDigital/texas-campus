@@ -75,10 +75,16 @@
     const normalize = (value) => value.toLowerCase().normalize("NFKD").replace(/[^a-z0-9\s]/g, " ").replace(/\s+/g, " ").trim();
     const answer = (raw) => {
       const q = normalize(raw);
-      if (/package|bundle|full package|price|cost|ganan|kiyada/.test(q)) {
+      if (/package|bundle|full package/.test(q) || ((/price|cost|ganan|kiyada/.test(q)) && /complete|both|all courses|package/.test(q))) {
         return {
           text: "We have three course packages: Digital Accounting (8 courses) for Rs. 32,000; AI Accounting (4 courses) for Rs. 32,000; and the Complete Bundle (all 12 courses) for Rs. 60,000.",
           action: { href: "./courses.html#package-title", label: "View course packages →" }
+        };
+      }
+      if (/price|cost|fee|ganan|kiyada/.test(q)) {
+        return {
+          text: "Individual course prices are shown on their course cards. Tell me which course you’re interested in, or open the catalogue to compare them.",
+          action: { href: "./courses.html#package-title", label: "Browse individual courses →" }
         };
       }
       if (/enrol|enroll|purchase|buy|payment|deposit|approval|bank|reference|ganna|salli|pay/.test(q)) {
