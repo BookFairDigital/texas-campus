@@ -89,3 +89,18 @@ if (year) year.textContent = new Date().getFullYear();
     }
   });
 })();
+
+
+/* Load the floating Texas Campus support assistant on public pages. */
+(() => {
+  const loadAssistant = () => {
+    if (document.querySelector('script[data-texas-campus-assistant]')) return;
+    const assistantScript = document.createElement("script");
+    assistantScript.src = "./chatbot.js?v=1";
+    assistantScript.dataset.texasCampusAssistant = "true";
+    assistantScript.defer = true;
+    document.body.appendChild(assistantScript);
+  };
+  if (document.body) loadAssistant();
+  else document.addEventListener("DOMContentLoaded", loadAssistant, { once: true });
+})();
