@@ -16,6 +16,7 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
 const $ = (selector) => document.querySelector(selector);
 const params = new URLSearchParams(window.location.search);
 const requestedSlug = params.get("course");
+const requestedPackage = params.get("package");
 
 const dialog = $("#checkout-dialog");
 const registerStep = $("#checkout-step-register");
@@ -28,6 +29,7 @@ const checkoutForm = $("#demo-order-form");
 const registrationForm = $("#student-checkout-form");
 
 let selectedCourse = null;
+let selectedPackage = null;
 let submitting = false;
 
 function showMessage(message) {
@@ -86,7 +88,76 @@ function formatPrice(course) {
   return `${course.currency || "LKR"} ${Number(course.price).toLocaleString("en-LK")}`;
 }
 
+const packageCatalog = {
+  "digital-accounting": {
+    name: "Digital Accounting Full Package", amount: 32000, currency: "LKR",
+    summary: "A complete practical pathway through eight digital accounting courses.",
+    detail: "Includes QuickBooks Desktop, QuickBooks Online, Tally ERP, Sage 50, Xero, Zoho Books, FreshBooks and MYOB Accounting.",
+    slugs: ["quickbooks-desktop", "quickbooks-online", "tally", "sage", "xero", "zoho", "freshbooks", "myob"], mark: "▤"
+  },
+  "ai-accounting": {
+    name: "AI Accounting Full Package", amount: 32000, currency: "LKR",
+    summary: "A complete practical pathway through four AI for Accounting courses.",
+    detail: "Includes ChatGPT for Accounting, Gemini AI for Accounting, Claude AI for Accounting and Gamma AI for Accounting.",
+    slugs: ["chatgpt", "gemini", "claude", "gamma"], mark: "✦"
+  },
+  "complete-bundle": {
+    name: "Complete Bundle", amount: 60000, currency: "LKR",
+    summary: "Both full learning paths together in one complete accounting and AI bundle.",
+    detail: "Includes all eight Digital Accounting courses and all four AI for Accounting courses.",
+    slugs: ["quickbooks-desktop", "quickbooks-online", "tally", "sage", "xero", "zoho", "freshbooks", "myob", "chatgpt", "gemini", "claude", "gamma"], mark: "◇"
+  }
+};
+
+async function loadPackage() {
+  const config = packageCatalog[requestedPackage];
+  if (!config) {
+    showMessage("Package eka catalogue eken select karala aye try karanna.");
+    if (buyButton) buyButton.disabled = true;
+    return;
+  }
+
+  selectedPackage = { ...config, slug: requestedPackage };
+  const { data, error } = await supabase
+    .from("courses")
+    .select("id,slug,title,is_published")
+    .in("slug", config.slugs)
+    .eq("is_published", true);
+
+  if (error) {
+    console.error("Package course lookup failed:", error);
+    showMessage("Package details load karanna bari una. Aye try karanna.");
+    if (buyButton) buyButton.disabled = true;
+    return;
+  }
+
+  const available = new Set((data || []).map(course => course.slug));
+  if (config.slugs.some(slug => !available.has(slug))) {
+    showMessage("Some package courses are unavailable right now. Please contact Texas Campus.");
+    if (buyButton) buyButton.disabled = true;
+    return;
+  }
+
+  setText("#detail-title", config.name);
+  setText("#breadcrumb-title", config.name);
+  setText("#detail-description", config.summary);
+  setText("#detail-overview", config.detail);
+  setText("#purchase-name", config.name);
+  setText("#purchase-price", `${config.currency} ${config.amount.toLocaleString("en-LK")}`);
+  setText("#checkout-course-name", config.name);
+  setText("#checkout-course-price", `${config.currency} ${config.amount.toLocaleString("en-LK")}`);
+  setText("#detail-category", "TEXAS CAMPUS COURSE PACKAGE");
+  setText("#detail-mark", config.mark);
+  const note = $("#purchase-note");
+  if (note) note.textContent = "Submit your bank deposit reference. Video access to every included course unlocks after admin approval.";
+  if (buyButton) buyButton.disabled = false;
+}
+
 async function loadCourse() {
+  if (requestedPackage) {
+    await loadPackage();
+    return;
+  }
   if (!requestedSlug) {
     showMessage("Course eka catalogue eken select karala aye try karanna.");
     if (buyButton) buyButton.disabled = true;
@@ -168,62 +239,56 @@ async function getStudentProfile(user) {
 }
 
 async function startCheckout() {
-  if (!selectedCourse) {
-    showMessage("Course details load wena thuru wait karanna.");
+  if (!selectedCourse && !selectedPackage) {
+    showMessage("Course/package details load wena thuru wait karanna.");
     return;
   }
 
   try {
     const user = await getCurrentUser();
-
     if (!user) {
       const intro = $(".checkout-intro", registerStep || document);
       if (intro) {
         intro.innerHTML =
-          'Course purchase karanna student account ekak one. ' +
+          'Purchase karanna student account ekak one. ' +
           '<a href="./index.html#student-login">Existing student? Log in here</a>. ' +
           'New student kenek nam pahala account form eka fill karanna.';
       }
-
       showStep("register");
       openDialog();
       return;
     }
 
     const profile = await getStudentProfile(user);
-
     if (!profile) {
       showMessage("Student profile eka hambune naha. Admin ta contact karanna.");
       return;
     }
-
     if (profile.account_status && profile.account_status !== "active") {
       showMessage("Student account eka active naha. Admin ta contact karanna.");
       return;
     }
-
-    if (
-      profile.access_expires_at &&
-      new Date(profile.access_expires_at).getTime() < Date.now()
-    ) {
+    if (profile.access_expires_at && new Date(profile.access_expires_at).getTime() < Date.now()) {
       showMessage("Student account access eka expire wela. Admin ta contact karanna.");
       return;
     }
 
+    const purchaseName = selectedPackage?.name || selectedCourse.title;
+    const purchasePrice = selectedPackage
+      ? `${selectedPackage.currency} ${selectedPackage.amount.toLocaleString("en-LK")}`
+      : formatPrice(selectedCourse);
     const depositor = checkoutForm?.elements.namedItem("depositor");
     if (depositor && profile.full_name) depositor.value = profile.full_name;
-
     const intro = $("#checkout-step-payment .checkout-intro");
     if (intro) {
       intro.innerHTML =
-        "Course: <strong>" + escapeHTML(selectedCourse.title) +
+        "Selected: <strong>" + escapeHTML(purchaseName) +
         "</strong><br>Student: <strong>" +
         escapeHTML(profile.full_name || profile.username || user.email || "Student") +
         "</strong>";
     }
-
-    setText("#checkout-course-name", selectedCourse.title);
-    setText("#checkout-course-price", formatPrice(selectedCourse));
+    setText("#checkout-course-name", purchaseName);
+    setText("#checkout-course-price", purchasePrice);
     showStep("payment");
     openDialog();
   } catch (error) {
@@ -332,8 +397,8 @@ async function submitOrder(event) {
   event.preventDefault();
   if (submitting) return;
 
-  if (!selectedCourse) {
-    alert("Course eka load wela naha. Refresh karala try karanna.");
+  if (!selectedCourse && !selectedPackage) {
+    alert("Course/package eka load wela naha. Refresh karala try karanna.");
     return;
   }
 
@@ -356,6 +421,38 @@ async function submitOrder(event) {
   try {
     const user = await getCurrentUser();
     if (!user) throw new Error("Student login session eka naha. Login wela aye try karanna.");
+
+    if (selectedPackage) {
+      const { data, error } = await supabase.functions.invoke("student-create-package-order", {
+        body: {
+          package_slug: selectedPackage.slug,
+          payment_reference: reference,
+          depositor_name: depositor
+        }
+      });
+      if (error) {
+        let details = null;
+        try { details = await error.context?.json?.(); } catch {}
+        throw new Error(details?.error || error.message || "Package request failed.");
+      }
+      if (!data?.order?.id) throw new Error(data?.error || "Package request could not be confirmed.");
+      const summary = $("#demo-order-summary");
+      if (summary) {
+        summary.innerHTML = `
+          <p><span>Package:</span><b>${escapeHTML(selectedPackage.name)}</b></p>
+          <p><span>Amount:</span><b>${escapeHTML(`${selectedPackage.currency} ${selectedPackage.amount.toLocaleString("en-LK")}`)}</b></p>
+          <p><span>Deposit reference:</span><b>${escapeHTML(reference)}</b></p>
+          <p><span>Request ID:</span><b>${escapeHTML(data.order.id)}</b></p>
+          <p><span>Status:</span><b>Pending admin review</b></p>
+          <p><span>Course access:</span><b>All included courses unlock after approval</b></p>
+        `;
+      }
+      const doneText = $("#checkout-step-done > p");
+      if (doneText) doneText.textContent = "Package request submitted. Admin payment approval is required before the included course videos appear in your student dashboard.";
+      showStep("done");
+      form.reset();
+      return;
+    }
 
     const { data: course, error: courseError } = await supabase
       .from("courses")
