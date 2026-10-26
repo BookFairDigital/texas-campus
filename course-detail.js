@@ -148,6 +148,7 @@ async function loadPackage() {
   setText("#checkout-course-price", `${config.currency} ${config.amount.toLocaleString("en-LK")}`);
   setText("#detail-category", "TEXAS CAMPUS COURSE PACKAGE");
   setText("#detail-mark", config.mark);
+  if (buyButton) buyButton.innerHTML = "Buy This Package <span>→</span>";
   const note = $("#purchase-note");
   if (note) note.textContent = "Submit your bank deposit reference. Video access to every included course unlocks after admin approval.";
   if (buyButton) buyButton.disabled = false;
