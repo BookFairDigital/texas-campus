@@ -15,7 +15,7 @@ const statusOf = o => String(o.payment_status || o.status || o.order_status || "
 const approved = o => /^(approved|paid|complete|completed|success|active|confirmed)$/.test(statusOf(o)) && (o.course_access === true || o.course_access === "true");
 const isPending = o => /pending|awaiting|review|processing/.test(statusOf(o));
 const orderCourseId = o => o.course_id || o.courseId || o.product_id || null;
-let currentUser = null, profile = null, allOrders = [], courses = [], progressRows = [];
+let currentUser = null, profile = null, allOrders = [], packageOrders = [], courses = [], progressRows = [];
 function notice(msg){const n=$("notice");if(n){n.textContent=msg;n.classList.remove("hidden");}}
 function clearNotice(){const n=$("notice");if(n){n.textContent="";n.classList.add("hidden");}}
 function initials(s){return String(s||"Student").trim().split(/\s+/).slice(0,2).map(x=>x[0]||"").join("").toUpperCase()||"ST";}
@@ -38,6 +38,11 @@ async function getOrders(user){
  if(error) throw new Error("Could not load payment/course orders: "+error.message);
  return data||[];
 }
+async function getPackageOrders(user){
+ const {data,error}=await sb.from("course_package_orders").select("*").eq("student_id",user.id).order("created_at",{ascending:false});
+ if(error) throw new Error("Could not load package orders: "+error.message);
+ return data||[];
+}
 async function getCourses(){
  const ids=[...new Set(allOrders.map(orderCourseId).filter(Boolean))];
  let byId=[];
@@ -56,9 +61,21 @@ async function getProgress(user){
  if(error){console.info("Progress table not configured yet:",error.message);return [];}
  return data||[];
 }
-function approvedOrders(){return allOrders.filter(approved);}
+function approvedOrders(){
+ const individual = allOrders.filter(approved);
+ const packageAccess = packageOrders.filter(approved).flatMap(order =>
+  (Array.isArray(order.course_ids) ? order.course_ids : []).map(courseId => ({
+   ...order,
+   id: `package:${order.id}:${courseId}`,
+   course_id: courseId,
+   package_access: true,
+   package_order_id: order.id
+  }))
+ );
+ return [...individual, ...packageAccess];
+}
 function courseFor(order){return courses.find(c=>String(c.id)===String(orderCourseId(order)))||null;}
-function titleFor(order){return courseFor(order)?.title||order.course_title||order.title||order.course_name||"Purchased course";}
+function titleFor(order){return courseFor(order)?.title||order.package_name||order.course_title||order.title||order.course_name||"Purchased course";}
 function slugFor(order){return courseFor(order)?.slug||order.course_slug||"";}
 function approvalDate(order){return order.reviewed_at||order.approved_at||order.created_at||null;}
 function expiryDate(order){const base=approvalDate(order);if(!base)return null;const d=new Date(base);d.setFullYear(d.getFullYear()+2);return d;}
@@ -87,7 +104,7 @@ function renderCourseCards(target,orders){
 }
 function renderPayments(target){
  if(!target)return;
- target.innerHTML=allOrders.length?allOrders.map(o=>`<div class="payment-row"><div class="task-icon">＄</div><div class="task-copy"><strong>${esc(titleFor(o))}</strong><small>${esc(dateText(o.created_at))} · ${esc(o.payment_reference||"No reference")} · ${esc(money(o.amount,o.currency||"LKR"))}</small></div><span class="status ${approved(o)?"approved":statusOf(o)==="rejected"?"rejected":""}">${esc(statusOf(o).replaceAll("_"," "))}</span></div>`).join(""):`<div class="empty">No payment records found for this account.</div>`;
+ const payments=[...allOrders,...packageOrders];\n target.innerHTML=payments.length?payments.map(o=>`<div class="payment-row"><div class="task-icon">＄</div><div class="task-copy"><strong>${esc(titleFor(o))}</strong><small>${esc(dateText(o.created_at))} · ${esc(o.payment_reference||"No reference")} · ${esc(money(o.amount,o.currency||"LKR"))}</small></div><span class="status ${approved(o)?"approved":statusOf(o)==="rejected"?"rejected":""}">${esc(statusOf(o).replaceAll("_"," "))}</span></div>`).join(""):`<div class="empty">No payment records found for this account.</div>`;
 }
 function renderAccount(target){
  if(!target)return;
@@ -171,7 +188,7 @@ async function loadPage(){
  if(error)throw error;
  if(!data.session?.user){location.replace("./index.html#student-login");return;}
  currentUser=data.session.user;profile=await getProfile(currentUser);shellUser();
- allOrders=await getOrders(currentUser);await getCourses();progressRows=await getProgress(currentUser);
+ allOrders=await getOrders(currentUser);packageOrders=await getPackageOrders(currentUser);await getCourses();progressRows=await getProgress(currentUser);
  if(page==="dashboard")renderDashboard();
  if(page==="my-courses")renderCourseCards($("courseList"),approvedOrders());
  if(page==="catalogue")await loadCatalogue($("catalogueList"));
