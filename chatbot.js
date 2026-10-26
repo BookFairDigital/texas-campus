@@ -12,9 +12,36 @@
     const root = document.createElement("div");
     root.id = "tc-assistant";
     root.innerHTML = `
-      <button class="tc-chat-launcher" type="button" aria-label="Open Texas Campus assistant" aria-expanded="false" aria-controls="tc-chat-panel">
+      <button class="tc-chat-launcher" type="button" aria-label="Open Texas Campus AI assistant" aria-expanded="false" aria-controls="tc-chat-panel">
         <span class="tc-launcher-pulse"></span>
-        <svg viewBox="0 0 24 24" aria-hidden="true"><path d="M12 3.2c-5 0-9 3.4-9 7.7 0 2.1 1 4 2.7 5.4L5 20.8l4.7-2.2c.8.2 1.5.3 2.3.3 5 0 9-3.5 9-7.8s-4-7.9-9-7.9Z"/><path d="M8 10.9h.1m3.9 0h.1m3.9 0h.1"/></svg>
+        <svg class="tc-launcher-robot" viewBox="0 0 100 118" aria-hidden="true">
+          <defs>
+            <linearGradient id="tcBotMetal" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#fff"/><stop offset=".55" stop-color="#cbd2df"/><stop offset="1" stop-color="#858d9c"/></linearGradient>
+            <linearGradient id="tcBotRed" x1="0" y1="0" x2="1" y2="1"><stop stop-color="#ff5369"/><stop offset="1" stop-color="#a90d27"/></linearGradient>
+            <linearGradient id="tcBotVisor" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#132535"/><stop offset="1" stop-color="#080d16"/></linearGradient>
+            <radialGradient id="tcBotEye"><stop stop-color="#c8ffff"/><stop offset=".38" stop-color="#55e7ff"/><stop offset="1" stop-color="#1686ed"/></radialGradient>
+            <filter id="tcBotGlow" x="-100%" y="-100%" width="300%" height="300%"><feGaussianBlur stdDeviation="2.2" result="blur"/><feMerge><feMergeNode in="blur"/><feMergeNode in="SourceGraphic"/></feMerge></filter>
+          </defs>
+          <ellipse cx="51" cy="111" rx="25" ry="4" fill="#11151d" opacity=".2"/>
+          <path d="M50 13V7" stroke="#b8c2d2" stroke-width="3" stroke-linecap="round"/><circle cx="50" cy="6" r="4" fill="#ed334b"/>
+          <path d="M27 31c0-12 9-21 23-21s23 9 23 21v14H27V31Z" fill="url(#tcBotMetal)" stroke="#8993a3" stroke-width="1.5"/>
+          <path d="M24 28c0-12 11-21 26-21s26 9 26 21v3H24v-3Z" fill="#f5f7fb"/>
+          <path d="M26 27c0-11 10-18 24-18s24 7 24 18H26Z" fill="url(#tcBotMetal)"/>
+          <rect x="26" y="24" width="48" height="31" rx="14" fill="url(#tcBotVisor)" stroke="#596579" stroke-width="1.5"/>
+          <ellipse cx="40" cy="39" rx="5" ry="6" fill="url(#tcBotEye)" filter="url(#tcBotGlow)"/>
+          <ellipse cx="60" cy="39" rx="5" ry="6" fill="url(#tcBotEye)" filter="url(#tcBotGlow)"/>
+          <path d="M44 49c3 2 9 2 12 0" stroke="#66dcfa" stroke-width="1.5" stroke-linecap="round"/>
+          <path d="M25 31h-5a4 4 0 0 0-4 4v10a4 4 0 0 0 4 4h5m50-18h5a4 4 0 0 1 4 4v10a4 4 0 0 1-4 4h-5" fill="url(#tcBotRed)" stroke="#c3cad6" stroke-width="2"/>
+          <path d="M42 55v7h16v-7" fill="#aeb7c6"/>
+          <path d="M32 62c0-3 3-5 6-5h24c3 0 6 2 6 5l8 31-12 9H36l-12-9 8-31Z" fill="url(#tcBotMetal)" stroke="#8a93a2" stroke-width="1.5"/>
+          <path d="M39 62h22l-2 11-9 5-9-5-2-11Z" fill="url(#tcBotRed)" opacity=".9"/>
+          <path d="M40 78c0-2 2-4 4-4h12c2 0 4 2 4 4v9c0 2-2 4-4 4H44c-2 0-4-2-4-4v-9Z" fill="#1b2737" stroke="#8c96a8" stroke-width="1.5"/>
+          <path d="m50 77 5 6-5 6-5-6 5-6Z" fill="#77edff" filter="url(#tcBotGlow)"/>
+          <path d="m32 66-8 4-7 18 5 3 13-14m33-11 8 4 7 18-5 3-13-14" fill="none" stroke="url(#tcBotMetal)" stroke-width="7" stroke-linecap="round" stroke-linejoin="round"/>
+          <circle cx="18" cy="91" r="4" fill="#dce1ea" stroke="#929bab"/><circle cx="82" cy="91" r="4" fill="#dce1ea" stroke="#929bab"/>
+          <path d="m39 99-4 10m26-10 4 10" stroke="#aeb7c6" stroke-width="7" stroke-linecap="round"/>
+          <path d="M29 111h11m20 0h11" stroke="#dce1ea" stroke-width="6" stroke-linecap="round"/>
+        </svg>
         <span class="tc-launcher-label">Ask Texas</span>
       </button>
       <section class="tc-chat-panel" id="tc-chat-panel" role="dialog" aria-label="Texas Campus assistant" aria-modal="false" hidden>
