@@ -96,7 +96,7 @@ if (year) year.textContent = new Date().getFullYear();
   const loadAssistant = () => {
     if (document.querySelector('script[data-texas-campus-assistant]')) return;
     const assistantScript = document.createElement("script");
-    assistantScript.src = "./chatbot.js?v=1";
+    assistantScript.src = "./chatbot.js?v=2";
     assistantScript.dataset.texasCampusAssistant = "true";
     assistantScript.defer = true;
     document.body.appendChild(assistantScript);
