@@ -670,10 +670,9 @@
       <section class="admin-status-banner" aria-label="System status">
         <div class="admin-status-icon" aria-hidden="true">!</div>
         <div>
-          <strong>Some features require setup</strong>
+          <strong>Payment review and course approval</strong>
           <p>
-            Administrator login and student account creation use Supabase.
-            Course saving, payment approval and course unlocking are not yet connected.
+            Course and package requests appear in Payment Requests below. Approving a verified payment unlocks the purchased videos in the student dashboard.
           </p>
         </div>
       </section>
@@ -822,7 +821,7 @@
     <div class="admin-card-icon">▣</div>
     <div>
       <h2>Payment Requests</h2>
-      <p>Review and approve or reject course orders.</p>
+      <p>Review and approve or reject individual course and full package requests.</p>
     </div>
   </div>
 
@@ -846,21 +845,19 @@
             <div class="admin-metric-box">
               <div>
                 <span class="admin-metric-label">Access Management</span>
-                <strong class="admin-metric-value">Not connected</strong>
+                <strong class="admin-metric-value">Linked to payment approval</strong>
               </div>
-              <span class="admin-mini-status">Setup required</span>
+              <span class="admin-mini-status">Active</span>
             </div>
 
             <p class="admin-card-description">
-              After payment verification, approved students will be granted access to their purchased lessons.
+              Approving a course or package order automatically unlocks its included videos in the student dashboard.
             </p>
 
-            <button class="admin-btn admin-card-action" type="button" disabled>
-              Manage Course Access →
-            </button>
+            <p class="admin-card-description">No extra access step is needed after payment approval.</p>
 
             <p class="admin-card-footnote">
-              Course access controls are not active yet.
+              Pending and rejected orders remain locked.
             </p>
           </article>
 
@@ -1148,8 +1145,12 @@ async function loadOrders() {
       const student = Array.isArray(order.profiles) ? order.profiles[0] : order.profiles;
       const course = Array.isArray(order.courses) ? order.courses[0] : order.courses;
 
+      const orderTitle = order.order_type === "package"
+        ? `${safeText(course?.title || order.package_name || "Course package")} · ${Number(order.package_course_count || 0)} courses`
+        : safeText(course?.title || "Course");
+
       info.innerHTML =
-        `<strong>${safeText(course?.title || "Course")}</strong><br>` +
+        `<strong>${orderTitle}</strong><br>` +
         `<small>${safeText(student?.full_name || student?.email || "Student")} · ` +
         `LKR ${Number(order.amount).toLocaleString()} · ` +
         `${safeText(order.payment_status)}</small><br>` +
@@ -1179,6 +1180,7 @@ async function loadOrders() {
                 action: "review_order",
                 id: order.id,
                 status,
+                order_type: order.order_type || "course",
                 admin_note: note
               });
               ordersMessage.textContent =
