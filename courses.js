@@ -32,7 +32,7 @@ const brandLogos = {
 
 function formatPrice(course) {
   if (course.price === null || course.price === undefined || course.price === "") {
-    return "Contact us";
+    return "View course price";
   }
 
   return `${course.currency || "LKR"} ${Number(course.price).toLocaleString("en-LK")}`;
