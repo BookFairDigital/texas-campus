@@ -562,10 +562,6 @@ async function submitOrder(event) {
       throw new Error("Oya me course ekata already access thiyenawa. Dashboard eka check karanna.");
     }
 
-    if (existingOrders?.some(order => order.payment_status === "pending")) {
-      throw new Error("Me course ekata pending order ekak thiyenawa. Admin review eka iwara wenakan wait karanna.");
-    }
-
     const { data: order, error: orderError } = await supabase
       .from("course_orders")
       .insert({
