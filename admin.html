@@ -949,29 +949,38 @@
   <div class="admin-card-head">
     <div class="admin-card-icon">▶</div>
     <div>
-      <h2>Course Videos & Study Materials</h2>
-      <p>Choose one of the 12 published courses, then upload a lesson video or PDF study material to private Cloudflare R2 storage.</p>
+      <h2>Course Content Storage</h2>
+      <p>Video uploads and PDF study materials are separated for easier course-by-course management.</p>
     </div>
   </div>
 
-  <form id="r2-content-form">
-    <label class="admin-label" for="r2-content-course">Select Course</label>
-    <select class="admin-input" id="r2-content-course" required>
-      <option value="">Loading courses…</option>
-    </select>
+  <div style="display:flex;gap:8px;flex-wrap:wrap;margin:16px 0">
+    <button type="button" class="admin-btn" id="r2-video-tab" aria-selected="true">▶ Video Lessons</button>
+    <button type="button" class="admin-btn secondary" id="r2-pdf-tab" aria-selected="false">▤ PDF Study Materials</button>
+  </div>
 
-    <label class="admin-label" for="r2-content-type">Content Type</label>
-    <select class="admin-input" id="r2-content-type" required>
-      <option value="video">Lesson Video</option>
-      <option value="study_material">Study Material (PDF)</option>
-    </select>
+  <form id="r2-content-form">
+    <input type="hidden" id="r2-content-type" value="video">
+    <div id="r2-video-course-wrap">
+      <label class="admin-label" for="r2-content-course">Select Course for Videos</label>
+      <select class="admin-input" id="r2-content-course" required>
+        <option value="">Loading courses…</option>
+      </select>
+    </div>
+
+    <div id="r2-pdf-course-wrap" hidden>
+      <label class="admin-label">Select a Course for PDF Materials</label>
+      <p class="admin-card-footnote">Each course is listed separately. Choose the course where this PDF belongs.</p>
+      <div id="r2-pdf-course-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:9px;margin:12px 0"></div>
+      <input type="hidden" id="r2-pdf-course-id">
+    </div>
 
     <div id="r2-lesson-fields">
       <label class="admin-label" for="r2-lesson-number">Lesson Number (auto-suggested)</label>
       <input class="admin-input" id="r2-lesson-number" type="number" min="1" step="1" required>
     </div>
 
-    <label class="admin-label" for="r2-content-title">Lesson / Material Title</label>
+    <label class="admin-label" for="r2-content-title" id="r2-title-label">Lesson Title</label>
     <input class="admin-input" id="r2-content-title" maxlength="180" placeholder="e.g. Introduction to MYOB" required>
 
     <label class="admin-label" for="r2-content-file">Choose File</label>
@@ -1160,14 +1169,58 @@ loadOrders();
       return used.length ? Math.max(...used) + 1 : 1;
     }
 
+    const r2VideoTab = document.getElementById("r2-video-tab");
+    const r2PdfTab = document.getElementById("r2-pdf-tab");
+    const r2PdfCourseWrap = document.getElementById("r2-pdf-course-wrap");
+    const r2VideoCourseWrap = document.getElementById("r2-video-course-wrap");
+    const r2PdfCourseGrid = document.getElementById("r2-pdf-course-grid");
+    const r2PdfCourseId = document.getElementById("r2-pdf-course-id");
+    const r2TitleLabel = document.getElementById("r2-title-label");
+
+    function r2CurrentCourseId() {
+      return r2TypeSelect.value === "video" ? r2CourseSelect.value : r2PdfCourseId.value;
+    }
+
+    function r2SetContentMode(mode) {
+      const isVideo = mode === "video";
+      r2TypeSelect.value = isVideo ? "video" : "study_material";
+      r2VideoTab.classList.toggle("secondary", !isVideo);
+      r2PdfTab.classList.toggle("secondary", isVideo);
+      r2VideoTab.setAttribute("aria-selected", String(isVideo));
+      r2PdfTab.setAttribute("aria-selected", String(!isVideo));
+      r2VideoCourseWrap.hidden = !isVideo;
+      r2PdfCourseWrap.hidden = isVideo;
+      r2CourseSelect.required = isVideo;
+      r2LessonFields.hidden = !isVideo;
+      r2LessonNumber.required = isVideo;
+      r2ContentFile.accept = isVideo ? "video/*,.mp4,.mov,.m4v,.webm,.mkv" : "application/pdf,.pdf";
+      r2TitleLabel.textContent = isVideo ? "Lesson Title" : "PDF Material Title";
+      r2ContentFile.value = "";
+      document.getElementById("r2-file-help").textContent = isVideo
+        ? "Video files up to 2 GB. Lesson number is suggested automatically for the selected course."
+        : "PDF files up to 100 MB. Select one of the 12 courses above. You can link the PDF to a lesson after uploading if needed.";
+      if (isVideo) r2RefreshLessonNumber();
+      else r2LessonNumber.value = "";
+    }
+
+    function r2RenderPdfCourseCards() {
+      r2PdfCourseGrid.innerHTML = r2Courses.map(course => {
+        const selected = r2PdfCourseId.value === course.id;
+        const count = r2Items.filter(item => item.course_id === course.id && item.content_type === "study_material").length;
+        return '<button type="button" class="admin-btn ' + (selected ? '' : 'secondary') +
+          '" data-pdf-course="' + safeText(course.id) + '" style="text-align:left;min-height:62px;white-space:normal">' +
+          '<strong>' + safeText(course.title) + '</strong><br><small>' + count + ' PDF file(s)</small></button>';
+      }).join("");
+    }
+
     function r2RefreshLessonNumber() {
-      const courseId = r2CourseSelect.value;
+      const courseId = r2CurrentCourseId();
       if (r2TypeSelect.value === "video") {
         r2LessonFields.hidden = false;
         r2LessonNumber.required = true;
         r2LessonNumber.value = r2NextLesson(courseId);
       } else {
-        r2LessonFields.hidden = false;
+        r2LessonFields.hidden = true;
         r2LessonNumber.required = false;
         r2LessonNumber.value = "";
       }
@@ -1203,25 +1256,27 @@ loadOrders();
       r2CourseSelect.innerHTML = '<option value="">Select a course</option>' +
         r2Courses.map(course => '<option value="' + safeText(course.id) + '">' + safeText(course.title) + '</option>').join("");
       r2RenderContentList();
+      if (!r2PdfCourseId.value && r2Courses.length) r2PdfCourseId.value = "";
+      r2RenderPdfCourseCards();
       r2RefreshLessonNumber();
     }
 
     r2CourseSelect.addEventListener("change", r2RefreshLessonNumber);
-    r2TypeSelect.addEventListener("change", () => {
-      const isVideo = r2TypeSelect.value === "video";
-      r2ContentFile.accept = isVideo ? "video/*,.mp4,.mov,.m4v,.webm,.mkv" : "application/pdf,.pdf";
-      document.getElementById("r2-file-help").textContent = isVideo
-        ? "Video files up to 2 GB. Lesson number is suggested automatically."
-        : "PDF files up to 100 MB. Leave lesson number blank for general course material, or attach it to a lesson.";
-      r2RefreshLessonNumber();
+    r2VideoTab.addEventListener("click", () => r2SetContentMode("video"));
+    r2PdfTab.addEventListener("click", () => r2SetContentMode("study_material"));
+    r2PdfCourseGrid.addEventListener("click", event => {
+      const button = event.target.closest("[data-pdf-course]");
+      if (!button) return;
+      r2PdfCourseId.value = button.dataset.pdfCourse;
+      r2RenderPdfCourseCards();
     });
 
     r2ContentForm.addEventListener("submit", async event => {
       event.preventDefault();
-      const courseId = r2CourseSelect.value;
+      const contentType = r2TypeSelect.value;
+      const courseId = r2CurrentCourseId();
       const course = r2Courses.find(item => item.id === courseId);
       const file = r2ContentFile.files[0];
-      const contentType = r2TypeSelect.value;
       const title = r2ContentTitle.value.trim();
       const lessonNumber = r2LessonNumber.value ? Number(r2LessonNumber.value) : null;
       if (!course || !file || !title) return;
@@ -1318,9 +1373,9 @@ loadOrders();
           safeText(course.title) + "<br>" + safeText(isVideo ? "Lesson " + lessonNumber + " · " + title : "Study Material · " + title) +
           "<br>R2 object key: <code>" + safeText(signed.key) + "</code>";
         r2ContentForm.reset();
-        r2TypeSelect.value = "video";
-        r2ContentFile.accept = "video/*,.mp4,.mov,.m4v,.webm,.mkv";
-        document.getElementById("r2-file-help").textContent = "Video files up to 2 GB. Lesson number is suggested automatically.";
+        r2PdfCourseId.value = "";
+        r2SetContentMode(contentType);
+        r2RenderPdfCourseCards();
         await r2LoadContent();
       } catch (error) {
         console.error("Course content upload failed:", error);
@@ -1331,10 +1386,13 @@ loadOrders();
       }
     });
 
-    r2LoadContent().catch(error => {
+    r2VideoTab.addEventListener("click", () => r2SetContentMode("video"));
+    r2PdfTab.addEventListener("click", () => r2SetContentMode("study_material"));
+    r2LoadContent().then(() => r2SetContentMode("video")).catch(error => {
       console.error("Could not load R2 course content:", error);
       r2ContentMessage.textContent = error.message || "Could not load the course list. Refresh the page.";
       r2CourseSelect.innerHTML = '<option value="">Could not load courses</option>';
+      r2PdfCourseGrid.textContent = "Could not load courses.";
     });
 
     const adminTabTargets = {
