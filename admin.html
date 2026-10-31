@@ -949,32 +949,52 @@
   <div class="admin-card-head">
     <div class="admin-card-icon">▶</div>
     <div>
-      <h2>R2 Video Storage</h2>
-      <p>Upload course videos directly to the private Cloudflare R2 bucket.</p>
+      <h2>Course Videos & Study Materials</h2>
+      <p>Choose one of the 12 published courses, then upload a lesson video or PDF study material to private Cloudflare R2 storage.</p>
     </div>
   </div>
 
-  <form id="r2-upload-form">
-    <label class="admin-label" for="r2-course-slug">Course folder / URL slug</label>
-    <input class="admin-input" id="r2-course-slug" placeholder="digital-accounting"
-      pattern="[a-zA-Z0-9-]+" maxlength="80" value="general" required>
+  <form id="r2-content-form">
+    <label class="admin-label" for="r2-content-course">Select Course</label>
+    <select class="admin-input" id="r2-content-course" required>
+      <option value="">Loading courses…</option>
+    </select>
 
-    <label class="admin-label" for="r2-video-file">Select video file (maximum 2 GB)</label>
-    <input class="admin-input" id="r2-video-file" type="file"
-      accept="video/*,.mp4,.mov,.m4v,.webm,.mkv" required>
+    <label class="admin-label" for="r2-content-type">Content Type</label>
+    <select class="admin-input" id="r2-content-type" required>
+      <option value="video">Lesson Video</option>
+      <option value="study_material">Study Material (PDF)</option>
+    </select>
 
-    <button class="admin-btn admin-card-action" id="r2-upload-button" type="submit">
-      Upload Video to R2
-    </button>
-    <div class="admin-progress" id="r2-upload-progress" hidden aria-label="Upload progress">
-      <span id="r2-upload-progress-bar"></span>
+    <div id="r2-lesson-fields">
+      <label class="admin-label" for="r2-lesson-number">Lesson Number (auto-suggested)</label>
+      <input class="admin-input" id="r2-lesson-number" type="number" min="1" step="1" required>
     </div>
-    <p id="r2-upload-message" class="login-message" role="status" aria-live="polite"></p>
-    <div id="r2-upload-result" class="admin-upload-result" hidden></div>
+
+    <label class="admin-label" for="r2-content-title">Lesson / Material Title</label>
+    <input class="admin-input" id="r2-content-title" maxlength="180" placeholder="e.g. Introduction to MYOB" required>
+
+    <label class="admin-label" for="r2-content-file">Choose File</label>
+    <input class="admin-input" id="r2-content-file" type="file" accept="video/*,.mp4,.mov,.m4v,.webm,.mkv" required>
+    <p class="admin-card-footnote" id="r2-file-help">Video files up to 2 GB. Lesson number is suggested automatically based on existing lessons.</p>
+
+    <button class="admin-btn admin-card-action" id="r2-content-upload-button" type="submit">Upload to R2</button>
+    <div class="admin-progress" id="r2-content-progress" hidden aria-label="Upload progress">
+      <span id="r2-content-progress-bar"></span>
+    </div>
+    <p id="r2-content-message" class="login-message" role="status" aria-live="polite"></p>
+    <div id="r2-content-result" class="admin-upload-result" hidden></div>
   </form>
 
+  <div style="margin-top:24px">
+    <div class="admin-card-head">
+      <div class="admin-card-icon">▤</div>
+      <div><h2>Uploaded Course Content</h2><p>Files saved against each course and lesson.</p></div>
+    </div>
+    <div id="r2-content-list" class="admin-upload-result">Loading uploaded files…</div>
+  </div>
   <p class="admin-card-footnote">
-    Files are uploaded to the private R2 bucket. This upload tool stores the object in R2 and returns its object key; student playback and course lesson linking are separate steps.
+    Videos: maximum 2 GB. PDF study materials: maximum 100 MB. Files remain private in R2. Student playback and download links need a separate student-side integration.
   </p>
 </article>
 
@@ -1119,91 +1139,202 @@ loadOrders();
       }
     });
 
-    const r2UploadForm = document.getElementById("r2-upload-form");
-    const r2UploadButton = document.getElementById("r2-upload-button");
-    const r2UploadMessage = document.getElementById("r2-upload-message");
-    const r2UploadResult = document.getElementById("r2-upload-result");
-    const r2Progress = document.getElementById("r2-upload-progress");
-    const r2ProgressBar = document.getElementById("r2-upload-progress-bar");
+    const r2ContentForm = document.getElementById("r2-content-form");
+    const r2CourseSelect = document.getElementById("r2-content-course");
+    const r2TypeSelect = document.getElementById("r2-content-type");
+    const r2LessonFields = document.getElementById("r2-lesson-fields");
+    const r2LessonNumber = document.getElementById("r2-lesson-number");
+    const r2ContentFile = document.getElementById("r2-content-file");
+    const r2ContentTitle = document.getElementById("r2-content-title");
+    const r2ContentButton = document.getElementById("r2-content-upload-button");
+    const r2ContentMessage = document.getElementById("r2-content-message");
+    const r2ContentResult = document.getElementById("r2-content-result");
+    const r2ContentProgress = document.getElementById("r2-content-progress");
+    const r2ContentProgressBar = document.getElementById("r2-content-progress-bar");
+    let r2Courses = [];
+    let r2Items = [];
 
-    r2UploadForm.addEventListener("submit", async (event) => {
+    function r2NextLesson(courseId) {
+      const used = r2Items.filter(item => item.course_id === courseId && item.content_type === "video")
+        .map(item => Number(item.lesson_number)).filter(Number.isInteger);
+      return used.length ? Math.max(...used) + 1 : 1;
+    }
+
+    function r2RefreshLessonNumber() {
+      const courseId = r2CourseSelect.value;
+      if (r2TypeSelect.value === "video") {
+        r2LessonFields.hidden = false;
+        r2LessonNumber.required = true;
+        r2LessonNumber.value = r2NextLesson(courseId);
+      } else {
+        r2LessonFields.hidden = false;
+        r2LessonNumber.required = false;
+        r2LessonNumber.value = "";
+      }
+    }
+
+    function r2RenderContentList() {
+      const host = document.getElementById("r2-content-list");
+      if (!r2Items.length) {
+        host.textContent = "No videos or study materials uploaded yet.";
+        return;
+      }
+      const courseName = id => r2Courses.find(course => course.id === id)?.title || "Course";
+      host.innerHTML = r2Items.map(item => {
+        const label = item.content_type === "video"
+          ? "Lesson " + item.lesson_number + " · Video"
+          : "Study Material" + (item.lesson_number ? " · Lesson " + item.lesson_number : "");
+        const size = item.file_size >= 1024 * 1024
+          ? (item.file_size / (1024 * 1024)).toFixed(1) + " MB"
+          : Math.max(1, Math.round(item.file_size / 1024)) + " KB";
+        return '<div style="padding:10px 0;border-bottom:1px solid #343540">' +
+          '<strong>' + safeText(courseName(item.course_id)) + '</strong><br>' +
+          safeText(label + " · " + item.title) + '<br><span class="admin-card-footnote">' +
+          safeText(item.file_name) + " · " + safeText(size) + '</span></div>';
+      }).join("");
+    }
+
+    async function r2LoadContent() {
+      const { data, error } = await supabase.functions.invoke("admin-course-content", { body: { action: "list" } });
+      if (error) throw error;
+      if (data?.error) throw new Error(data.error);
+      r2Courses = data.courses || [];
+      r2Items = data.content || [];
+      r2CourseSelect.innerHTML = '<option value="">Select a course</option>' +
+        r2Courses.map(course => '<option value="' + safeText(course.id) + '">' + safeText(course.title) + '</option>').join("");
+      r2RenderContentList();
+      r2RefreshLessonNumber();
+    }
+
+    r2CourseSelect.addEventListener("change", r2RefreshLessonNumber);
+    r2TypeSelect.addEventListener("change", () => {
+      const isVideo = r2TypeSelect.value === "video";
+      r2ContentFile.accept = isVideo ? "video/*,.mp4,.mov,.m4v,.webm,.mkv" : "application/pdf,.pdf";
+      document.getElementById("r2-file-help").textContent = isVideo
+        ? "Video files up to 2 GB. Lesson number is suggested automatically."
+        : "PDF files up to 100 MB. Leave lesson number blank for general course material, or attach it to a lesson.";
+      r2RefreshLessonNumber();
+    });
+
+    r2ContentForm.addEventListener("submit", async event => {
       event.preventDefault();
-      const file = document.getElementById("r2-video-file").files[0];
-      const courseSlug = document.getElementById("r2-course-slug").value.trim();
-      if (!file) return;
-
-      if (!file.type.startsWith("video/")) {
-        r2UploadMessage.textContent = "Please select a video file.";
+      const courseId = r2CourseSelect.value;
+      const course = r2Courses.find(item => item.id === courseId);
+      const file = r2ContentFile.files[0];
+      const contentType = r2TypeSelect.value;
+      const title = r2ContentTitle.value.trim();
+      const lessonNumber = r2LessonNumber.value ? Number(r2LessonNumber.value) : null;
+      if (!course || !file || !title) return;
+      const isVideo = contentType === "video";
+      if (isVideo && !file.type.startsWith("video/")) {
+        r2ContentMessage.textContent = "Please choose a valid video file.";
         return;
       }
-      if (file.size > 2 * 1024 * 1024 * 1024) {
-        r2UploadMessage.textContent = "This file is larger than the 2 GB upload limit.";
+      if (!isVideo && file.type !== "application/pdf" && !file.name.toLowerCase().endsWith(".pdf")) {
+        r2ContentMessage.textContent = "Study materials must be PDF files.";
+        return;
+      }
+      if (file.size > (isVideo ? 2 * 1024 * 1024 * 1024 : 100 * 1024 * 1024)) {
+        r2ContentMessage.textContent = isVideo ? "Video maximum size is 2 GB." : "PDF maximum size is 100 MB.";
+        return;
+      }
+      if (isVideo && (!Number.isInteger(lessonNumber) || lessonNumber < 1)) {
+        r2ContentMessage.textContent = "Enter a valid lesson number.";
         return;
       }
 
-      r2UploadButton.disabled = true;
-      r2UploadResult.hidden = true;
-      r2Progress.hidden = false;
-      r2ProgressBar.style.width = "0%";
-      r2UploadMessage.style.color = "";
-      r2UploadMessage.textContent = "Preparing secure upload...";
+      r2ContentButton.disabled = true;
+      r2ContentResult.hidden = true;
+      r2ContentProgress.hidden = false;
+      r2ContentProgressBar.style.width = "0%";
+      r2ContentMessage.style.color = "";
+      r2ContentMessage.textContent = "Preparing secure upload…";
 
       try {
-        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
-        if (sessionError) throw sessionError;
-        if (!sessionData.session) throw new Error("Your admin session expired. Sign in again.");
-
-        const { data: signed, error: signError } = await supabase.functions.invoke(
-          "r2-create-upload-url",
-          { body: { fileName: file.name, contentType: file.type, fileSize: file.size, courseSlug } }
-        );
+        const { data: signed, error: signError } = await supabase.functions.invoke("admin-course-content", {
+          body: {
+            action: "prepare_upload",
+            courseId,
+            contentType,
+            lessonNumber,
+            title,
+            fileName: file.name,
+            mimeType: isVideo ? file.type : "application/pdf",
+            fileSize: file.size
+          }
+        });
         if (signError) {
-          let message = signError.message || "Could not prepare the upload.";
-          try {
-            const body = await signError.context?.json?.();
-            if (body?.error) message = body.error;
-          } catch (_) {}
-          throw new Error(message);
+          let detail = signError.message || "Could not prepare upload.";
+          try { const body = await signError.context?.json?.(); if (body?.error) detail = body.error; } catch (_) {}
+          throw new Error(detail);
         }
-        if (!signed?.uploadUrl || !signed?.key) throw new Error(signed?.error || "Upload URL was not returned.");
+        if (!signed?.uploadUrl || !signed?.key) throw new Error(signed?.error || "Secure upload URL missing.");
 
-        r2UploadMessage.textContent = "Uploading video to private R2 storage...";
+        r2ContentMessage.textContent = "Uploading " + (isVideo ? "video" : "PDF") + " to private R2…";
         await new Promise((resolve, reject) => {
           const xhr = new XMLHttpRequest();
           xhr.open("PUT", signed.uploadUrl);
-          xhr.setRequestHeader("Content-Type", file.type);
-          xhr.upload.onprogress = (e) => {
+          xhr.setRequestHeader("Content-Type", isVideo ? file.type : "application/pdf");
+          xhr.upload.onprogress = e => {
             if (e.lengthComputable) {
-              const percent = Math.round((e.loaded / e.total) * 100);
-              r2ProgressBar.style.width = percent + "%";
-              r2UploadMessage.textContent = "Uploading... " + percent + "%";
+              const percent = Math.round(e.loaded / e.total * 100);
+              r2ContentProgressBar.style.width = percent + "%";
+              r2ContentMessage.textContent = "Uploading… " + percent + "%";
             }
           };
-          xhr.onload = () => {
-            if (xhr.status >= 200 && xhr.status < 300) resolve();
-            else reject(new Error("R2 upload failed (HTTP " + xhr.status + "). Check the bucket CORS settings."));
-          };
-          xhr.onerror = () => reject(new Error("Browser could not reach R2. Check the bucket CORS settings and try again."));
-          xhr.onabort = () => reject(new Error("Upload was cancelled."));
+          xhr.onload = () => xhr.status >= 200 && xhr.status < 300
+            ? resolve()
+            : reject(new Error("R2 upload failed (HTTP " + xhr.status + "). Check R2 bucket CORS settings."));
+          xhr.onerror = () => reject(new Error("Could not reach R2. Check bucket CORS settings."));
+          xhr.onabort = () => reject(new Error("Upload cancelled."));
           xhr.send(file);
         });
 
-        r2ProgressBar.style.width = "100%";
-        r2UploadMessage.style.color = "#32c48d";
-        r2UploadMessage.textContent = "Video uploaded successfully.";
-        r2UploadResult.hidden = false;
-        r2UploadResult.innerHTML = "<strong>Upload complete</strong><br>Bucket: " +
-          safeText(signed.bucket || "texas-campus-videos") + "<br>Object key: <code>" +
-          safeText(signed.key) + "</code>";
-        r2UploadForm.reset();
-        document.getElementById("r2-course-slug").value = courseSlug || "general";
+        r2ContentMessage.textContent = "Verifying upload and saving course lesson details…";
+        const { data: saved, error: saveError } = await supabase.functions.invoke("admin-course-content", {
+          body: {
+            action: "save",
+            courseId,
+            contentType,
+            lessonNumber,
+            title,
+            fileName: file.name,
+            mimeType: isVideo ? file.type : "application/pdf",
+            key: signed.key
+          }
+        });
+        if (saveError) {
+          let detail = saveError.message || "Could not save course record.";
+          try { const body = await saveError.context?.json?.(); if (body?.error) detail = body.error; } catch (_) {}
+          throw new Error(detail);
+        }
+        if (saved?.error) throw new Error(saved.error);
+
+        r2ContentProgressBar.style.width = "100%";
+        r2ContentMessage.style.color = "#32c48d";
+        r2ContentMessage.textContent = "Upload complete and saved to " + course.title + ".";
+        r2ContentResult.hidden = false;
+        r2ContentResult.innerHTML = "<strong>Saved successfully</strong><br>" +
+          safeText(course.title) + "<br>" + safeText(isVideo ? "Lesson " + lessonNumber + " · " + title : "Study Material · " + title) +
+          "<br>R2 object key: <code>" + safeText(signed.key) + "</code>";
+        r2ContentForm.reset();
+        r2TypeSelect.value = "video";
+        r2ContentFile.accept = "video/*,.mp4,.mov,.m4v,.webm,.mkv";
+        document.getElementById("r2-file-help").textContent = "Video files up to 2 GB. Lesson number is suggested automatically.";
+        await r2LoadContent();
       } catch (error) {
-        console.error("R2 video upload failed:", error);
-        r2UploadMessage.style.color = "#ff9aa7";
-        r2UploadMessage.textContent = error.message || "Video upload failed.";
+        console.error("Course content upload failed:", error);
+        r2ContentMessage.style.color = "#ff9aa7";
+        r2ContentMessage.textContent = error.message || "Upload failed.";
       } finally {
-        r2UploadButton.disabled = false;
+        r2ContentButton.disabled = false;
       }
+    });
+
+    r2LoadContent().catch(error => {
+      console.error("Could not load R2 course content:", error);
+      r2ContentMessage.textContent = error.message || "Could not load the course list. Refresh the page.";
+      r2CourseSelect.innerHTML = '<option value="">Could not load courses</option>';
     });
 
     const adminTabTargets = {
