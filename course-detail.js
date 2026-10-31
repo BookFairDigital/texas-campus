@@ -317,6 +317,26 @@ async function startCheckout() {
       return;
     }
 
+    // Shared-device protection: if the currently signed-in student already owns
+    // this course, sign them out and start a fresh registration for the next buyer.
+    const courseIdForCheckout = selectedCourse?.id;
+    if (courseIdForCheckout) {
+      const { data: ownedOrders, error: ownedOrdersError } = await supabase
+        .from("course_orders")
+        .select("id,payment_status,course_access")
+        .eq("student_id", user.id)
+        .eq("course_id", courseIdForCheckout)
+        .eq("payment_status", "approved")
+        .eq("course_access", true)
+        .limit(1);
+      if (ownedOrdersError) throw ownedOrdersError;
+      if (ownedOrders?.length) {
+        await supabase.auth.signOut();
+        showRegistrationStep();
+        return;
+      }
+    }
+
     const profile = await getStudentProfile(user);
     const savedStudentName = String(profile?.full_name || "").trim();
     const savedUsername = String(profile?.username || "").trim();
