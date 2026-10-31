@@ -246,22 +246,44 @@ function showRegistrationStep(user = null) {
       ? "Student details complete karala purchase eka continue karanna."
       : 'Purchase karanna student account ekak one. <a href="./index.html#student-login">Existing student? Log in here</a>. New student kenek nam pahala form eka fill karanna.';
   }
-  if (registrationForm && user) {
-    const metadata = user.user_metadata || {};
+  if (registrationForm) {
+    const metadata = user?.user_metadata || {};
     const fullNameField = registrationForm.elements.namedItem("fullName");
     const emailField = registrationForm.elements.namedItem("email");
-    if (fullNameField && !fullNameField.value) fullNameField.value = metadata.full_name || metadata.name || "";
-    if (emailField && !emailField.value) emailField.value = user.email || "";
     const passwordField = registrationForm.elements.namedItem("password");
-    if (passwordField) {
-      passwordField.required = false;
-      passwordField.placeholder = "Not needed for your existing login";
-    }
-  } else if (registrationForm) {
-    const passwordField = registrationForm.elements.namedItem("password");
-    if (passwordField) {
-      passwordField.required = true;
-      passwordField.placeholder = "At least 8 characters";
+    const emailLabel = $("#checkout-email-field");
+    const passwordLabel = $("#checkout-password-field");
+
+    if (user) {
+      if (fullNameField && !fullNameField.value) {
+        fullNameField.value = metadata.full_name || metadata.name || "";
+      }
+      // Existing authenticated students use their verified Auth email internally.
+      // Do not expose it in the checkout form or allow browser autofill to display it.
+      if (emailField) {
+        emailField.value = "";
+        emailField.required = false;
+        emailField.autocomplete = "off";
+      }
+      if (emailLabel) emailLabel.hidden = true;
+      if (passwordField) {
+        passwordField.value = "";
+        passwordField.required = false;
+      }
+      if (passwordLabel) passwordLabel.hidden = true;
+    } else {
+      if (emailField) {
+        emailField.required = true;
+        emailField.autocomplete = "new-password";
+        emailField.value = "";
+      }
+      if (emailLabel) emailLabel.hidden = false;
+      if (passwordField) {
+        passwordField.value = "";
+        passwordField.required = true;
+        passwordField.placeholder = "At least 8 characters";
+      }
+      if (passwordLabel) passwordLabel.hidden = false;
     }
   }
   showStep("register");
@@ -356,7 +378,7 @@ async function registerStudent(event) {
   const { data: currentSession } = await supabase.auth.getSession();
   const existingUser = currentSession.session?.user || null;
 
-  if (!fullName || !username || !email || !mobile || (!existingUser && !password)) {
+  if (!fullName || !username || (!existingUser && (!email || !password)) || !mobile) {
     alert("Full name, username, email, mobile saha password okkoma fill karanna.");
     return;
   }
