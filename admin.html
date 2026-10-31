@@ -175,6 +175,107 @@
       padding: 42px 0 55px;
     }
 
+    /* Admin side navigation */
+    .admin-sidebar {
+      position: fixed;
+      z-index: 8;
+      top: 76px;
+      bottom: 0;
+      left: 0;
+      width: 224px;
+      padding: 24px 14px;
+      overflow-y: auto;
+      background: #111218;
+      border-right: 1px solid var(--admin-border);
+    }
+    .admin-sidebar-label {
+      margin: 0 10px 12px;
+      color: #777986;
+      font-size: 10px;
+      font-weight: 750;
+      letter-spacing: .14em;
+      text-transform: uppercase;
+    }
+    .admin-sidebar a {
+      display: flex;
+      align-items: center;
+      gap: 11px;
+      margin: 4px 0;
+      padding: 11px 12px;
+      border: 1px solid transparent;
+      border-radius: 9px;
+      color: #c9cad3;
+      font-size: 12px;
+      font-weight: 600;
+    }
+    .admin-sidebar a:hover,
+    .admin-sidebar a.active {
+      border-color: rgba(223,23,50,.25);
+      background: rgba(223,23,50,.10);
+      color: #fff;
+    }
+    .admin-sidebar a span:first-child {
+      width: 20px;
+      text-align: center;
+      color: #ff687b;
+      font-size: 16px;
+    }
+    .admin-main-content { min-width: 0; }
+    .admin-upload-result {
+      margin-top: 14px;
+      padding: 12px;
+      border: 1px solid #343540;
+      border-radius: 9px;
+      background: #0d0e13;
+      overflow-wrap: anywhere;
+      color: #cfd0d8;
+      font-size: 12px;
+    }
+    .admin-upload-result code { color: #8de0b8; }
+    .admin-progress {
+      width: 100%;
+      height: 8px;
+      margin-top: 14px;
+      overflow: hidden;
+      border-radius: 99px;
+      background: #292a34;
+    }
+    .admin-progress > span {
+      display: block;
+      width: 0;
+      height: 100%;
+      background: var(--admin-green);
+      transition: width .2s ease;
+    }
+    @media (min-width: 761px) {
+      .admin-wrap {
+        width: min(1120px, calc(100% - 270px));
+        margin: 0 24px 0 246px;
+      }
+    }
+    @media (max-width: 760px) {
+      .admin-sidebar {
+        position: sticky;
+        top: 76px;
+        display: flex;
+        width: 100%;
+        gap: 5px;
+        padding: 8px 4%;
+        overflow-x: auto;
+        border-right: 0;
+        border-bottom: 1px solid var(--admin-border);
+      }
+      .admin-sidebar-label { display: none; }
+      .admin-sidebar a {
+        flex: 0 0 auto;
+        margin: 0;
+        padding: 8px 10px;
+        white-space: nowrap;
+      }
+      .admin-sidebar a span:first-child { width: auto; }
+      .admin-wrap { width: 92%; margin: 0 auto; }
+    }
+
     .admin-page-heading {
       display: flex;
       justify-content: space-between;
@@ -636,6 +737,16 @@
 
   <!-- Dashboard -->
   <main id="admin-content" hidden>
+    <nav class="admin-sidebar" aria-label="Admin navigation">
+      <p class="admin-sidebar-label">Workspace</p>
+      <a class="active" href="#admin-home"><span>⌂</span>Dashboard</a>
+      <a href="#student-accounts"><span>♙</span>Student Accounts</a>
+      <a href="#course-management"><span>▤</span>Course Management</a>
+      <a href="#r2-video-storage"><span>▶</span>R2 Video Storage</a>
+      <a href="#payment-requests"><span>▣</span>Payment Requests</a>
+      <a href="#course-access"><span>◈</span>Course Access</a>
+    </nav>
+    <div class="admin-main-content">
     <header class="admin-topbar">
       <a class="admin-brand" href="index.html" aria-label="Texas Campus home">
         <img src="./assets/texas-campus-logo.png" alt="Texas Campus">
@@ -653,7 +764,7 @@
       </div>
     </header>
 
-    <div class="admin-wrap">
+    <div class="admin-wrap" id="admin-home">
       <section class="admin-page-heading">
         <div>
           <p class="admin-eyebrow">TEXAS CAMPUS / CONTROL CENTRE</p>
@@ -688,7 +799,7 @@
         <div class="admin-grid">
 
           <!-- Student accounts -->
-          <article class="admin-card">
+          <article class="admin-card" id="student-accounts">
             <div class="admin-card-head">
               <div class="admin-card-icon" aria-hidden="true">♙</div>
               <div>
@@ -768,7 +879,7 @@
 
           
 <!-- Course Management -->
-<article class="admin-card" style="grid-column:1/-1">
+<article class="admin-card" id="course-management" style="grid-column:1/-1">
   <div class="admin-card-head">
     <div class="admin-card-icon">▤</div>
     <div>
@@ -815,8 +926,42 @@
   <div id="course-list" style="margin-top:20px"></div>
 </article>
 
+<!-- R2 Video Storage -->
+<article class="admin-card" id="r2-video-storage" style="grid-column:1/-1">
+  <div class="admin-card-head">
+    <div class="admin-card-icon">▶</div>
+    <div>
+      <h2>R2 Video Storage</h2>
+      <p>Upload course videos directly to the private Cloudflare R2 bucket.</p>
+    </div>
+  </div>
+
+  <form id="r2-upload-form">
+    <label class="admin-label" for="r2-course-slug">Course folder / URL slug</label>
+    <input class="admin-input" id="r2-course-slug" placeholder="digital-accounting"
+      pattern="[a-zA-Z0-9-]+" maxlength="80" value="general" required>
+
+    <label class="admin-label" for="r2-video-file">Select video file (maximum 2 GB)</label>
+    <input class="admin-input" id="r2-video-file" type="file"
+      accept="video/*,.mp4,.mov,.m4v,.webm,.mkv" required>
+
+    <button class="admin-btn admin-card-action" id="r2-upload-button" type="submit">
+      Upload Video to R2
+    </button>
+    <div class="admin-progress" id="r2-upload-progress" hidden aria-label="Upload progress">
+      <span id="r2-upload-progress-bar"></span>
+    </div>
+    <p id="r2-upload-message" class="login-message" role="status" aria-live="polite"></p>
+    <div id="r2-upload-result" class="admin-upload-result" hidden></div>
+  </form>
+
+  <p class="admin-card-footnote">
+    Files are uploaded to the private R2 bucket. This upload tool stores the object in R2 and returns its object key; student playback and course lesson linking are separate steps.
+  </p>
+</article>
+
 <!-- Payment Requests -->
-<article class="admin-card" style="grid-column:1/-1">
+<article class="admin-card" id="payment-requests" style="grid-column:1/-1">
   <div class="admin-card-head">
     <div class="admin-card-icon">▣</div>
     <div>
@@ -833,7 +978,7 @@
 </article>
 
           <!-- Course access -->
-          <article class="admin-card">
+          <article class="admin-card" id="course-access">
             <div class="admin-card-head">
               <div class="admin-card-icon" aria-hidden="true">◈</div>
               <div>
@@ -868,6 +1013,7 @@
         <span>© <span id="admin-year"></span> Texas Campus. All rights reserved.</span>
         <span>Administrator Dashboard · Secure Access</span>
       </footer>
+    </div>
     </div>
   </main>
 
@@ -953,6 +1099,100 @@ loadOrders();
       } finally {
         loginButton.disabled = false;
       }
+    });
+
+    const r2UploadForm = document.getElementById("r2-upload-form");
+    const r2UploadButton = document.getElementById("r2-upload-button");
+    const r2UploadMessage = document.getElementById("r2-upload-message");
+    const r2UploadResult = document.getElementById("r2-upload-result");
+    const r2Progress = document.getElementById("r2-upload-progress");
+    const r2ProgressBar = document.getElementById("r2-upload-progress-bar");
+
+    r2UploadForm.addEventListener("submit", async (event) => {
+      event.preventDefault();
+      const file = document.getElementById("r2-video-file").files[0];
+      const courseSlug = document.getElementById("r2-course-slug").value.trim();
+      if (!file) return;
+
+      if (!file.type.startsWith("video/")) {
+        r2UploadMessage.textContent = "Please select a video file.";
+        return;
+      }
+      if (file.size > 2 * 1024 * 1024 * 1024) {
+        r2UploadMessage.textContent = "This file is larger than the 2 GB upload limit.";
+        return;
+      }
+
+      r2UploadButton.disabled = true;
+      r2UploadResult.hidden = true;
+      r2Progress.hidden = false;
+      r2ProgressBar.style.width = "0%";
+      r2UploadMessage.style.color = "";
+      r2UploadMessage.textContent = "Preparing secure upload...";
+
+      try {
+        const { data: sessionData, error: sessionError } = await supabase.auth.getSession();
+        if (sessionError) throw sessionError;
+        if (!sessionData.session) throw new Error("Your admin session expired. Sign in again.");
+
+        const { data: signed, error: signError } = await supabase.functions.invoke(
+          "r2-create-upload-url",
+          { body: { fileName: file.name, contentType: file.type, fileSize: file.size, courseSlug } }
+        );
+        if (signError) {
+          let message = signError.message || "Could not prepare the upload.";
+          try {
+            const body = await signError.context?.json?.();
+            if (body?.error) message = body.error;
+          } catch (_) {}
+          throw new Error(message);
+        }
+        if (!signed?.uploadUrl || !signed?.key) throw new Error(signed?.error || "Upload URL was not returned.");
+
+        r2UploadMessage.textContent = "Uploading video to private R2 storage...";
+        await new Promise((resolve, reject) => {
+          const xhr = new XMLHttpRequest();
+          xhr.open("PUT", signed.uploadUrl);
+          xhr.setRequestHeader("Content-Type", file.type);
+          xhr.upload.onprogress = (e) => {
+            if (e.lengthComputable) {
+              const percent = Math.round((e.loaded / e.total) * 100);
+              r2ProgressBar.style.width = percent + "%";
+              r2UploadMessage.textContent = "Uploading... " + percent + "%";
+            }
+          };
+          xhr.onload = () => {
+            if (xhr.status >= 200 && xhr.status < 300) resolve();
+            else reject(new Error("R2 upload failed (HTTP " + xhr.status + "). Check the bucket CORS settings."));
+          };
+          xhr.onerror = () => reject(new Error("Browser could not reach R2. Check the bucket CORS settings and try again."));
+          xhr.onabort = () => reject(new Error("Upload was cancelled."));
+          xhr.send(file);
+        });
+
+        r2ProgressBar.style.width = "100%";
+        r2UploadMessage.style.color = "#32c48d";
+        r2UploadMessage.textContent = "Video uploaded successfully.";
+        r2UploadResult.hidden = false;
+        r2UploadResult.innerHTML = "<strong>Upload complete</strong><br>Bucket: " +
+          safeText(signed.bucket || "texas-campus-videos") + "<br>Object key: <code>" +
+          safeText(signed.key) + "</code>";
+        r2UploadForm.reset();
+        document.getElementById("r2-course-slug").value = courseSlug || "general";
+      } catch (error) {
+        console.error("R2 video upload failed:", error);
+        r2UploadMessage.style.color = "#ff9aa7";
+        r2UploadMessage.textContent = error.message || "Video upload failed.";
+      } finally {
+        r2UploadButton.disabled = false;
+      }
+    });
+
+    document.querySelectorAll(".admin-sidebar a").forEach((link) => {
+      link.addEventListener("click", () => {
+        document.querySelectorAll(".admin-sidebar a").forEach((item) => item.classList.remove("active"));
+        link.classList.add("active");
+      });
     });
 
     studentForm.addEventListener("submit", async (event) => {
