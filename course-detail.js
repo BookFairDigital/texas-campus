@@ -239,6 +239,24 @@ async function getStudentProfile(user) {
   return data;
 }
 
+function showRegistrationStep(user = null) {
+  const intro = $("#checkout-step-register .checkout-intro");
+  if (intro) {
+    intro.innerHTML = user
+      ? "Student details complete karala purchase eka continue karanna."
+      : 'Purchase karanna student account ekak one. <a href="./index.html#student-login">Existing student? Log in here</a>. New student kenek nam pahala form eka fill karanna.';
+  }
+  if (registrationForm && user) {
+    const metadata = user.user_metadata || {};
+    const fullNameField = registrationForm.elements.namedItem("fullName");
+    const emailField = registrationForm.elements.namedItem("email");
+    if (fullNameField && !fullNameField.value) fullNameField.value = metadata.full_name || metadata.name || "";
+    if (emailField && !emailField.value) emailField.value = user.email || "";
+  }
+  showStep("register");
+  openDialog();
+}
+
 async function startCheckout() {
   if (!selectedCourse && !selectedPackage) {
     showMessage("Course/package details load wena thuru wait karanna.");
@@ -248,21 +266,14 @@ async function startCheckout() {
   try {
     const user = await getCurrentUser();
     if (!user) {
-      const intro = $(".checkout-intro", registerStep || document);
-      if (intro) {
-        intro.innerHTML =
-          'Purchase karanna student account ekak one. ' +
-          '<a href="./index.html#student-login">Existing student? Log in here</a>. ' +
-          'New student kenek nam pahala account form eka fill karanna.';
-      }
-      showStep("register");
-      openDialog();
+      showRegistrationStep();
       return;
     }
 
     const profile = await getStudentProfile(user);
-    if (!profile) {
-      showMessage("Student profile eka hambune naha. Admin ta contact karanna.");
+    if (!profile || !String(profile.full_name || "").trim()) {
+      // Never send an incomplete/unknown student straight to payment.
+      showRegistrationStep(user);
       return;
     }
     if (profile.account_status && profile.account_status !== "active") {
@@ -278,15 +289,14 @@ async function startCheckout() {
     const purchasePrice = selectedPackage
       ? `${selectedPackage.currency} ${selectedPackage.amount.toLocaleString("en-LK")}`
       : formatPrice(selectedCourse);
+    const studentName = String(profile.full_name || user.user_metadata?.full_name || user.user_metadata?.name || "").trim();
     const depositor = checkoutForm?.elements.namedItem("depositor");
-    if (depositor && profile.full_name) depositor.value = profile.full_name;
+    if (depositor) depositor.value = studentName;
     const intro = $("#checkout-step-payment .checkout-intro");
     if (intro) {
       intro.innerHTML =
         "Selected: <strong>" + escapeHTML(purchaseName) +
-        "</strong><br>Student: <strong>" +
-        escapeHTML(profile.full_name || profile.username || user.email || "Student") +
-        "</strong>";
+        "</strong><br>Student: <strong>" + escapeHTML(studentName) + "</strong>";
     }
     setText("#checkout-course-name", purchaseName);
     setText("#checkout-course-price", purchasePrice);
@@ -338,36 +348,43 @@ async function registerStudent(event) {
   }
 
   try {
-    const { data, error } = await supabase.auth.signUp({
-      email,
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          username,
-          mobile
+    const existingUser = await getCurrentUser();
+    let accountUser = existingUser;
+
+    // If Auth already has a session but its student profile is incomplete,
+    // collect the missing details instead of skipping directly to payment.
+    if (!accountUser) {
+      const { data, error } = await supabase.auth.signUp({
+        email,
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            username,
+            mobile
+          }
         }
+      });
+
+      if (error) throw error;
+      if (!data.user) throw new Error("Account eka create une naha.");
+      accountUser = data.user;
+
+      if (!data.session) {
+        alert(
+          "Account request eka create una. Email confirmation required. Email eka confirm karala, me course page ekata awith student login wela purchase eka continue karanna."
+        );
+        return;
       }
-    });
-
-    if (error) throw error;
-    if (!data.user) throw new Error("Account eka create une naha.");
-
-    if (!data.session) {
-      alert(
-        "Account request eka create una. Email confirmation required nam email eka confirm karala student login wenna. Eeta passe course eka purchase karanna."
-      );
-      window.location.href = "./index.html#student-login";
-      return;
     }
 
     const { error: profileError } = await supabase
       .from("profiles")
       .upsert({
-        id: data.user.id,
+        id: accountUser.id,
         full_name: fullName,
         username,
-        email,
+        email: accountUser.email || email,
         mobile,
         account_status: "active"
       }, { onConflict: "id" });
@@ -375,12 +392,12 @@ async function registerStudent(event) {
     if (profileError) {
       console.error("Profile save error:", profileError);
       throw new Error(
-        "Account eka create una, namuth student profile eka save karanna bari una. Admin ta contact karanna. " +
+        "Student profile eka save karanna bari una. Admin ta contact karanna. " +
         profileError.message
       );
     }
 
-    alert("Account eka haduna! Dan course checkout eka continue karanna.");
+    alert("Student details save una! Dan course checkout eka continue karanna.");
     await startCheckout();
   } catch (error) {
     console.error("Student registration failed:", error);
