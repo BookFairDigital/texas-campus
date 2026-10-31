@@ -739,12 +739,12 @@
   <main id="admin-content" hidden>
     <nav class="admin-sidebar" aria-label="Admin navigation">
       <p class="admin-sidebar-label">Workspace</p>
-      <a class="active" href="#admin-home"><span>⌂</span>Dashboard</a>
-      <a href="#student-accounts"><span>♙</span>Student Accounts</a>
-      <a href="#course-management"><span>▤</span>Course Management</a>
-      <a href="#r2-video-storage"><span>▶</span>R2 Video Storage</a>
-      <a href="#payment-requests"><span>▣</span>Payment Requests</a>
-      <a href="#course-access"><span>◈</span>Course Access</a>
+      <a class="active" href="#admin-home" data-tab="dashboard"><span>⌂</span>Dashboard</a>
+      <a href="#student-accounts" data-tab="student-accounts"><span>♙</span>Student Accounts</a>
+      <a href="#course-management" data-tab="course-management"><span>▤</span>Course Management</a>
+      <a href="#r2-video-storage" data-tab="r2-video-storage"><span>▶</span>R2 Video Storage</a>
+      <a href="#payment-requests" data-tab="payment-requests"><span>▣</span>Payment Requests</a>
+      <a href="#course-access" data-tab="course-access"><span>◈</span>Course Access</a>
     </nav>
     <div class="admin-main-content">
     <header class="admin-topbar">
@@ -796,6 +796,23 @@
           </div>
         </div>
 
+        <div id="dashboard-overview" class="admin-card" style="margin-bottom:19px">
+          <div class="admin-card-head">
+            <div class="admin-card-icon">▦</div>
+            <div>
+              <h2>Dashboard Overview</h2>
+              <p>Quick view of your student accounts.</p>
+            </div>
+          </div>
+          <div class="admin-metric-box">
+            <div>
+              <span class="admin-metric-label">Total Students</span>
+              <strong class="admin-metric-value" id="total-students-count">Loading…</strong>
+            </div>
+            <span class="admin-mini-status">Registered</span>
+          </div>
+          <p class="admin-card-footnote" id="dashboard-student-note">Student count is loaded from the secure administrator backend.</p>
+        </div>
         <div class="admin-grid">
 
           <!-- Student accounts -->
@@ -846,7 +863,7 @@
           </article>
 
           <!-- Student management card -->
-          <article class="admin-card">
+          <article class="admin-card" id="student-accounts">
             <div class="admin-card-head">
               <div class="admin-card-icon" aria-hidden="true">♙</div>
               <div>
@@ -1188,12 +1205,72 @@ loadOrders();
       }
     });
 
-    document.querySelectorAll(".admin-sidebar a").forEach((link) => {
-      link.addEventListener("click", () => {
-        document.querySelectorAll(".admin-sidebar a").forEach((item) => item.classList.remove("active"));
-        link.classList.add("active");
+    const adminTabTargets = {
+      dashboard: null,
+      "student-accounts": "student-accounts",
+      "course-management": "course-management",
+      "r2-video-storage": "r2-video-storage",
+      "payment-requests": "payment-requests",
+      "course-access": "course-access"
+    };
+
+    function openAdminTab(tabName) {
+      const targetId = adminTabTargets[tabName];
+      const overview = document.getElementById("dashboard-overview");
+      if (overview) overview.hidden = tabName !== "dashboard";
+
+      document.querySelectorAll(".admin-grid > .admin-card").forEach((card) => {
+        card.hidden = !targetId || card.id !== targetId;
+      });
+
+      document.querySelectorAll(".admin-sidebar a[data-tab]").forEach((link) => {
+        const active = link.dataset.tab === tabName;
+        link.classList.toggle("active", active);
+        if (active) link.setAttribute("aria-current", "page");
+        else link.removeAttribute("aria-current");
+      });
+
+      const heading = document.querySelector(".admin-page-heading h1");
+      const labels = {
+        dashboard: "Admin Dashboard",
+        "student-accounts": "Student Accounts",
+        "course-management": "Course Management",
+        "r2-video-storage": "R2 Video Storage",
+        "payment-requests": "Payment Requests",
+        "course-access": "Course Access"
+      };
+      if (heading) heading.textContent = labels[tabName] || "Admin Dashboard";
+    }
+
+    document.querySelectorAll(".admin-sidebar a[data-tab]").forEach((link) => {
+      link.addEventListener("click", (event) => {
+        event.preventDefault();
+        openAdminTab(link.dataset.tab);
       });
     });
+
+    async function loadDashboardStudentCount() {
+      const count = document.getElementById("total-students-count");
+      const note = document.getElementById("dashboard-student-note");
+      if (!count) return;
+      try {
+        const result = await supabase.functions.invoke("admin-manage-students", {
+          body: { action: "list" }
+        });
+        if (result.error) throw result.error;
+        if (result.data?.error) throw new Error(result.data.error);
+        const students = result.data?.students || [];
+        count.textContent = students.length.toLocaleString();
+        if (note) note.textContent = "Total registered student accounts.";
+      } catch (error) {
+        count.textContent = "—";
+        if (note) note.textContent = "Could not load student count. Open Student Management to retry.";
+        console.error("Dashboard student count failed:", error.message);
+      }
+    }
+
+    openAdminTab("dashboard");
+    loadDashboardStudentCount();
 
     studentForm.addEventListener("submit", async (event) => {
       event.preventDefault();
