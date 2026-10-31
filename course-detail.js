@@ -69,6 +69,14 @@ function closeDialog() {
   checkoutForm?.reset();
   const summary = $("#demo-order-summary");
   if (summary) summary.textContent = "";
+  const sessionLogin = $("#checkout-session-login");
+  if (sessionLogin) sessionLogin.hidden = true;
+  const resumeEmail = $("#checkout-resume-email");
+  const resumePassword = $("#checkout-resume-password");
+  if (resumeEmail) resumeEmail.value = "";
+  if (resumePassword) resumePassword.value = "";
+  const paymentMessage = $("#checkout-payment-message");
+  if (paymentMessage) paymentMessage.textContent = "";
   showStep("register");
 }
 
