@@ -282,8 +282,21 @@ async function startCheckout() {
     }
 
     const profile = await getStudentProfile(user);
-    if (!profile || !String(profile.full_name || "").trim()) {
-      // Never send an incomplete/unknown student straight to payment.
+    const savedStudentName = String(profile?.full_name || "").trim();
+    const savedUsername = String(profile?.username || "").trim();
+    const savedEmail = String(profile?.email || user.email || "").trim();
+    const savedMobile = String(profile?.mobile || "").trim();
+    const profileIsComplete =
+      !!profile &&
+      !!savedStudentName &&
+      savedStudentName.toLowerCase() !== "student" &&
+      !!savedUsername &&
+      !!savedEmail &&
+      !!savedMobile;
+
+    if (!profileIsComplete) {
+      // New signups can have a placeholder profile ("Student") created by
+      // the auth trigger. Collect the real student's details before checkout.
       showRegistrationStep(user);
       return;
     }
