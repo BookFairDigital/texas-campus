@@ -92,9 +92,9 @@
     <form id="student-checkout-form">
       <label>Full name<input name="fullName" autocomplete="name" required placeholder="Your full name"></label>
       <label>Username<input name="username" autocomplete="username" required minlength="3" placeholder="Choose a username"></label>
-      <label>Email address<input name="email" type="email" autocomplete="email" required placeholder="you@example.com"></label>
+      <label id="checkout-email-field">Email address<input name="email" type="email" autocomplete="off" required placeholder="you@example.com"></label>
       <label>Mobile number<input name="mobile" type="tel" autocomplete="tel" required pattern="[0-9+() -]{7,20}" placeholder="07X XXX XXXX"></label>
-      <label>Password<input name="password" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters"></label>
+      <label id="checkout-password-field">Password<input name="password" type="password" autocomplete="new-password" required minlength="8" placeholder="At least 8 characters"></label>
       <button class="button button-primary checkout-submit" type="submit">Continue to Bank Deposit <span>→</span></button>
       <p class="checkout-security-note">Your student account is managed through the Texas Campus sign-in service.</p>
     </form>
