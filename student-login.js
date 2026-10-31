@@ -16,6 +16,17 @@ const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
 const form = document.querySelector("#student-login-form");
 const message = document.querySelector("#student-login-message");
 
+const loginModal = document.querySelector("#student-modal");
+function openStudentLoginModal() {
+  if (loginModal) loginModal.hidden = false;
+}
+if (window.location.hash === "#student-login") {
+  openStudentLoginModal();
+}
+window.addEventListener("hashchange", () => {
+  if (window.location.hash === "#student-login") openStudentLoginModal();
+});
+
 if (form) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
