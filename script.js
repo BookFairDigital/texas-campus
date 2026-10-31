@@ -38,59 +38,6 @@ if (detailsDialog) detailsDialog.addEventListener("click", (event) => {
 const year = document.querySelector("#year");
 if (year) year.textContent = new Date().getFullYear();
 
-/* Student login: connect the existing username/password modal to Supabase. */
-(() => {
-  const form = document.getElementById("student-login-form");
-  if (!form) return;
-  const message = document.getElementById("student-login-message");
-  const usernameInput = document.getElementById("student-username");
-  const passwordInput = document.getElementById("student-password");
-  const submitButton = form.querySelector('button[type="submit"]');
-  if (!window.supabase) {
-    if (message) message.textContent = "Login service did not load. Refresh and try again.";
-    return;
-  }
-  const client = window.supabase.createClient(
-    "https://dykxmozruyzgkiyopvlp.supabase.co",
-    "sb_publishable_WprXMzuhLjAKfZfGHvM48A_OHGjmaVH"
-  );
-  form.addEventListener("submit", async (event) => {
-    event.preventDefault();
-    if (message) { message.textContent = "Signing in…"; message.style.color = ""; }
-    if (submitButton) { submitButton.disabled = true; submitButton.textContent = "Signing in…"; }
-    try {
-      const { data, error } = await client.functions.invoke("student-login", {
-        body: { username: usernameInput.value.trim(), password: passwordInput.value }
-      });
-      if (error) {
-        let detail = data?.error || error.message || "Login failed.";
-        try {
-          if (error.context) {
-            const response = await error.context.json();
-            if (response?.error) detail = response.error;
-          }
-        } catch (_) {}
-        throw new Error(detail);
-      }
-      if (!data?.access_token || !data?.refresh_token) throw new Error(data?.error || "Login failed. Please try again.");
-      const { error: sessionError } = await client.auth.setSession({
-        access_token: data.access_token, refresh_token: data.refresh_token
-      });
-      if (sessionError) throw sessionError;
-      if (message) message.textContent = "Login successful. Opening your dashboard…";
-      window.location.href = "./student-dashboard.html";
-    } catch (err) {
-      if (message) {
-        message.textContent = err?.message || "Unable to sign in. Please try again.";
-        message.style.color = "#ff6578";
-      }
-    } finally {
-      if (submitButton) { submitButton.disabled = false; submitButton.textContent = "Log In"; }
-    }
-  });
-})();
-
-
 /* Load the floating Texas Campus support assistant on public pages. */
 (() => {
   const loadAssistant = () => {
