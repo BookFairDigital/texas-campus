@@ -459,12 +459,22 @@ async function registerStudent(event) {
       }
     }
 
+    // The auth trigger may append a short suffix when the requested username
+    // is already taken. Preserve that unique username instead of overwriting it.
+    const { data: createdProfile, error: readProfileError } = await supabase
+      .from("profiles")
+      .select("username")
+      .eq("id", accountUser.id)
+      .maybeSingle();
+
+    if (readProfileError) throw readProfileError;
+
     const { error: profileError } = await supabase
       .from("profiles")
       .upsert({
         id: accountUser.id,
         full_name: fullName,
-        username,
+        username: createdProfile?.username || username,
         email: accountUser.email || email,
         mobile,
         account_status: "active"
