@@ -171,17 +171,48 @@ async function loadCourseView(){
  const target=$("courseContent");if(!target)return;
  if(!order||!course){target.innerHTML='<div class="empty"><strong>Course access required</strong>This course is not linked to an approved order on your account.</div>';return;}
  const days=daysLeft(order);if(days!==null&&days<=0){target.innerHTML='<div class="notice">This course access has expired. Contact Texas Campus administration for renewal.</div>';return;}
- const folder=course.drive_folder_url;
- const lessonRows=progressRows.filter(r=>String(r.course_id)===String(course.id));
- const lessonMarkup=lessonRows.length?lessonRows.map((r,i)=>`<div class="lesson" id="lesson-${esc(r.lesson_id)}"><input type="checkbox" data-lesson-id="${esc(r.lesson_id)}" ${r.completed||r.completed_at?"checked":""} aria-label="Mark ${esc(r.lesson_title)} complete"><div class="lesson-main"><strong>${esc(r.lesson_title||`Lesson ${i+1}`)}</strong><small>${r.completed||r.completed_at?"Completed":"Not completed yet"}</small></div>${r.lesson_url?`<a href="${esc(r.lesson_url)}" target="_blank" rel="noopener noreferrer">Open lesson ↗</a>`:""}</div>`).join(""):'<div class="empty">Individual lesson records are not configured yet. For now, use the Google Drive folder to access the course videos and tutorial materials.</div>';
- target.innerHTML=`<div class="panel"><div class="panel-head"><div><h2>${esc(course.title)}</h2><p>${esc(course.summary||"Your course learning space")}</p></div><span class="status approved">${days} days remaining</span></div><p class="page-subtitle">Course videos and tutorial materials are provided through the course Google Drive folder.</p>${folder?`<a class="btn" href="${esc(folder)}" target="_blank" rel="noopener noreferrer">Open Google Drive course folder ↗</a>`:'<div class="empty">The Google Drive folder has not been added by the administrator yet.</div>'}</div><div class="panel" style="margin-top:16px"><div class="panel-head"><div><h2>Video lessons & tutorial materials</h2><p>Lessons appear here when they are added to the lesson progress table.</p></div></div><div class="lesson-list">${lessonMarkup}</div>${folder?`<div class="form-actions"><a class="btn secondary" href="${esc(folder)}" target="_blank" rel="noopener noreferrer">Open full Drive folder ↗</a></div>`:""}</div>`;
- target.querySelectorAll("[data-lesson-id]").forEach(box=>box.addEventListener("change",async()=>{
-  const lesson_id=box.dataset.lessonId;const lesson=lessonRows.find(r=>String(r.lesson_id)===String(lesson_id));if(!lesson)return;
-  const completed=box.checked;const now=new Date().toISOString();
-  const {error}=await sb.from("course_lesson_progress").upsert({student_id:currentUser.id,course_id:course.id,lesson_id,lesson_title:lesson.lesson_title||"Lesson",lesson_url:lesson.lesson_url||null,completed,completed_at:completed?now:null,updated_at:now},{onConflict:"student_id,course_id,lesson_id"});
-  if(error){box.checked=!completed;notice("Progress could not be saved: "+error.message);return;}
-  lesson.completed=completed;lesson.completed_at=completed?now:null;notice("Lesson progress saved.");
- }));
+
+ target.innerHTML='<div class="panel"><div class="panel-head"><div><h2>'+esc(course.title)+'</h2><p>'+esc(course.summary||"Your course learning space")+'</p></div><span class="status approved">'+(days===null?"Active":days+" days remaining")+'</span></div><p class="page-subtitle">Your purchased course videos and study materials.</p><div class="empty">Loading your course content…</div></div>';
+ try{
+  const {data,error}=await sb.functions.invoke("student-course-content",{body:{course_id:course.id}});
+  if(error){
+   let message=error.message||"Could not load course videos.";
+   try{const detail=await error.context?.json?.();if(detail?.error)message=detail.error;}catch(_){}
+   throw new Error(message);
+  }
+  if(data?.error)throw new Error(data.error);
+  const items=Array.isArray(data?.content)?data.content:[];
+  const videos=items.filter(item=>item.content_type==="video");
+  const materials=items.filter(item=>item.content_type==="study_material");
+  const videoMarkup=videos.length?videos.map((item,index)=>`
+   <article class="panel" style="padding:16px;margin:12px 0">
+    <div class="panel-head"><div><p class="eyebrow">LESSON ${esc(item.lesson_number||index+1)}</p><h3 style="margin:4px 0 10px">${esc(item.title)}</h3></div></div>
+    <video controls playsinline preload="metadata" controlsList="nodownload" style="display:block;width:100%;max-height:560px;background:#08090c;border-radius:10px">
+     <source src="${esc(item.signed_url)}" type="${esc(item.mime_type||"video/mp4")}">
+     Your browser does not support HTML video.
+    </video>
+   </article>`).join(""):'<div class="empty">No video lessons have been uploaded for this course yet.</div>';
+  const materialMarkup=materials.length?materials.map(item=>`
+   <a class="task-row" href="${esc(item.signed_url)}" target="_blank" rel="noopener noreferrer">
+    <div class="task-icon">PDF</div><div class="task-copy"><strong>${esc(item.title)}</strong><small>${esc(item.file_name)}</small></div><span class="status approved">Open ↗</span>
+   </a>`).join(""):'<div class="empty">No PDF study materials have been uploaded for this course yet.</div>';
+  target.innerHTML=`
+   <div class="panel">
+    <div class="panel-head"><div><h2>${esc(course.title)}</h2><p>${esc(course.summary||"Your course learning space")}</p></div><span class="status approved">${days===null?"Active":days+" days remaining"}</span></div>
+    <p class="page-subtitle">Only content belonging to this course is shown here. Access is available while your approved course access remains active.</p>
+   </div>
+   <div class="panel" style="margin-top:16px">
+    <div class="panel-head"><div><h2>Video lessons</h2><p>${videos.length} lesson${videos.length===1?"":"s"} available</p></div></div>
+    <div class="lesson-list">${videoMarkup}</div>
+   </div>
+   <div class="panel" style="margin-top:16px">
+    <div class="panel-head"><div><h2>PDF study materials</h2><p>Materials for this course only</p></div></div>
+    <div class="item-list">${materialMarkup}</div>
+   </div>`;
+ }catch(error){
+  console.error("Course content load failed:",error);
+  target.innerHTML='<div class="panel"><h2>'+esc(course.title)+'</h2><div class="notice">'+esc(error.message||"Course videos could not be loaded.")+'</div></div>';
+ }
 }
 async function loadPage(){
  const page=document.body.dataset.page||"dashboard";navActive();
