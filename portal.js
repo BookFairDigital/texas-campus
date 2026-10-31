@@ -165,6 +165,24 @@ async function loadCatalogue(target){
  }).join(""):`<div class="empty">No published courses available.</div>`;
 }
 async function loadCourseView(){
+ // Discourage casual copying/downloading on this course-learning page.
+ if (!window.__tcCourseProtectionBound) {
+  window.__tcCourseProtectionBound = true;
+  document.addEventListener("contextmenu", event => {
+   if (event.target.closest("#courseContent")) event.preventDefault();
+  });
+  ["copy","cut","dragstart"].forEach(type => document.addEventListener(type, event => {
+   if (event.target.closest("#courseContent")) event.preventDefault();
+  }));
+  document.addEventListener("keydown", event => {
+   if (!event.target.closest("#courseContent")) return;
+   const key = event.key.toLowerCase();
+   if ((event.ctrlKey || event.metaKey) && ["s","u","c","x"].includes(key)) {
+    event.preventDefault();
+    event.stopPropagation();
+   }
+  }, true);
+ }
  const params=new URLSearchParams(location.search),slug=params.get("course"),id=params.get("id");
  const order=approvedOrders().find(o=>String(orderCourseId(o))===String(id)||slugFor(o)===slug);
  const course=order?courseFor(order):courses.find(c=>c.slug===slug);
@@ -187,7 +205,7 @@ async function loadCourseView(){
   const videoMarkup=videos.length?videos.map((item,index)=>`
    <article class="panel" style="padding:16px;margin:12px 0">
     <div class="panel-head"><div><p class="eyebrow">LESSON ${esc(item.lesson_number||index+1)}</p><h3 style="margin:4px 0 10px">${esc(item.title)}</h3></div></div>
-    <video controls playsinline preload="metadata" controlsList="nodownload" style="display:block;width:100%;max-height:560px;background:#08090c;border-radius:10px">
+    <video controls playsinline preload="metadata" controlsList="nodownload noplaybackrate noremoteplayback" disablePictureInPicture disableRemotePlayback oncontextmenu="return false" ondragstart="return false" style="display:block;width:100%;max-height:560px;background:#08090c;border-radius:10px;user-select:none;-webkit-user-select:none;-webkit-touch-callout:none">
      <source src="${esc(item.signed_url)}" type="${esc(item.mime_type||"video/mp4")}">
      Your browser does not support HTML video.
     </video>
