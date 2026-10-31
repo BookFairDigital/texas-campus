@@ -252,6 +252,17 @@ function showRegistrationStep(user = null) {
     const emailField = registrationForm.elements.namedItem("email");
     if (fullNameField && !fullNameField.value) fullNameField.value = metadata.full_name || metadata.name || "";
     if (emailField && !emailField.value) emailField.value = user.email || "";
+    const passwordField = registrationForm.elements.namedItem("password");
+    if (passwordField) {
+      passwordField.required = false;
+      passwordField.placeholder = "Not needed for your existing login";
+    }
+  } else if (registrationForm) {
+    const passwordField = registrationForm.elements.namedItem("password");
+    if (passwordField) {
+      passwordField.required = true;
+      passwordField.placeholder = "At least 8 characters";
+    }
   }
   showStep("register");
   openDialog();
@@ -329,13 +340,15 @@ async function registerStudent(event) {
   const mobile = getValue("mobile", "phone");
   const passwordField = form.elements.namedItem("password");
   const password = String(passwordField?.value || "");
+  const { data: currentSession } = await supabase.auth.getSession();
+  const existingUser = currentSession.session?.user || null;
 
-  if (!fullName || !username || !email || !mobile || !password) {
+  if (!fullName || !username || !email || !mobile || (!existingUser && !password)) {
     alert("Full name, username, email, mobile saha password okkoma fill karanna.");
     return;
   }
 
-  if (password.length < 8) {
+  if (!existingUser && password.length < 8) {
     alert("Password eka at least characters 8k wenna one.");
     return;
   }
@@ -348,7 +361,6 @@ async function registerStudent(event) {
   }
 
   try {
-    const existingUser = await getCurrentUser();
     let accountUser = existingUser;
 
     // If Auth already has a session but its student profile is incomplete,
