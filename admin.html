@@ -1278,6 +1278,11 @@ loadOrders();
       const course = r2Courses.find(item => item.id === courseId);
       const file = r2ContentFile.files[0];
       const title = r2ContentTitle.value.trim();
+      if (!course) {
+        r2ContentMessage.style.color = "#ff9aa7";
+        r2ContentMessage.textContent = contentType === "video" ? "Please select a course for this video." : "Please choose one of the 12 courses for this PDF.";
+        return;
+      }
       const lessonNumber = r2LessonNumber.value ? Number(r2LessonNumber.value) : null;
       if (!course || !file || !title) return;
       const isVideo = contentType === "video";
@@ -1386,8 +1391,6 @@ loadOrders();
       }
     });
 
-    r2VideoTab.addEventListener("click", () => r2SetContentMode("video"));
-    r2PdfTab.addEventListener("click", () => r2SetContentMode("study_material"));
     r2LoadContent().then(() => r2SetContentMode("video")).catch(error => {
       console.error("Could not load R2 course content:", error);
       r2ContentMessage.textContent = error.message || "Could not load the course list. Refresh the page.";
