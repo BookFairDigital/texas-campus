@@ -115,6 +115,15 @@
       <label>Depositor name<input name="depositor" required placeholder="Name on the bank deposit"></label>
       <label>Deposit reference / transaction ID<input name="reference" required placeholder="Enter your deposit reference"></label>
       <label>Payment receipt (optional)<input name="receipt" type="file" accept="image/*,.pdf"></label>
+      <div id="checkout-session-login" hidden style="margin:12px 0;padding:14px;border:1px solid #f0b7c0;border-radius:10px;background:#fff5f6">
+        <strong>Student login needed to submit this order</strong>
+        <p style="margin:5px 0 10px;font-size:13px">Your login session expired. Sign in again below; your depositor name and reference will stay in this form.</p>
+        <label>Student email<input id="checkout-resume-email" type="email" autocomplete="username" placeholder="Your student email"></label>
+        <label>Student password<input id="checkout-resume-password" type="password" autocomplete="current-password" placeholder="Your student password"></label>
+        <button class="button button-primary checkout-submit" id="checkout-resume-login" type="button">Sign in and continue order</button>
+        <p id="checkout-resume-message" role="status" style="margin:8px 0 0;font-size:12px"></p>
+      </div>
+      <p id="checkout-payment-message" role="status" aria-live="polite" style="margin:8px 0;color:#b42336;font-size:13px"></p>
       <button class="button button-primary checkout-submit" type="submit">Submit Bank Deposit Details <span>→</span></button>
       <p class="checkout-security-note">Your deposit reference is sent to Texas Campus for manual review. Course and package video access stays locked until an administrator approves the request.</p>
     </form>
@@ -130,6 +139,6 @@
 
 
 <script src="script.js?v=assistant-3"></script>
-<script type="module" src="course-detail.js?v=checkout-clean-session-6"></script>
+<script type="module" src="course-detail.js?v=checkout-session-recovery-7"></script>
 </body>
 </html>
