@@ -490,7 +490,18 @@ async function submitOrder(event) {
 
   try {
     const user = await getCurrentUser();
-    if (!user) throw new Error("Student login session eka naha. Login wela aye try karanna.");
+    if (!user) {
+      const loginBox = $("#checkout-session-login");
+      if (loginBox) {
+        loginBox.hidden = false;
+        $("#checkout-resume-email")?.focus();
+      }
+      const message = $("#checkout-payment-message");
+      if (message) message.textContent = "Student login session eka expire wela. Password eka dala sign in karala order eka continue karanna.";
+      return;
+    }
+    const paymentMessage = $("#checkout-payment-message");
+    if (paymentMessage) paymentMessage.textContent = "";
 
     if (selectedPackage) {
       const { data, error } = await supabase.functions.invoke("student-create-package-order", {
@@ -620,7 +631,9 @@ async function submitOrder(event) {
     if (signOutError) console.warn("Post-order sign-out failed:", signOutError.message);
   } catch (error) {
     console.error("Checkout submission failed:", error);
-    alert("Order submit karanna bari una: " + (error.message || "Unknown error"));
+    const message = $("#checkout-payment-message");
+    if (message) message.textContent = "Order submit karanna bari una: " + (error.message || "Unknown error");
+    else showMessage("Order submit karanna bari una: " + (error.message || "Unknown error"));
   } finally {
     submitting = false;
     if (button) {
@@ -648,6 +661,36 @@ if (registrationForm) {
     passwordInput.autocomplete = "new-password";
     passwordInput.minLength = 8;
   }
+}
+
+const resumeLoginButton = $("#checkout-resume-login");
+if (resumeLoginButton) {
+  resumeLoginButton.addEventListener("click", async () => {
+    const email = String($("#checkout-resume-email")?.value || "").trim();
+    const password = String($("#checkout-resume-password")?.value || "");
+    const message = $("#checkout-resume-message");
+    if (!email || !password) {
+      if (message) message.textContent = "Student email saha password enter karanna.";
+      return;
+    }
+    resumeLoginButton.disabled = true;
+    resumeLoginButton.textContent = "Signing in…";
+    if (message) message.textContent = "";
+    try {
+      const { error } = await supabase.auth.signInWithPassword({ email, password });
+      if (error) throw error;
+      const box = $("#checkout-session-login");
+      if (box) box.hidden = true;
+      const passwordField = $("#checkout-resume-password");
+      if (passwordField) passwordField.value = "";
+      await checkoutForm.requestSubmit();
+    } catch (error) {
+      if (message) message.textContent = error.message || "Student login failed. Check your email and password.";
+    } finally {
+      resumeLoginButton.disabled = false;
+      resumeLoginButton.textContent = "Sign in and continue order";
+    }
+  });
 }
 
 if (checkoutForm) {
