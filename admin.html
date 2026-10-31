@@ -1142,7 +1142,10 @@ loadOrders();
         await verifyAdmin(data.user);
       } catch (error) {
         console.error("Admin login failed:", error.message);
-        showLogin("Sign-in failed. Check your Supabase email/password and try again.");
+        const message = error?.message || "Unknown sign-in error.";
+        showLogin(message === "Invalid login credentials"
+          ? "Supabase rejected this email/password combination. Use the current administrator password or reset it in Supabase Auth."
+          : "Sign-in failed: " + message);
       } finally {
         loginButton.disabled = false;
       }
