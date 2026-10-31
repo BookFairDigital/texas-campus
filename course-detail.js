@@ -64,6 +64,12 @@ function closeDialog() {
   } else {
     dialog.removeAttribute("open");
   }
+  // Remove names, references and any previous buyer details from the visible form.
+  registrationForm?.reset();
+  checkoutForm?.reset();
+  const summary = $("#demo-order-summary");
+  if (summary) summary.textContent = "";
+  showStep("register");
 }
 
 function escapeHTML(value) {
@@ -444,7 +450,6 @@ async function registerStudent(event) {
       );
     }
 
-    alert("Student details save una! Dan course checkout eka continue karanna.");
     await startCheckout();
   } catch (error) {
     console.error("Student registration failed:", error);
@@ -516,6 +521,10 @@ async function submitOrder(event) {
       if (doneText) doneText.textContent = "Package request submitted. Admin payment approval is required before the included course videos appear in your student dashboard.";
       showStep("done");
       form.reset();
+      // This is a shared-device checkout flow: end the previous student's
+      // session once the order is safely submitted, so the next buyer starts fresh.
+      const { error: signOutError } = await supabase.auth.signOut();
+      if (signOutError) console.warn("Post-order sign-out failed:", signOutError.message);
       return;
     }
 
@@ -606,6 +615,9 @@ async function submitOrder(event) {
 
     showStep("done");
     form.reset();
+    // Clear the authenticated buyer from this shared browser after successful submission.
+    const { error: signOutError } = await supabase.auth.signOut();
+    if (signOutError) console.warn("Post-order sign-out failed:", signOutError.message);
   } catch (error) {
     console.error("Checkout submission failed:", error);
     alert("Order submit karanna bari una: " + (error.message || "Unknown error"));
