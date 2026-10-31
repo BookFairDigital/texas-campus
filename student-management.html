@@ -47,8 +47,11 @@ dialog{background:#171820;color:white;border:1px solid #444550;border-radius:14p
   <form id="resetForm">
     <h2>Reset student password</h2><p class="sub" id="resetFor"></p>
     <label for="newPassword">New temporary password (10–128 characters)</label>
-    <input class="field full" id="newPassword" type="password" minlength="10" maxlength="128" autocomplete="new-password" required>
-    <p class="small">The old password cannot be recovered or displayed. Save the new password securely and share it privately with the student.</p>
+    <div style="display:flex;gap:8px;flex-wrap:wrap">
+      <input class="field" style="flex:1;min-width:190px" id="newPassword" type="text" minlength="10" maxlength="128" autocomplete="new-password" required>
+      <button type="button" class="btn secondary" id="generateTempPassword">Generate password</button>
+    </div>
+    <p class="small">Existing passwords cannot be viewed. Generate or enter a new temporary password, reset the account, then copy the new password shown here and share it privately.</p>
     <p class="msg" id="resetMsg"></p>
     <div class="dialog-actions"><button type="button" class="btn secondary" id="cancelReset">Cancel</button><button class="btn" id="saveReset" type="submit">Reset password</button></div>
   </form>
@@ -142,10 +145,17 @@ $('rows').addEventListener('click',async e=>{
 });
 $('cancelReset').addEventListener('click',()=>$('resetDialog').close());
 $('cancelExpiry').addEventListener('click',()=>$('expiryDialog').close());
+$('generateTempPassword').addEventListener('click',()=>{
+ const chars='ABCDEFGHJKLMNPQRSTUVWXYZabcdefghijkmnopqrstuvwxyz23456789!@#$%';
+ const bytes=new Uint8Array(20);
+ crypto.getRandomValues(bytes);
+ $('newPassword').value=Array.from(bytes,b=>chars[b%chars.length]).join('');
+ $('newPassword').focus();
+});
 $('resetForm').addEventListener('submit',async e=>{
  e.preventDefault();if(!currentStudent)return;
  $('saveReset').disabled=true;message('resetMsg','Resetting password…');
- try{const d=await callApi({action:'reset_password',studentId:currentStudent.id,password:$('newPassword').value});message('resetMsg',d.message,true);message('pageMsg',`Password reset for ${currentStudent.username}. Share the new temporary password privately.`,true);$('newPassword').value='';setTimeout(()=>$('resetDialog').close(),1200)}
+ try{const d=await callApi({action:'reset_password',studentId:currentStudent.id,password:$('newPassword').value});message('resetMsg','Password reset successfully. The new temporary password is shown above; copy it and share it privately.',true);message('pageMsg',`Password reset for ${currentStudent.username}. New temporary password is available in the open dialog.`,true)}
  catch(err){message('resetMsg',err.message)}
  finally{$('saveReset').disabled=false}
 });
