@@ -741,6 +741,7 @@
       <p class="admin-sidebar-label">Workspace</p>
       <a class="active" href="#admin-home" data-tab="dashboard"><span>⌂</span>Dashboard</a>
       <a href="#student-accounts" data-tab="student-accounts"><span>♙</span>Student Accounts</a>
+      <a href="#student-management" data-tab="student-management"><span>⚙</span>Student Management</a>
       <a href="#course-management" data-tab="course-management"><span>▤</span>Course Management</a>
       <a href="#r2-video-storage" data-tab="r2-video-storage"><span>▶</span>R2 Video Storage</a>
       <a href="#payment-requests" data-tab="payment-requests"><span>▣</span>Payment Requests</a>
@@ -863,7 +864,7 @@
           </article>
 
           <!-- Student management card -->
-          <article class="admin-card" id="student-accounts">
+          <article class="admin-card" id="student-management">
             <div class="admin-card-head">
               <div class="admin-card-icon" aria-hidden="true">♙</div>
               <div>
@@ -1208,6 +1209,7 @@ loadOrders();
     const adminTabTargets = {
       dashboard: null,
       "student-accounts": "student-accounts",
+      "student-management": "student-management",
       "course-management": "course-management",
       "r2-video-storage": "r2-video-storage",
       "payment-requests": "payment-requests",
@@ -1234,6 +1236,7 @@ loadOrders();
       const labels = {
         dashboard: "Admin Dashboard",
         "student-accounts": "Student Accounts",
+        "student-management": "Student Management",
         "course-management": "Course Management",
         "r2-video-storage": "R2 Video Storage",
         "payment-requests": "Payment Requests",
