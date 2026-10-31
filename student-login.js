@@ -27,6 +27,17 @@ window.addEventListener("hashchange", () => {
   if (window.location.hash === "#student-login") openStudentLoginModal();
 });
 
+const loginModal = document.querySelector("#student-modal");
+function openStudentLoginModal() {
+  if (loginModal) loginModal.hidden = false;
+}
+if (window.location.hash === "#student-login") {
+  openStudentLoginModal();
+}
+window.addEventListener("hashchange", () => {
+  if (window.location.hash === "#student-login") openStudentLoginModal();
+});
+
 if (form) {
   form.addEventListener("submit", async (event) => {
     event.preventDefault();
